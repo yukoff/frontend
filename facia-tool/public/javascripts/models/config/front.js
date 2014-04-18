@@ -42,7 +42,7 @@ define([
         populateObservables(this.props,  opts);
 
         asObservableProps([
-            'open',
+            'isOpen',
             'openProps'], this);
 
         this.collections = new Group({

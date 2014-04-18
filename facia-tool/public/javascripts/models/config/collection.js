@@ -34,7 +34,7 @@ define([
         }
 
         asObservableProps([
-            'open',
+            'isOpen',
             'underDrag'], this);
     }
 

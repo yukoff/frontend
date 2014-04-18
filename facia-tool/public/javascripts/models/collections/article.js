@@ -56,7 +56,7 @@ define([
 
             asObservableProps([
                 'underDrag',
-                'open',
+                'isOpen',
                 'isLoaded',
                 'isEmpty',
                 'sparkUrl'], this);
