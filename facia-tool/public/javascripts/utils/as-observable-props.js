@@ -1,8 +1,9 @@
 /* global _: true */
 define(['knockout'], function(ko) {
-    return function(props) {
-        return _.object(props.map(function(prop){
-            return [prop, ko.observable()];
-        }));
+    return function(props, obj) {
+        return _.reduce(props, function(obj, prop){
+            obj[prop] = ko.observable();
+            return obj;
+        }, obj || {});
     };
 });
