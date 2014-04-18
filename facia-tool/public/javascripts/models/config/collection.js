@@ -33,20 +33,20 @@ define([
             this.meta.groups(this.meta.groups().join(','));
         }
 
-        this.state = asObservableProps([
+        asObservableProps([
             'open',
-            'underDrag']);
+            'underDrag'], this);
     }
 
     Collection.prototype.toggleOpen = function() {
-        this.state.open(!this.state.open());
+        this.open(!this.open());
     };
 
     Collection.prototype.save = function() {
         if (vars.model.collections.indexOf(this) < 0) {
             vars.model.collections.unshift(this);
         }
-        this.state.open(false);
+        this.open(false);
         vars.model.save(this);
     };
 

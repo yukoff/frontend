@@ -44,7 +44,7 @@ define([
             'updatedBy',
             'updatedEmail']);
 
-        this.state  = asObservableProps([
+        asObservableProps([
             'lastUpdated',
             'hasConcurrentEdits',
             'collapsed',
@@ -52,18 +52,18 @@ define([
             'pending',
             'editingConfig',
             'count',
-            'timeAgo']);
+            'timeAgo'], this);
 
         this.setPending(true);
         this.load();
     }
 
     Collection.prototype.setPending = function(bool) {
-        this.state.pending(!!bool);
+        this.pending(!!bool);
     };
 
     Collection.prototype.isPending = function() {
-        return !!this.state.pending();
+        return !!this.pending();
     };
 
     Collection.prototype.createGroups = function(groupNames) {
@@ -81,17 +81,17 @@ define([
     };
 
     Collection.prototype.toggleCollapsed = function() {
-        this.state.collapsed(!this.state.collapsed());
+        this.collapsed(!this.collapsed());
         this.closeAllArticles();
     };
 
     Collection.prototype.toggleEditingConfig = function() {
-        this.state.editingConfig(!this.state.editingConfig());
+        this.editingConfig(!this.editingConfig());
     };
 
     Collection.prototype.reset = function() {
         this.closeAllArticles();
-        this.state.editingConfig(false);
+        this.editingConfig(false);
         this.load();
     };
 
@@ -106,7 +106,7 @@ define([
     Collection.prototype.processDraft = function(goLive) {
         var self = this;
 
-        this.state.hasDraft(false);
+        this.hasDraft(false);
         this.setPending(true);
         this.closeAllArticles();
 
@@ -161,16 +161,16 @@ define([
 
             if (!raw) { return; }
 
-            self.state.hasConcurrentEdits(false);
+            self.hasConcurrentEdits(false);
 
-            if (raw.lastUpdated !== self.state.lastUpdated()) {
+            if (raw.lastUpdated !== self.lastUpdated()) {
                 self.populate(raw);
             }
 
-            if (!self.state.editingConfig()) {
+            if (!self.editingConfig()) {
                 populateObservables(self.collectionMeta, raw);
                 self.collectionMeta.updatedBy(raw.updatedEmail === config.email ? 'you' : raw.updatedBy);
-                self.state.timeAgo(self.getTimeAgo(raw.lastUpdated));
+                self.timeAgo(self.getTimeAgo(raw.lastUpdated));
             }
         })
         .fail(function() {
@@ -180,7 +180,7 @@ define([
 
     Collection.prototype.hasOpenArticles = function() {
         return _.reduce(this.groups, function(hasOpen, group) {
-            return hasOpen || _.some(group.items(), function(article) { return article.state.open(); });
+            return hasOpen || _.some(group.items(), function(article) { return article.open(); });
         }, false);
     };
 
@@ -194,10 +194,10 @@ define([
         this.raw = raw;
         if (!raw) { return; }
 
-        this.state.hasDraft(_.isArray(raw.draft));
+        this.hasDraft(_.isArray(raw.draft));
 
         if (this.hasOpenArticles()) {
-            this.state.hasConcurrentEdits(raw.updatedEmail !== config.email && self.state.lastUpdated());
+            this.hasConcurrentEdits(raw.updatedEmail !== config.email && self.lastUpdated());
             return;
         }
 
@@ -219,8 +219,8 @@ define([
             );
         });
 
-        this.state.lastUpdated(raw.lastUpdated);
-        this.state.count(list.length);
+        this.lastUpdated(raw.lastUpdated);
+        this.count(list.length);
 
         this.decorate();
     };
@@ -258,7 +258,7 @@ define([
     Collection.prototype.saveMeta = function() {
         var self = this;
 
-        this.state.editingConfig(false);
+        this.editingConfig(false);
         this.setPending(true);
 
         authedAjax.request({

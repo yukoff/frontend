@@ -94,7 +94,7 @@ define([
                     bootstrap({
                         force: true,
                         openFronts: _.reduce(model.fronts(), function(openFronts, front) {
-                            openFronts[front.id()] = front.state.open();
+                            openFronts[front.id()] = front.open();
                             return openFronts;
                         }, {})
                     })
@@ -188,7 +188,7 @@ define([
                         .map(function(id) {
                             var front = new Front(cloneWithKey(config.fronts[id], id));
 
-                            front.state.open(opts.openFronts[id]);
+                            front.open(opts.openFronts[id]);
                             return front;
                         })
                        .value()

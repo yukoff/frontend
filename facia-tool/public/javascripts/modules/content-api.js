@@ -82,7 +82,7 @@ function (
            _.chain(articles)
             .filter(function(article) { return !article.isSnap(); })
             .each(function(article) {
-                article.state.isEmpty(!article.state.isLoaded());
+                article.isEmpty(!article.isLoaded());
             });
         });
     }

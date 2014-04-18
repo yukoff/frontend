@@ -48,8 +48,8 @@ define([
                     targetList.underDrag(targetItem.constructor === Group);
                     _.each(targetList.items(), function(item) {
                         var underDrag = (item === targetItem);
-                        if (underDrag !== item.state.underDrag()) {
-                            item.state.underDrag(underDrag);
+                        if (underDrag !== item.underDrag()) {
+                            item.underDrag(underDrag);
                         }
                     });
                 }, false);
@@ -62,8 +62,8 @@ define([
 
                     targetList.underDrag(false);
                     _.each(targetList.items(), function(item) {
-                        if (item.state.underDrag()) {
-                            item.state.underDrag(false);
+                        if (item.underDrag()) {
+                            item.underDrag(false);
                         }
                     });
                 }, false);
@@ -88,7 +88,7 @@ define([
 
                     targetList.underDrag(false);
                     _.each(targetList.items(), function(item) {
-                        item.state.underDrag(false);
+                        item.underDrag(false);
                     });
 
                     // If the item isn't dropped onto an item, assume it's to be appended *after* the other items in this group,

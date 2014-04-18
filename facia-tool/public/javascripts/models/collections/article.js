@@ -54,12 +54,12 @@ define([
                 'snapType',
                 'snapData']);
 
-            this.state = asObservableProps([
+            asObservableProps([
                 'underDrag',
                 'open',
                 'isLoaded',
                 'isEmpty',
-                'sparkUrl']);
+                'sparkUrl'], this);
 
             this.isSnap = ko.computed(function() {
                 return !!snap.validateId(this.id());
@@ -125,7 +125,7 @@ define([
             populateObservables(this.props,  opts);
             populateObservables(this.meta,   opts.meta);
             populateObservables(this.fields, opts.fields);
-            populateObservables(this.state,  opts.state);
+            //populateObservables(this.state,  opts.state);
 
             if (withContent) {
                  missingProps = [
@@ -138,7 +138,7 @@ define([
                     vars.model.statusCapiErrors(true);
                     window.console.error('ContentApi missing: "' + missingProps.join('", "') + '" for ' + this.id());
                 } else {
-                    this.state.isLoaded(true);
+                    this.isLoaded(true);
                 }
             }
         };
@@ -149,9 +149,9 @@ define([
         };
 
         Article.prototype.sparkline = function() {
-            this.state.sparkUrl(undefined);
+            this.sparkUrl(undefined);
             if (vars.state.switches['facia-tool-sparklines']) {
-                this.state.sparkUrl(vars.sparksBase + this.id() + (this.meta.updatedAt() ? '&markers=' + this.meta.updatedAt() : ''));
+                this.sparkUrl(vars.sparksBase + this.id() + (this.meta.updatedAt() ? '&markers=' + this.meta.updatedAt() : ''));
             }
         };
 
@@ -171,14 +171,14 @@ define([
             if (this.uneditable) { return; }
 
             _.defer(function(){
-                self.state.open(true);
+                self.open(true);
             });
         };
 
         Article.prototype.close = function() {
             var self = this;
             _.defer(function(){
-                self.state.open(false);
+                self.open(false);
             });
         };
 
@@ -264,7 +264,7 @@ define([
         Article.prototype.convertToSnap = function() {
             this.meta.href(this.id());
             this.id(snap.generateId());
-            this.state.open(!this.meta.headline());
+            this.open(!this.meta.headline());
         };
 
         Article.prototype.save = function() {

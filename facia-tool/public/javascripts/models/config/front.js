@@ -41,9 +41,9 @@ define([
 
         populateObservables(this.props,  opts);
 
-        this.state = asObservableProps([
+        asObservableProps([
             'open',
-            'openProps']);
+            'openProps'], this);
 
         this.collections = new Group({
             parent: self,
@@ -63,15 +63,15 @@ define([
     }
 
     Front.prototype.setOpen = function(isOpen) {
-        this.state.open(isOpen);
+        this.open(isOpen);
     };
 
     Front.prototype.toggleOpen = function() {
-        this.state.open(!this.state.open());
+        this.open(!this.open());
     };
 
     Front.prototype.openProps = function() {
-        this.state.openProps(true);
+        this.openProps(true);
     };
 
     Front.prototype.createCollection = function() {
@@ -84,7 +84,7 @@ define([
     };
 
     Front.prototype._depopulateCollection = function(collection) {
-        collection.state.open(false);
+        collection.open(false);
         collection.parents.remove(this);
         this.collections.items.remove(collection);
         vars.model.save(collection);
@@ -92,7 +92,7 @@ define([
 
     Front.prototype.save = function() {
         vars.model.save();
-        this.state.openProps(false);
+        this.openProps(false);
     };
 
     return Front;

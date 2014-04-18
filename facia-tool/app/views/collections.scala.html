@@ -105,11 +105,11 @@
     <script type="text/html" id="template_collection">
         <div class="collection">
             <div class="list-header" data-bind="
-                css: {collapsed: state.collapsed() || configMeta.uneditable()}">
+                css: {collapsed: collapsed() || configMeta.uneditable()}">
 
-                <div data-bind="visible: !state.editingConfig()">
+                <div data-bind="visible: !editingConfig()">
 
-                    <span class="tools" data-bind="visible: state.hasDraft">
+                    <span class="tools" data-bind="visible: hasDraft">
                         <a class="draft-warning" data-bind="
                             click: $root.setModeDraft,
                             visible: $root.liveMode">
@@ -129,12 +129,12 @@
 
                     <a class="list-header__edit" data-bind="
                         click: toggleEditingConfig,
-                        visible: typeof configMeta.displayName() === 'undefined' && !state.collapsed()">&laquo; edit title</a>
+                        visible: typeof configMeta.displayName() === 'undefined' && !collapsed()">&laquo; edit title</a>
 
                     <span class="count" data-bind="if: !isPending() && !configMeta.uneditable()">
                         (<span data-bind="
-                            text: state.count() ? state.count() : 'empty',
-                            css: {'non-zero':  state.count}"></span>)
+                            text: count() ? count() : 'empty',
+                            css: {'non-zero':  count}"></span>)
                     </span>
 
                     <span class="count" data-bind="if: isPending() && !configMeta.uneditable()">
@@ -155,23 +155,23 @@
                         click: toggleCollapsed,
                         visible: !configMeta.uneditable(),
                         css: {
-                            'icon-chevron-down': !state.collapsed(),
-                            'icon-chevron-up'  :  state.collapsed }"></i>
+                            'icon-chevron-down': !collapsed(),
+                            'icon-chevron-up'  :  collapsed }"></i>
 
                     <span class="list-header__timings" data-bind="
-                        css: {'has-concurrent-user': state.hasConcurrentEdits}">
-                        <!-- ko if: state.timeAgo -->
-                            Edited <span class="list-header__timings__last-updated" data-bind="text: state.timeAgo"></span>
+                        css: {'has-concurrent-user': hasConcurrentEdits}">
+                        <!-- ko if: timeAgo -->
+                            Edited <span class="list-header__timings__last-updated" data-bind="text: timeAgo"></span>
                             by <span class="list-header__timings__user" data-bind="text: collectionMeta.updatedBy"></span>
                         <!-- /ko -->
                         <a data-bind="
                             click: reset,
-                            visible: state.hasConcurrentEdits,
+                            visible: hasConcurrentEdits,
                             ">Show edits</a>
                     </span>
                 </div>
 
-                <div class="collection-overrides" data-bind="visible: state.editingConfig">
+                <div class="collection-overrides" data-bind="visible: editingConfig">
                     <input type="text" data-bind="
                         value: collectionMeta.displayName,
                         hasFocus: true" placeholder="Title"/>
@@ -188,7 +188,7 @@
 
             </div>
 
-            <!-- ko if: !state.collapsed() -->
+            <!-- ko if: !collapsed() -->
                 <div data-bind="
                     css: {'pending': isPending()},
                     template: {name: 'template_groups', foreach: groups}"></div>
@@ -218,8 +218,8 @@
     <script type="text/html" id="template_article">
         <div class="article u-cf" data-bind="
             css: {
-                open: state.open,
-                underDrag: state.underDrag
+                open: open,
+                underDrag: underDrag
             }">
 
             <a target="article" data-bind="
@@ -233,7 +233,7 @@
                 visible: humanDate,
                 text: humanDate"></div>
 
-            <div data-bind="if: state.open">
+            <div data-bind="if: open">
                 <div class="image__overrides">
                     <a data-bind="
                         click: toggleImageAdjustBoost,
@@ -300,11 +300,11 @@
                 </div>
             </div>
 
-            <div class="closed" data-bind="if: !state.open()">
+            <div class="closed" data-bind="if: !open()">
                 <a class="spark" target="ophan" title="Dark blue: Guardian. Green: Google. Light blue: Other." data-bind="
-                    visible: state.sparkUrl,
+                    visible: sparkUrl,
                     attr: {href: 'http://dashboard.ophan.co.uk/graph/breakdown?path=/' + id()}">
-                    <img data-bind="attr: {src: state.sparkUrl}" />
+                    <img data-bind="attr: {src: sparkUrl}" />
                 </a>
 
                 <div class="image__overrides" data-bind="
@@ -325,14 +325,14 @@
                     <i class="icon-share-alt"></i>
                 </a>
 
-                <div class="article_content is-empty" data-bind="if: state.isEmpty">
+                <div class="article_content is-empty" data-bind="if: isEmpty">
                     <a target="article" class="is-empty__url" data-bind="
                         attr: {href: 'http://www.theguardian.com/' + id()},
                         text: id"></a>
                     This content is unavailable, deleted, or has a new URL
                 </div>
 
-                <div class="article_content" data-bind="if: !state.isEmpty()">
+                <div class="article_content" data-bind="if: !isEmpty()">
 
                     <span class="is" data-bind="
                         visible: isSnap,

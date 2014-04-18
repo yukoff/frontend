@@ -109,7 +109,7 @@ define([
                     if (isValidDate(lastPressed)) {
                         model.statusPressFailure(
                             _.some(model.collections(), function(collection) {
-                                var l = new Date(collection.state.lastUpdated());
+                                var l = new Date(collection.lastUpdated());
                                 return isValidDate(l) ? l > lastPressed : false;
                             })
                         );
@@ -217,11 +217,11 @@ define([
                 getRightTargets();
 
                 model.rightTarget(model.rightTarget() || model.rightTargets()[0]);
-                (model.rightTarget().underDrag || model.rightTarget().state.underDrag)(false);
+                (model.rightTarget().underDrag || model.rightTarget().underDrag)(false);
 
                 newIndex = ((e.keyCode === 40 ? 1 : -1) + model.rightTargets.indexOf(model.rightTarget())) % model.rightTargets().length;
                 model.rightTarget(model.rightTargets()[newIndex]);
-                (model.rightTarget().underDrag || model.rightTarget().state.underDrag)(true);
+                (model.rightTarget().underDrag || model.rightTarget().underDrag)(true);
             }
         }
 
