@@ -37,7 +37,7 @@
         <div class="cnf-collection" data-bind="
             css: {
                 underDrag: underDrag,
-                open: open}">
+                open: isOpen}">
 
             <span class="cnf-collection__index" data-bind="text: $index() + 1"></span>
 
@@ -61,7 +61,7 @@
                 </span>
             </span>
 
-            <!-- ko if: open -->
+            <!-- ko if: isOpen -->
             <div class="cnf-form">
                 <label>Title</label>
                 <input type="text" data-bind="
@@ -130,7 +130,7 @@
             </div>
             <!-- /ko -->
 
-            <div data-bind="if: id() && open()">
+            <div data-bind="if: id() && isOpen()">
                 <div class="cnf-front__inner">
                     <div data-bind="visible: openProps">
                         <div class="cnf-form" data-bind="">

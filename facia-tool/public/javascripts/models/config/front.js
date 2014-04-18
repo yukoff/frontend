@@ -63,11 +63,11 @@ define([
     }
 
     Front.prototype.setOpen = function(isOpen) {
-        this.open(isOpen);
+        this.isOpen(isOpen);
     };
 
     Front.prototype.toggleOpen = function() {
-        this.open(!this.open());
+        this.isOpen(!this.isOpen());
     };
 
     Front.prototype.openProps = function() {
@@ -84,7 +84,7 @@ define([
     };
 
     Front.prototype._depopulateCollection = function(collection) {
-        collection.open(false);
+        collection.isOpen(false);
         collection.parents.remove(this);
         this.collections.items.remove(collection);
         vars.model.save(collection);

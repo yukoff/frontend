@@ -50,10 +50,8 @@ define([
 
         model.collections = ko.observableArray();
 
-        model.leftTargets = ko.observableArray();
         model.leftTarget  = ko.observable();
         
-        model.rightTargets = ko.observableArray();
         model.rightTarget  = ko.observable();
         
         model.liveMode = vars.state.liveMode;
@@ -163,6 +161,7 @@ define([
                 })
             );
             showFrontSpark();
+            model.rightTarget(undefined);
         }
 
         function showFrontSpark() {
@@ -198,30 +197,28 @@ define([
         });
 
         function getRightTargets() {
-            model.rightTargets.removeAll();
-            _.each(model.collections(), function(collection) {
-                _.each(collection.groups, function(group) {
-                    _.each(group.items(), function(item) {
-                        model.rightTargets.push(item);
-                    });
-                    model.rightTargets.push(group);
-                });
-            });
+            return _.chain(model.collections())
+                    .map(function(collection) {
+                        return _.map(collection.groups, function(group) {
+                            return group.items().concat(group);
+                        });
+                    })
+                    .flatten()
+                    .value();
         }
 
         function keyDownActions(e) {
-            var newIndex;
+            var rightTargets,
+                newIndex;
 
             e = e || window.event;
+
             if (e.keyCode === 38 || e.keyCode === 40) {
-                getRightTargets();
-
-                model.rightTarget(model.rightTarget() || model.rightTargets()[0]);
-                (model.rightTarget().underDrag || model.rightTarget().underDrag)(false);
-
-                newIndex = ((e.keyCode === 40 ? 1 : -1) + model.rightTargets.indexOf(model.rightTarget())) % model.rightTargets().length;
-                model.rightTarget(model.rightTargets()[newIndex]);
-                (model.rightTarget().underDrag || model.rightTarget().underDrag)(true);
+                rightTargets = getRightTargets();
+                if (model.rightTarget()) { model.rightTarget().underDrag(false); }
+                newIndex = ((e.keyCode === 40 ? 1 : -1) + rightTargets.indexOf(model.rightTarget())) % rightTargets.length;
+                model.rightTarget(rightTargets[newIndex]);
+                if (model.rightTarget()) { model.rightTarget().underDrag(true); }
             }
         }
 

@@ -218,7 +218,7 @@
     <script type="text/html" id="template_article">
         <div class="article u-cf" data-bind="
             css: {
-                open: open,
+                open: isOpen,
                 underDrag: underDrag
             }">
 
@@ -233,7 +233,7 @@
                 visible: humanDate,
                 text: humanDate"></div>
 
-            <div data-bind="if: open">
+            <div data-bind="if: isOpen">
                 <div class="image__overrides">
                     <a data-bind="
                         click: toggleImageAdjustBoost,
@@ -300,7 +300,7 @@
                 </div>
             </div>
 
-            <div class="closed" data-bind="if: !open()">
+            <div class="closed" data-bind="if: !isOpen()">
                 <a class="spark" target="ophan" title="Dark blue: Guardian. Green: Google. Light blue: Other." data-bind="
                     visible: sparkUrl,
                     attr: {href: 'http://dashboard.ophan.co.uk/graph/breakdown?path=/' + id()}">

@@ -39,14 +39,14 @@ define([
     }
 
     Collection.prototype.toggleOpen = function() {
-        this.open(!this.open());
+        this.isOpen(!this.isOpen());
     };
 
     Collection.prototype.save = function() {
         if (vars.model.collections.indexOf(this) < 0) {
             vars.model.collections.unshift(this);
         }
-        this.open(false);
+        this.isOpen(false);
         vars.model.save(this);
     };
 

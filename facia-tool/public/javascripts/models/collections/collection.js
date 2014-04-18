@@ -180,7 +180,7 @@ define([
 
     Collection.prototype.hasOpenArticles = function() {
         return _.reduce(this.groups, function(hasOpen, group) {
-            return hasOpen || _.some(group.items(), function(article) { return article.open(); });
+            return hasOpen || _.some(group.items(), function(article) { return article.isOpen(); });
         }, false);
     };
 

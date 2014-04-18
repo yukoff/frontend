@@ -171,14 +171,14 @@ define([
             if (this.uneditable) { return; }
 
             _.defer(function(){
-                self.open(true);
+                self.isOpen(true);
             });
         };
 
         Article.prototype.close = function() {
             var self = this;
             _.defer(function(){
-                self.open(false);
+                self.isOpen(false);
             });
         };
 
@@ -264,7 +264,7 @@ define([
         Article.prototype.convertToSnap = function() {
             this.meta.href(this.id());
             this.id(snap.generateId());
-            this.open(!this.meta.headline());
+            this.isOpen(!this.meta.headline());
         };
 
         Article.prototype.save = function() {
