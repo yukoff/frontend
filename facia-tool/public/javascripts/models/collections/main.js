@@ -44,12 +44,18 @@ define([
             model.statusPressFailure(false);
         };
 
-        model.collections = ko.observableArray();
-
         model.fronts = ko.observableArray();
 
         model.front = ko.observable();
 
+        model.collections = ko.observableArray();
+
+        model.leftTargets = ko.observableArray();
+        model.leftTarget  = ko.observable();
+        
+        model.rightTargets = ko.observableArray();
+        model.rightTarget  = ko.observable();
+        
         model.liveMode = vars.state.liveMode;
 
         model.frontSparkUrl = ko.observable();
@@ -191,6 +197,34 @@ define([
             }, period);
         });
 
+        function getRightTargets() {
+            model.rightTargets.removeAll();
+            _.each(model.collections(), function(collection) {
+                _.each(collection.groups, function(group) {
+                    _.each(group.items(), function(item) {
+                        model.rightTargets.push(item);
+                    });
+                    model.rightTargets.push(group);
+                });
+            });
+        }
+
+        function keyDownActions(e) {
+            var newIndex;
+
+            e = e || window.event;
+            if (e.keyCode === 38 || e.keyCode === 40) {
+                getRightTargets();
+
+                model.rightTarget(model.rightTarget() || model.rightTargets()[0]);
+                (model.rightTarget().underDrag || model.rightTarget().state.underDrag)(false);
+
+                newIndex = ((e.keyCode === 40 ? 1 : -1) + model.rightTargets.indexOf(model.rightTarget())) % model.rightTargets().length;
+                model.rightTarget(model.rightTargets()[newIndex]);
+                (model.rightTarget().underDrag || model.rightTarget().state.underDrag)(true);
+            }
+        }
+
         this.init = function() {
             droppable.init();
 
@@ -219,6 +253,8 @@ define([
                     wasPopstate = true;
                     model.setFront(getFront());
                 };
+
+                document.onkeydown = keyDownActions;
 
                 ko.applyBindings(model);
 
