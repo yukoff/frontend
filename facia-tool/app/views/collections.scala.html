@@ -109,9 +109,10 @@
     <!-- templates -->
 
     <script type="text/html" id="template_collection">
+        <!-- ko if: !configMeta.uneditable() -->
         <div class="collection">
             <div class="list-header" data-bind="
-                css: {collapsed: collapsed() || configMeta.uneditable()}">
+                css: {collapsed: collapsed()}">
 
                 <div data-bind="visible: !editingConfig()">
 
@@ -200,6 +201,7 @@
                     template: {name: 'template_groups', foreach: groups}"></div>
             <!-- /ko -->
         </div>
+        <!-- /ko -->
     </script>
 
     <script type="text/html" id="template_groups">

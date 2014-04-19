@@ -202,6 +202,8 @@ define([
 
         function getRightTargets() {
             return _.chain(model.collections())
+                    .filter(function(collection) { return !collection.configMeta.uneditable(); })
+                    .filter(function(collection) { return !collection.collapsed(); })
                     .map(function(collection) {
                         return _.map(collection.groups, function(group) {
                             return group.items().concat(group);
