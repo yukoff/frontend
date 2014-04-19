@@ -51,9 +51,9 @@ define([
         model.collections = ko.observableArray();
 
         model.leftTarget  = ko.observable();
-        
-        model.rightTarget  = ko.observable();
-        
+        model.rightTarget = ko.observable();
+        model.rightColSelected = ko.observable();
+
         model.liveMode = vars.state.liveMode;
 
         model.frontSparkUrl = ko.observable();
@@ -196,6 +196,10 @@ define([
             }, period);
         });
 
+        function getLeftTargets() {
+            return model.clipboard.items().concat(model.clipboard).concat(model.latestArticles.articles());
+        }
+
         function getRightTargets() {
             return _.chain(model.collections())
                     .map(function(collection) {
@@ -208,17 +212,33 @@ define([
         }
 
         function keyDownActions(e) {
-            var rightTargets,
-                newIndex;
+            var targets,
+                target;
 
             e = e || window.event;
 
-            if (e.keyCode === 38 || e.keyCode === 40) {
-                rightTargets = getRightTargets();
-                if (model.rightTarget()) { model.rightTarget().underDrag(false); }
-                newIndex = ((e.keyCode === 40 ? 1 : -1) + rightTargets.indexOf(model.rightTarget())) % rightTargets.length;
-                model.rightTarget(rightTargets[newIndex]);
-                if (model.rightTarget()) { model.rightTarget().underDrag(true); }
+            if (e.keyCode < 37 || e.keyCode > 40) {
+                return;
+
+            } else if (e.keyCode === 38 || e.keyCode === 40) {
+                if (model.rightColSelected()) {
+                    targets = getRightTargets();
+                    target  = model.rightTarget;
+                } else {
+                    targets = getLeftTargets();
+                    target  = model.leftTarget;
+                }
+                if (target()) { target().underDrag(false); }
+                target(targets[
+                    ((e.keyCode === 40 ? 1 : -1) + targets.indexOf(target())) % (targets.length || 1)
+                ]);
+                if (target()) { target().underDrag(true); }
+            
+            } else if (e.keyCode === 37) {
+                model.rightColSelected(false);
+            
+            } else if (e.keyCode === 39) {
+                model.rightColSelected(true);
             }
         }
 

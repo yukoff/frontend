@@ -42,7 +42,9 @@
             visible: front">View Live</a>
     </div>
 
-    <div class="left-col">
+    <div class="left-col" data-bind="
+        css: {selected: !rightColSelected()}">
+
         <div class="title">
             Clipboard <span class="linky" data-bind="click: createSnap">+</span>
         </div>
@@ -96,7 +98,11 @@
         </div>
     </div>
 
-    <div class="right-col" data-bind="css: {'live-mode': $root.liveMode}">
+    <div class="right-col" data-bind="
+        css: {
+            'live-mode': $root.liveMode,
+            selected: rightColSelected}">
+
         <div class="collections__inner scrollable" data-bind="template: {name: 'template_collection', foreach: collections}"></div>
     </div>
 

@@ -95,15 +95,33 @@ a, a:hover {
     margin: 13px 10px 0 0;
 }
 
-.left-col {
+.left-col,
+.right-col {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     position: absolute;
-    top: 49px;
+    top: 50px;
     width: 50%;
     padding: 10px 15px 0 12px;
+    border-top: 5px solid #cccccc;
+}
+
+.left-col {
     border-right: 1px solid #cccccc;
-    border-top: 1px solid #cccccc;
+}
+
+.right-col {
+    left: 50%;
+    padding-left: 15px;
+}
+
+.left-col.selected,
+.right-col.selected {
+    border-top-color: #0088cc;
+}
+
+.right-col.live-mode {
+    background: #EEFFEE;
 }
 
 .finder__controls {
@@ -201,20 +219,6 @@ a, a:hover {
     color: #d61d00;
 }
 
-.right-col {
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    position: absolute;
-    left: 50%;
-    top: 50px;
-    width: 50%;
-    padding: 10px 15px 0 15px;
-}
-
-.right-col.live-mode {
-    background: #EEFFEE;
-}
-
 .collections__inner {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -235,9 +239,9 @@ a, a:hover {
     position: relative;
     background: #FFFFFF;
     border-top: 5px solid #FFFFFF;
-    -webkit-transition: border-color 150ms;
-       -moz-transition: border-color 150ms;
-            transition: border-color 150ms;
+    -webkit-transition: all 150ms;
+       -moz-transition: all 150ms;
+            transition: all 150ms;
 }
 
 .live-mode .article {
@@ -261,6 +265,7 @@ a, a:hover {
 
 .article.underDrag {
     border-top-color: #f89406;
+    background-color: #eeeeee;
 }
 
 .open .article.underDrag {
@@ -601,7 +606,6 @@ button {
     height: 50px;
     white-space: nowrap;
     overflow: hidden;
-    border-bottom: 1px solid #cccccc;
     border-left: 1px solid #cccccc;
     margin-left: -1px;
     z-index: 1;
