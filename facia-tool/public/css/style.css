@@ -14,8 +14,13 @@ p {
 }
 
 a, a:hover {
+    color: #3279F1;
     text-decoration: none;
     cursor: pointer;
+}
+
+a:hover {
+    color: #376ABF;
 }
 
 .status {
@@ -166,7 +171,7 @@ a, a:hover {
 }
 
 .droppable.underDrag {
-    background-color: #f89406;
+    background-color: #FBCC43;
 }
 
 .open .droppable.underDrag {
@@ -264,7 +269,7 @@ a, a:hover {
 }
 
 .article.underDrag {
-    border-top-color: #f89406;
+    border-top-color: #FBCC43;
     background-color: #eeeeee;
 }
 
@@ -309,12 +314,14 @@ a, a:hover {
 }
 
 .is {
-    background: #fbcc43;
+    background: #FBCC43;
     color: #ffffff;
     font-size: 11px;
-    line-height: 11px;
+    line-height: 15px;
     padding: 0 4px;
     border-radius: 2px;
+    height: 14px;
+    display: inline-block;
 }
 
 .is--breaking {
@@ -333,7 +340,7 @@ a, a:hover {
 }
 
 div.trailtext {
-    padding-right: 50px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
     display: inline-block;
@@ -344,6 +351,7 @@ div.trailtext {
     word-wrap: break-word;
     height: 15px;
     line-height: 16px;
+    padding-right: 50px;
     font-size: 12px;
     color: #999999;
 }
@@ -361,16 +369,18 @@ div.trailtext {
     width: 75px;
     height: 14px;
     overflow: hidden;
-    padding: 1px 0 0 4px;
+    padding: 0 0 0 4px;
     color: #FFFFFF;
     font-size: 10px;
     line-height: 14px;
-    background: rgba(0,0,0,0.2);
+    text-shadow: 0px 0px 2px #666666;
     border-radius: 2px;
 }
 
 .open .article__date {
     top: 52px;
+    text-shadow: none;
+    background: rgba(0,0,0,0.1);
 }
 
 .article__overrides {
@@ -409,10 +419,11 @@ div.trailtext {
 }
 
 .image__overrides {
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     position: absolute;
     bottom: 0px;
-    height: 36px;
+    height: 34px;
     font-size: 12px;
     line-height: 14px;
     color: #666666;
@@ -534,9 +545,9 @@ button {
 }
 
 .search-term {
-    position: absolute;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    position: absolute;
     display: inline-block;
     width: 35%;
     padding: 0 15px 0 0;
@@ -809,7 +820,7 @@ button {
 }
 
 .cnf-collection.underDrag {
-    border-top-color: #f89406;
+    border-top-color: #FBCC43;
 }
 
 .cnf-collection__index {

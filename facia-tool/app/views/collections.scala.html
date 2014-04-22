@@ -235,11 +235,10 @@
                 click: open">
                 <img class="thumb" draggable="false" data-bind="
                     attr: {src: fields.thumbnail, title: id}"/>
+                <div class="article__date" data-bind="
+                    visible: humanDate,
+                    text: humanDate"></div>
             </a>
-
-            <div class="article__date" data-bind="
-                visible: humanDate,
-                text: humanDate"></div>
 
             <div data-bind="if: isOpen">
                 <div class="article__overrides u-cf">
@@ -278,7 +277,7 @@
                     </div>
 
                     <div class="misc__overrides">
-                        Image:
+                        Image
                         <a data-bind="
                             click: toggleImageAdjustBoost,
                             text: meta.imageAdjust() === 'boost' ? 'boosted' : 'boost',
@@ -288,7 +287,7 @@
                             text: meta.imageAdjust() === 'hide' ? 'hidden' : 'hide',
                             css: {selected: meta.imageAdjust() === 'hide'}"></a>.
 
-                        Mark as:
+                        Mark as
                         <a data-bind="
                             click: toggleIsBreaking,
                             css: {selected: meta.isBreaking}">breaking news</a>
