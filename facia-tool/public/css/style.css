@@ -122,7 +122,7 @@ a:hover {
 
 .left-col.selected,
 .right-col.selected {
-    border-top-color: #0088cc;
+    border-top-color: #999999;
 }
 
 .right-col.live-mode {
@@ -270,7 +270,7 @@ a:hover {
 
 .article.underDrag {
     border-top-color: #FBCC43;
-    background-color: #eeeeee;
+    background-color: #f4f3e8;
 }
 
 .open .article.underDrag {
