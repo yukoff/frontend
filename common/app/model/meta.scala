@@ -27,7 +27,7 @@ trait MetaData extends Tags {
   lazy val isFront = false
   lazy val contentType = ""
 
-  def adUnitSuffix = section
+  def adUnitSuffix = section + "/" + contentType.toLowerCase
 
   def hasPageSkin(edition: Edition) = false
 

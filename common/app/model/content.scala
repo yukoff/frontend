@@ -189,7 +189,7 @@ class Content protected (val apiContent: ApiContentWithMeta) extends Trail with 
   override lazy val adUnitSuffix: String = {
     val prioritisedTagList: List[Tag] = blogs.toList ::: primaryKeyWordTag.toList
     val prioritisedPossibleAdUnits: List[String] = prioritisedTagList.map{_.id} ::: section :: Nil
-    prioritisedPossibleAdUnits.headOption.getOrElse("")
+    prioritisedPossibleAdUnits.headOption.map(_ + "/" + contentType.toLowerCase).getOrElse("")
   }
 }
 
