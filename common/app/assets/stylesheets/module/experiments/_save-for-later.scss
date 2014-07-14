@@ -1,0 +1,74 @@
+%i-bookmark {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAAVdEVYdENyZWF0aW9uIFRpbWUAMTQvNy8xNLcYFhQAAAFpSURBVHic7ZrRTcMwGAa/IPaAESJ5ABiBDdoRMgJs0G5QNmAFBviljgAbwAThIUYKqCgiqXMIfyflpY2jy9WJ++Cm73vVzAUtQOMAtACNA9ACNA5AC9BUH+By6oSmadbwKMbUH73qZ4AD0AI0DkAL0EyuAktJKe0ktTOHHyOiO6fPd5qpZWLJMphSOkjazL7AwGNEbOcOxpbB/MsvvXlJ2uRrFaHkO2DutC99rS9U/xJ0AFqAxgFoARoHoAVoHIAWoHEAWoDGAWgBGgegBWgcgBagcQBagMYBaAEaB6AFaByAFqBxAFqAhg7wng8MMsBe0nU+9pRE8Q0SJ3iW1EXEcfRZl/cS7CTdrCmzZoBXDTf+dOrLHOQ2pXSnIcTVGlJrPQIPktqfbn5MPqfNY4pTcgZ8TvFtRLz8ZmBEvEm6z4/FYXSts1N0j9BfwFtlJ3AAWoDGAWgBmuoDTC6D/53qZ4AD0AI01Qf4AO06SQ0TfcTmAAAAAElFTkSuQmCC');
+}
+%i-bookmark-white {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAAVdEVYdENyZWF0aW9uIFRpbWUAMTQvNy8xNLcYFhQAAAE0SURBVHic7ZrRDYIwGAZb4wCMwAiO4iiO4AiwgaM4giO4ghN8vtQHY7Qq/lyk3yV9o8310gAJZEmpZVa0AI0D0AI0DkAL0DgALUDTfIB17YKc8xweYdRe9Jo/AQ5AC9A4AC1AU30KTEXSkFLafDn9lHPe/dLnAUkvx8S1D5rOIXR/UQEkDT/Y/I0hKkDkPeDbYx+91h3N3wQdgBagcQBagMYBaAEaB6AFaByAFqBxAFqAxgFoARoHoAVoHIAWoHEAWoDGAWgBGgegBWgcgBagoQNcysAgA4wppb6MEbMI/Dx+fPKp+yjp4WuvpM2rOWH7mzHAWdL2jXnbcu2iAuwldR/M7cqcvw4wlAj9hDX6skbYHyK5tkn/KrtwHIAWoHEAWoCm+QDVx+DSaf4EOAAtQNN8gCsuI3EDLMwEUgAAAABJRU5ErkJggg==');
+}
+
+.save-for-later {
+    padding: 3px 0;
+    @include fs-textsans(3);
+    line-height: 36px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+.save-for-later__action {
+    display: inline-block;
+    color: $c-neutral1;
+    opacity: .7;
+    @include transition(opacity .15s ease-in);
+
+    &,
+    &:hover,
+    &:focus {
+        text-decoration: none;
+    }
+    &:hover,
+    &:focus {
+        opacity: 1;
+    }
+
+    .save-for-later--status-saved & {
+        opacity: 1;
+    }
+}
+.save-for-later__icon {
+    margin-right: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    border: 1px solid #545454;
+    @include border-radius(50%);
+    text-align: center;
+    height: 32px;
+    width: 32px;
+    @include box-sizing(border-box);
+
+    .i {
+        @extend %i-bookmark;
+        @include background-size(cover);
+        display: inline-block;
+        height: 32px;
+        width: 32px;
+        position: relative;
+        top: -1px;
+        left: -1px;
+    }
+
+    .save-for-later--status-saved & {
+        background: $c-brandBlue;
+        border-color: $c-brandBlue;
+
+        .i {
+            @extend %i-bookmark-white;
+        }
+    }
+}
+.save-for-later__label {
+    display: inline-block;
+    position: relative;
+    top: 1px;
+
+    .save-for-later--status-saved & {
+        color: $c-neutral3;
+    }
+}
