@@ -17,6 +17,16 @@
         @fragments.meta.dateline(content.webPublicationDate, secondary = true)
     }
     <div class="js-comment-count meta__comment-count--bottom"></div>
+    <div class="save-for-later [save-for-later--status-saved]">
+        <a class="save-for-later__action" href="#" role="button">
+            <span class="save-for-later__icon">
+                <i class="i"></i>
+            </span>
+            <span class="save-for-later__label">
+                Save for later
+            </span>
+        </a>
+    </div>
     <div class="social-wrapper social-wrapper--aside" data-component="share">
         <h2 class="social__head">Share this article</h2>
         @fragments.social(content, "top", iconModifier = if(content.isVideo) "white" else "")
