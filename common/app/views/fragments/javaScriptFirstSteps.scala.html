@@ -63,7 +63,8 @@
         css: {
             loaded: false
         },
-        config: @fragments.javaScriptConfig(item)
+        config: @fragments.javaScriptConfig(item),
+        workerUrl: '@Static("javascripts/components/worker.js")'
     };
 
     (function(isModern) {
@@ -89,3 +90,5 @@
     })(guardian.isModernBrowser);
 
 </script>
+
+<script src="@Static("javascripts/components/worker-init.js")"></script>
