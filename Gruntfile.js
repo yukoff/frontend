@@ -502,6 +502,14 @@ module.exports = function (grunt) {
                     dest: 'common/conf/assets'
                 }]
             },
+            offline: {
+                files: [{
+                    expand: true,
+                    cwd: 'common/app/public/offline',
+                    src: ['**/*'],
+                    dest: staticTargetDir + 'offline'
+                }]
+            },
             headJs: {
                 files: [{
                     expand: true,
@@ -813,6 +821,18 @@ module.exports = function (grunt) {
         'asset_hash',
         'compile:conf'
     ]);
+
+    grunt.registerTask('compile:offline', [
+//        'compile:images',
+        'copy:css',
+        'copy:javascript',
+        'copy:offline',
+        'compile:fonts',
+        'asset_hash',
+        'compile:conf'
+    ]);
+
+
 
     /**
      * Test tasks

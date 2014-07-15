@@ -3,5 +3,5 @@ navigator.serviceWorker.register(guardian.workerUrl, {
 }).then(function(sw) {
     console.log("Registered!", sw);
 }).catch(function(err) {
-    console.log("Reg failed", err);
+    console.log("Registration failed failed", err);
 });

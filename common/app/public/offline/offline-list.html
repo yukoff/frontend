@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="js-off id--signed-out" lang="en-GB">
+    <head>
+
+    <meta charset="utf-8" />
+    <title>The Guardian - Save for later</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="HandheldFriendly" content="True" />
+
+    <style>
+        .i,.caption:before,figcaption:before,blockquote.quoted:before { background-image: url(/assets/images/global/sprite.png); }
+    </style>
+
+    <link rel="stylesheet" data-reload="head.default" type="text/css" href="/assets/stylesheets/head.default.css" />
+
+
+    <style>
+        #header {
+            border-top: 4px solid red;
+        }
+
+        .l-header-main {
+            height: 40px;
+        }
+        @media (min-width: 740px) {
+            .l-header-main {
+                height: 85px;
+            }
+        }
+
+        .guardian-logo-wrapper {
+            margin-top: 7px !important;
+        }
+
+        .offline-indicator {
+            float: left;
+            padding-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .offline-indicator img {
+            width: 200px;
+        }
+
+        @media (min-width: 480px) {
+            .offline-indicator {
+                padding-left: 20px;
+            }
+        }
+
+        @media (min-width: 740px) {
+            .guardian-logo-wrapper::after {
+                content: 'alpha'; /* haha */
+            }
+        }
+    </style>
+</head>
+<body id="top">
+
+        <header id="header" class="l-header l-header--identity" role="banner" data-link-name="global navigation: header" itemscope itemtype="http://schema.org/Organization">
+            <div class="l-header-main">
+                <div class="gs-container">
+                    <div class="offline-indicator"><img src="/assets/offline/offline.png" /></div>
+                    <meta itemprop="logo" content="http://static-secure.guim.co.uk/icons/social/og/gu-logo-fallback.png" />
+                    <a href="/uk" data-link-name="site logo" id="logo" class="guardian-logo-wrapper" itemprop="url">
+                        <span class="u-h">The Guardian</span>
+                        <i class="i i-guardian-logo-160 mobile-only"></i>
+                        <i class="i i-guardian-logo-big hide-on-mobile"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div id="js-context">
+            <div class="gs-container">
+                <div class="facia-container facia-container--layout-front">
+                    <section class="container container--special">
+                        <div class="facia-container__inner">
+                            <div class="container__border tone-news tone-accent-border"></div>
+                            <div class="container__header">
+                                <h2 class="container__title tone-news tone-background">
+                                    <span class="container__title__label u-text-hyphenate">
+                                        Saved for later
+                                    </span>
+                                </h2>
+                            </div>
+                            <div class="container__body">
+                                <div class="facia-slice-wrapper">
+                                    <ul class="u-unstyled l-row l-row--items-4 l-row--layout-m facia-slice" id="items">
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="gs-container" id="content">
+
+            </div>
+        </div>
+
+        <footer class="l-footer u-cf" data-link-name="footer" data-component="footer">
+            <div class="l-footer__secondary gs-container" role="contentinfo">
+                <div class="l-footer__misc">
+                    <div class="really-serious-copyright">© 2014 Guardian News and Media Limited or its affiliated companies. All rights reserved.</div>
+                </div>
+            </div>
+        </footer>
+
+         <link rel="stylesheet" id="global-css" data-reload="global" type="text/css" href="/assets/stylesheets/global.css" />
+
+        <script type="text/tpl" id="itemTpl">
+             <li class="facia-slice__item facia-slice__item--volume-0 l-row__item" data-id={{id}}>
+                <div class="item item--has-image item--has-no-discussion item--imageadjust-default tone-news" data-link-name="trail | 6">
+                    <div class="item__container">
+                        <a href="{{link}}" class="item__link tone-accent-border" data-link-name="article">
+                        </a>
+                        <div class="item__media-wrapper">
+                            <div class="item__image-container u-responsive-ratio js-image-upgrade">
+                                <img src="{{img}}" class="responsive-img" alt="" />
+                            </div>
+                        </div>
+                        <h2 class="item__title">
+                            {{headline}}
+                        </h2>
+                        <div class="item__standfirst">
+                            {{standfirst}}
+                        </div>
+                        <div class="item__meta">
+                            <time class="item__timestamp js-item__timestamp" datetime="{{dateTime}}" data-relativeformat="short">
+                                <i class="i i-clock-light-grey"></i>
+                                <span class="timestamp__text" title="Published: 14 Jul 2014">{{published}}</span>
+                            </time>
+                        </div>
+                    </div>
+                </div>
+            </li>
+         </script>
+
+        <script>
+            (function(){
+                var articles = JSON.parse(window.localStorage.getItem('gu.saved')).value;
+
+                function template(tmpl, params) {
+                    return Object.keys(params).reduce(function(tmpl, token) {
+                        return tmpl.replace(new RegExp('{{' + token + '}}', 'g'), params[token]);
+                    }, tmpl);
+                };
+
+                articles.forEach(function(item) {
+                    var tmpl = template(document.getElementById('itemTpl').innerHTML, {
+                        id: item.config.page.pageId,
+                        link: '/' + item.config.page.pageId,
+                        img: item.config.page.thumbnail,
+                        headline: item.config.page.headline,
+                        standfirst: item.config.page.standfirst,
+                        dateTime: item.config.page.webPublicationDate,
+                        published: item.config.page.webPublicationDate
+                    });
+
+                    var content = document.getElementById('items').innerHTML;
+                    document.getElementById('items').innerHTML =  content + tmpl;
+                });
+
+                Array.prototype.slice.call(document.querySelectorAll('.facia-slice__item')).forEach(function(item){
+
+                    console.log(item);
+
+                    item.addEventListener('click', function(e) {
+                        var id = item.getAttribute('data-id');
+
+                        var content = articles.find(function(el){
+                            return el.config.page.pageId === id;
+                        }).html;
+
+                        document.getElementById('content').innerHTML = content;
+                    });
+                });
+
+            })(window);
+        </script>
+
+    </body>
+</html>

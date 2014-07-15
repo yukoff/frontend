@@ -47,7 +47,8 @@ define([
     'common/modules/identity/api',
     'common/modules/onward/more-tags',
     'common/modules/ui/smartAppBanner',
-    'common/modules/discussion/loader'
+    'common/modules/discussion/loader',
+    'common/modules/experiments/saveForLater'
 ], function (
     $,
     mediator,
@@ -95,7 +96,8 @@ define([
     id,
     MoreTags,
     smartAppBanner,
-    DiscussionLoader
+    DiscussionLoader,
+    saveForLater
 ) {
 
     var modules = {
@@ -439,6 +441,7 @@ define([
     var ready = function (config, context) {
         if (!this.initialised) {
             this.initialised = true;
+            saveForLater.init();
             modules.displayOnboardMessage(config);
             modules.windowEventListeners();
             modules.checkIframe();
