@@ -1,4 +1,4 @@
-name := "Fronts Scala fw integration tests "
+name := "Fronts Scala fw integration tests"
 
 version := "0.1.0-SNAPSHOT"
 
