@@ -9,3 +9,10 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.gu" %% "scala-automation" % "1.15-SNAPSHOT"
 )
+
+  lazy val ciTests = taskKey[Unit]("Run tests for CI") 
+
+  ciTests := { 
+    val testResult = (test in Test).result.value 
+    0
+  } 
