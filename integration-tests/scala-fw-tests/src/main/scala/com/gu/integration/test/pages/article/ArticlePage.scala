@@ -9,7 +9,7 @@ import com.gu.integration.test.pages.common.RelatedContentModule
 
 class ArticlePage(implicit driver: WebDriver) extends ParentPage {
 
-  val articleRootElement: WebElement = findByTestAttribute("article-roo")
+  val articleRootElement: WebElement = findByTestAttribute("article-root")
   
   def mostPopularModule() = {
     new MostPopularModule
