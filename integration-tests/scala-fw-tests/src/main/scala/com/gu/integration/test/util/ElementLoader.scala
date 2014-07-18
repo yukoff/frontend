@@ -1,61 +1,43 @@
 package com.gu.integration.test.util
 
-import scala.collection.JavaConverters._
-import org.openqa.selenium.WebElement
+import scala.collection.JavaConverters.asScalaBufferConverter
+
+import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.By
-import com.gu.integration.test.config.PropertyLoader._
-import org.openqa.selenium.WebDriverException
-import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.WebElement
+
 
 object ElementLoader {
 
-  val frontsBaseUrl = getProperty(BaseUrl)
   val TestAttributeName = "data-test-id"
 
   /**
    * Will find the element with the provided test attribute id and, if provided, using the provided webelement as search context
-   * otherwise it will use the WebDriver
+   * otherwise it will use the WebDriver, which has to be in scope
    */
   def findByTestAttribute(testAttributeValue: String, contextElement: Option[SearchContext] = None)(implicit driver: WebDriver): WebElement = {
-    wrapException {
-      contextElement.getOrElse(driver).findElement(byTestAttributeId(testAttributeValue))
-    }
+    contextElement.getOrElse(driver).findElement(byTestAttributeId(testAttributeValue))
   }
 
   /**
    * Will find all elements with the provided test attribute id and, if provided, using the provided webelement as search context
-   * otherwise it will use the WebDriver
+   * otherwise it will use the WebDriver, which has to be in scope
    */
   def findAllByTestAttribute(testAttributeValue: String, contextElement: Option[SearchContext] = None)(implicit driver: WebDriver): List[WebElement] = {
-    wrapException {
-      contextElement.getOrElse(driver).findElements(byTestAttributeId(testAttributeValue)).asScala.toList
-    }
+    contextElement.getOrElse(driver).findElements(byTestAttributeId(testAttributeValue)).asScala.toList
   }
 
   private def byTestAttributeId(testAttributeValue: String): org.openqa.selenium.By = {
     By.cssSelector(s"[$TestAttributeName=$testAttributeValue]")
   }
 
-  private def wrapException[A](f: => A): A = {
-    try {
-      f
-    } catch {
-      case e: WebDriverException =>
-        //Since this was converted from trait to class the getClass no longer gets the name of the calling class
-        //TODO find a way to get the calling class
-        throw new RuntimeException(s"WebElement(s) were not found on page [$getClass]", e)
-    }
-  }
-
   /**
    * Find all link elements, including nested, from the provided SearchContext and returns those that are displayed
    */
   def displayedLinks(searchContext: SearchContext): List[WebElement] = {
-    wrapException {
-      searchContext.findElements(By.cssSelector("a")).asScala.toList.filter(element => element.isDisplayed)
-    }
+    searchContext.findElements(By.cssSelector("a")).asScala.toList.filter(element => element.isDisplayed)
   }
 
   /**
@@ -64,13 +46,16 @@ object ElementLoader {
    * visible
    */
   def displayedImages(searchContext: SearchContext)(implicit driver: WebDriver): List[WebElement] = {
-    wrapException {
-      val preDisplayedImages = searchContext.findElements(By.cssSelector("img")).asScala.toList.filter(element => element.isDisplayed)
-      //preDisplayedImages
-      return preDisplayedImages.filter(element => isImageDisplayed(element))
-    }
+    val preDisplayedImages = searchContext.findElements(By.cssSelector("img")).asScala.toList.filter(element => element.isDisplayed)
+    //preDisplayedImages
+    return preDisplayedImages.filter(element => isImageDisplayed(element))
   }
 
+  /**
+   * Use this method to check that an img element is properly displayed. This is needed as the Selenium isDisplayed does not explicitly
+   * check that the image is displayed, just that the element is there and visible. This actually checks the size of the image to
+   * make sure it is greater than 0
+   */
   def isImageDisplayed(imageElement: WebElement)(implicit driver: WebDriver): Boolean = {
     val result = driver.asInstanceOf[JavascriptExecutor].
       executeScript("return arguments[0].complete && typeof arguments[0].naturalWidth != \"undefined\" && arguments[0].naturalWidth > 0",
