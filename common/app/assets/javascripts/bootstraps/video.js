@@ -6,6 +6,7 @@ define([
     'common/utils/config',
     'common/utils/deferToAnalytics',
     'common/utils/url',
+    'common/modules/ui/images',
     'common/modules/commercial/dfp',
     'common/modules/analytics/omnitureMedia',
     'lodash/functions/throttle',
@@ -19,6 +20,7 @@ define([
     config,
     deferToAnalytics,
     urlUtils,
+    images,
     dfp,
     OmnitureMedia,
     _throttle,
@@ -257,9 +259,18 @@ define([
             });
         },
         initMoreInSection: function() {
-            var section = new Component();
-            section.endpoint = '/video/section/' + config.page.section + '.json';
-            section.fetch($('.js-onward')[0]);
+            var section = new Component(),
+                parentEl = $('.js-onward')[0];
+            section.endpoint = '/video/section/' + config.page.section + '.json?shortUrl=' + config.page.shortUrl;
+            section.fetch(parentEl).then(function() {
+                images.upgrade(parentEl);
+            });
+        },
+        initMostViewedVideo: function() {
+            var mostViewed = new Component();
+
+            mostViewed.endpoint = '/video/most-viewed.json';
+            mostViewed.fetch($('.js-video-components-container')[0], 'html');
         }
     };
 
@@ -268,6 +279,7 @@ define([
 
         if(config.page.contentType === 'Video') {
             modules.initMoreInSection();
+            modules.initMostViewedVideo();
         }
     };
 
