@@ -280,11 +280,6 @@ object Switches extends Collections {
     "If this switch is switched on then Jobs and Soulmates links will be displayed on page headers",
     safeState = Off,sellByDate = new LocalDate(2014, 8, 12))
 
-  val ResponsiveNavSwitch = Switch("Feature Switches", "responsive-nav",
-    "If this switch is turned on then the new responsive navigation will be displayed.",
-    safeState = Off, sellByDate = new LocalDate(2014, 7, 22)
-  )
-
   val EnhanceTweetsSwitch = Switch("Feature Switches", "enhance-tweets",
     "If this switch is turned on then embedded tweets will be enhanced using Twitter's widgets.",
     safeState = Off, sellByDate = never
@@ -316,6 +311,11 @@ object Switches extends Collections {
   )
 
   // A/B Tests
+
+  val ABHighCommercialComponent = Switch("A/B Tests", "ab-high-commercial-component",
+    "Switch for the High Commercial Component A/B test.",
+    safeState = Off, sellByDate = never
+  )
 
   // Dummy Switches
 
@@ -490,7 +490,6 @@ object Switches extends Collections {
     MemcachedFallbackSwitch,
     IncludeBuildNumberInMemcachedKey,
     GeoMostPopular,
-    ResponsiveNavSwitch,
     NewNavigationHighlightingSwitch,
     SmartBannerSwitch,
     ParameterlessImagesSwitch,
@@ -499,11 +498,11 @@ object Switches extends Collections {
     FaciaToolCachedZippingContentApiSwitch,
     FaciaToolDraftPressSwitch,
     FaciaToolDraftContent,
-    GuShiftCookieSwitch
+    GuShiftCookieSwitch,
+    ABHighCommercialComponent
   )
 
   val httpSwitches: List[Switch] = List(
-    ResponsiveNavSwitch,
     NewNavigationHighlightingSwitch,
     GuardianServicesLinksSwitch
   )

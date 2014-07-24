@@ -5,7 +5,7 @@ import play.api.mvc.RequestHeader
 import conf.Switches._
 import dev.HttpSwitch
 
-case class SectionLink(zone: String, title: String, breadcumbTitle: String, href: String, newWindow: Boolean = false) {
+case class SectionLink(zone: String, title: String, breadcumbTitle: String, href: String) {
   def currentFor(page: MetaData): Boolean = page.url == href ||
     s"/${page.section}" == href ||
     (Edition.all.exists(_.id.toLowerCase == page.id.toLowerCase) && href == "/")
@@ -209,15 +209,8 @@ object Navigation {
 
   def subNav(navigation: Seq[NavItem], page: MetaData): Option[SectionLink] = topLevelItem(navigation, page).flatMap(_.links.find(_.currentFor(page)))
 
-  def localNav(navigation: Seq[NavItem], page: MetaData): Option[NavItem] = topLevelItem(navigation, page).filter(_.links.nonEmpty)
-
-  def sectionOverride(localNav: NavItem, currentSublink: Option[SectionLink]): String = currentSublink.map(_.title).getOrElse(localNav.name.title)
-
-  def localNavWithoutCurrent(localNav: NavItem, currentSublink: Option[SectionLink]) =
-    localNav.links.filter(_.href != currentSublink.map(_.href).getOrElse(""))
-
-  def rotatedLocalNav(topSection: NavItem, metaData: MetaData): Seq[SectionLink] =
-    topSection.links.find(_.currentFor(metaData)) match {
+  def rotatedLocalNav(topSection: NavItem, metaData: MetaData)(implicit request: RequestHeader): Seq[SectionLink] =
+    topSection.searchForCurrentSublink(metaData) match {
       case Some(currentSection) =>
         val navSlices = topSection.links.span(_.href != currentSection.href)
         navSlices._2.drop(1) ++ navSlices._1

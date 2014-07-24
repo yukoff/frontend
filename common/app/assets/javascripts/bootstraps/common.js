@@ -21,10 +21,8 @@ define([
     'common/modules/onward/onward-content',
     'common/modules/ui/images',
     'common/modules/navigation/profile',
-    'common/modules/navigation/sections',
     'common/modules/navigation/search',
-    'common/modules/navigation/servicesNav',
-    'common/modules/navigation/newNavigation',
+    'common/modules/navigation/navigation',
     'common/modules/ui/tabs',
     'common/modules/ui/toggles',
     'common/modules/ui/dropdowns',
@@ -69,10 +67,8 @@ define([
     Onward,
     images,
     Profile,
-    Sections,
     Search,
-    ServicesNav,
-    newNavigation,
+    Navigation,
 
     Tabs,
     Toggles,
@@ -121,16 +117,10 @@ define([
             }
 
             search.init(header);
-
-            ServicesNav.init(config);
         },
 
         initialiseNavigation: function (config) {
-            new Sections(config).init(document);
-        },
-
-        initialiseNewNavigation: function (config) {
-            newNavigation.init(config);
+            Navigation.init(config);
         },
 
         transcludeRelated: function (config, context) {
@@ -448,11 +438,7 @@ define([
             modules.upgradeImages();
             modules.showTabs();
             modules.initialiseTopNavItems(config);
-            if(config.switches.responsiveNav){
-                modules.initialiseNewNavigation(config);
-            } else {
-                modules.initialiseNavigation(config);
-            }
+            modules.initialiseNavigation(config);
             modules.showToggles();
             modules.showRelativeDates();
             modules.initClickstream();
@@ -483,3 +469,4 @@ define([
         init: init
     };
 });
+
