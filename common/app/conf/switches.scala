@@ -173,6 +173,10 @@ object Switches extends Collections {
     "Enable Remarketing tracking",
     safeState = Off, sellByDate = never)
 
+  val OutbrainSwitch = Switch("Content Recommendation", "outbrain",
+    "Enable the Outbrain content recommendation widget.",
+    safeState = Off, sellByDate = never)
+
   // Commercial Feeds
 
   val TravelOffersFeedSwitch = Switch("Performance Switches", "gu-travel-offers",
@@ -428,6 +432,12 @@ object Switches extends Collections {
     safeState = On, sellByDate = new LocalDate(2014, 9, 30)
   )
 
+  // google crawler switches
+  val SeoBlockGooglebotFromJSPathsSwitch = Switch("Feature Switches", "seo-block-googlebot-js-paths",
+    "If switched on, relative paths in JS files become concatenated string segments to stop googlebot following them",
+    safeState = Off, sellByDate = new LocalDate(2014, 8, 29)
+  )
+
   val all: List[Switch] = List(
     AutoRefreshSwitch,
     DoubleCacheTimesSwitch,
@@ -465,6 +475,7 @@ object Switches extends Collections {
     ForeseeSwitch,
     MediaMathSwitch,
     RemarketingSwitch,
+    OutbrainSwitch,
     DiagnosticsLogging,
     TravelOffersFeedSwitch,
     JobFeedSwitch,
@@ -499,7 +510,8 @@ object Switches extends Collections {
     FaciaToolDraftPressSwitch,
     FaciaToolDraftContent,
     GuShiftCookieSwitch,
-    ABHighCommercialComponent
+    ABHighCommercialComponent,
+    SeoBlockGooglebotFromJSPathsSwitch
   )
 
   val httpSwitches: List[Switch] = List(

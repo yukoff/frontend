@@ -41,7 +41,7 @@ trait MetaData extends Tags {
     ("analytics-name", analyticsName),
     ("blockVideoAds", false),
     ("is-front", isFront),
-    ("ad-unit", s"/${Configuration.commercial.dfpAccountId}/${Configuration.commercial.dfpAdUnitRoot}/$adUnitSuffix"),
+    ("ad-unit", s"/${Configuration.commercial.dfpAccountId}/${Configuration.commercial.dfpAdUnitRoot}/$adUnitSuffix/ng"),
     ("is-surging", isSurging)
   )
 
@@ -172,6 +172,9 @@ trait Tags {
 
   def isSponsored = DfpAgent.isSponsored(tags)
   def isAdvertisementFeature = DfpAgent.isAdvertisementFeature(tags)
+  def hasInlineMerchandise = {
+    DfpAgent.hasInlineMerchandise(tags)
+  }
   def sponsor = DfpAgent.getSponsor(tags)
 
   // Tones are all considered to be 'News' it is the default so we do not list news tones explicitly
