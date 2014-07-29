@@ -54,7 +54,7 @@ object ElementLoader extends TestLogging {
     searchContext.findElements(By.cssSelector("a")).asScala
       .toList
       .view
-      .filter(element => waitUntil(visibilityOf(element)) && element.isDisplayed())
+      .filter(element => waitUntil(visibilityOf(element), 5) && element.isDisplayed())
       .take(maxElements)
       .toList
   }
@@ -90,8 +90,8 @@ object ElementLoader extends TestLogging {
    * Find all link IFrames, including nested, from the provided SearchContext and returns those that are visible
    */
   def displayedIFrames(searchContext: SearchContext)(implicit driver: WebDriver): List[WebElement] = {
-    val visibileFrames = searchContext.findElements(By.cssSelector("iframe")).asScala.toList.filter(element => waitUntil(visibilityOf(element)))
-    visibileFrames.filter(element => element.isDisplayed())
+    searchContext.findElements(By.cssSelector("iframe")).asScala.toList.filter(
+        element => waitUntil(visibilityOf(element), 5) && element.isDisplayed())
   }
 
   def firstDisplayedIframe(rootElement: WebElement)(implicit driver: WebDriver): WebElement = {
