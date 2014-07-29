@@ -54,9 +54,18 @@ object ElementLoader extends TestLogging {
     searchContext.findElements(By.cssSelector("a")).asScala
       .toList
       .view
-      .filter(element => waitUntil(visibilityOf(element), 5) && element.isDisplayed())
+      .filter(element => waitUntil(visibilityOf(element)) && element.isDisplayed())
       .take(maxElements)
       .toList
+  }
+
+  /**
+   * Finds one displayed link, including nested, from the provided SearchContext or, if none is provided, the driver
+   */
+  def displayedLink(searchContext: SearchContext)(implicit driver: WebDriver): WebElement = {
+    val link = searchContext.findElement(By.cssSelector("a"))
+    waitUntil(elementToBeClickable(link))
+    link
   }
 
   /**
@@ -91,7 +100,7 @@ object ElementLoader extends TestLogging {
    */
   def displayedIFrames(searchContext: SearchContext)(implicit driver: WebDriver): List[WebElement] = {
     searchContext.findElements(By.cssSelector("iframe")).asScala.toList.filter(
-        element => waitUntil(visibilityOf(element)) && element.isDisplayed())
+      element => waitUntil(visibilityOf(element)) && element.isDisplayed())
   }
 
   def firstDisplayedIframe(rootElement: WebElement)(implicit driver: WebDriver): WebElement = {
