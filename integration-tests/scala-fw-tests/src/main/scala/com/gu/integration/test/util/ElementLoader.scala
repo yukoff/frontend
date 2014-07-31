@@ -79,10 +79,11 @@ object ElementLoader extends TestLogging {
     //this is needed because sometimes it takes a while for AJAX to load the images so a race condition may occur
     //with the subsequent findElements
     waitUntil(visibilityOfElementLocated(By.cssSelector("img")), 5)
+    
     val imageElements = searchContext.findElements(By.cssSelector("img"))
     logger.info(s"Found ${imageElements.size()} image elements")
-    val preDisplayedImages = imageElements.asScala.toList.filter(element =>
-      waitUntil(visibilityOf(element)))
+    
+    val preDisplayedImages = imageElements.asScala.toList.filter(element => waitUntil(visibilityOf(element)))
     preDisplayedImages.filter(element => isImageDisplayed(element))
   }
 
