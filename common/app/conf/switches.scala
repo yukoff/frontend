@@ -217,7 +217,7 @@ object Switches extends Collections {
 
   val DiagnosticsLogging = Switch("Diagnostics", "enable-diagnostics-logging",
     "If this switch is on, then js error reports and requests sent to the Diagnostics servers will be logged.",
-    safeState = Off, never
+    safeState = On, never
   )
 
   val ScrollDepthSwitch = Switch("Analytics", "scroll-depth",
@@ -438,6 +438,11 @@ object Switches extends Collections {
     safeState = Off, sellByDate = new LocalDate(2014, 8, 29)
   )
 
+  val CenturyRedirectionSwitch = Switch("Feature Switches", "redirect-century-pages",
+    "If switched on, we redirect /century and /century/yyyy-yyyy to valid (non-R1) endpoints",
+    safeState = Off, sellByDate = new LocalDate(2014, 8, 12)
+  )
+
   val all: List[Switch] = List(
     AutoRefreshSwitch,
     DoubleCacheTimesSwitch,
@@ -511,7 +516,8 @@ object Switches extends Collections {
     ABHighCommercialComponent,
     SeoBlockGooglebotFromJSPathsSwitch,
     EnhancedMediaPlayerSwitch,
-    ABRightMostPopularText
+    ABRightMostPopularText,
+    CenturyRedirectionSwitch
   )
 
   val httpSwitches: List[Switch] = List(
