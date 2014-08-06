@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "name": "The Guardian",
+  "description": "Get the whole picture the whole time with the free Guardian app. Specially crafted for tablets and phones, this app brings you breaking news and full access to the Guardian's award-winning content.",
+  "launch_path": "/",
+  "icons": {
+    "128": "/assets/images/ico-256.png",
+    "256": "/assets/images/ico-128.png",
+    "60": "/assets/images/ico-60.png"
+  },
+  "developer": {
+    "name": "The Guardian",
+    "url": "http://developers.theguardian.com/"
+  },
+  "default_locale": "en",
+  "chrome": { "navigation": true }
+}
