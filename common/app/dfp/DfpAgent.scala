@@ -4,7 +4,7 @@ import java.net.URLDecoder
 
 import akka.agent.Agent
 import common._
-import conf.Configuration.commercial.{dfpAdUnitRoot, dfpAdvertisementFeatureTagsDataKey, dfpPageSkinnedAdUnitsKey, dfpSponsoredTagsDataKey}
+import conf.Configuration.commercial.{dfpAdUnitRoot, dfpAdvertisementFeatureTagsDataKey, dfpPageSkinnedAdUnitsKey, dfpSponsoredTagsDataKey, inlineMerchandisingSponsorshipsDataKey}
 import model.{Config, Tag}
 import play.api.{Application, GlobalSettings}
 import services.S3
@@ -33,6 +33,8 @@ trait DfpAgent {
 
   private def getKeywordTags(tags: Seq[Tag]): Seq[Tag] = tags filter(_.isKeyword)
 
+  private def getKeywordOrContributorTags(tags: Seq[Tag]): Seq[Tag] = tags filter(t => t.isKeyword || t.isContributor)
+
   private def getKeywordOrSeriesTags(tags: Seq[Tag]): Seq[Tag] = tags.filter(t => t.isSeries || t.isKeyword)
 
   def isSponsored(tags: Seq[Tag]): Boolean = getKeywordOrSeriesTags(tags) exists (tag => isSponsored(tag.id))
@@ -45,7 +47,7 @@ trait DfpAgent {
 
   def isProd = !Configuration.environment.isNonProd
 
-  def hasInlineMerchandise(tags: Seq[Tag]): Boolean = getKeywordTags(tags)  exists (tag => hasInlineMerchandise(tag.id))
+  def hasInlineMerchandise(tags: Seq[Tag]): Boolean = getKeywordOrContributorTags(tags) exists (tag => hasInlineMerchandise(tag.id))
   def hasInlineMerchandise(tagId: String): Boolean = inlineMerchandisingDeals exists (_.hasTag(tagId))
   def hasInlineMerchandise(config: Config): Boolean = isSponsoredContainer(config, hasInlineMerchandise)
 
@@ -138,6 +140,7 @@ object DfpAgent extends DfpAgent with ExecutionContexts {
 
     update(sponsoredTagsAgent, grabSponsorshipsFromStore(dfpSponsoredTagsDataKey))
     update(advertisementFeatureTagsAgent, grabSponsorshipsFromStore(dfpAdvertisementFeatureTagsDataKey))
+    update(inlineMerchandisingTagsAgent, grabSponsorshipsFromStore(inlineMerchandisingSponsorshipsDataKey))
     update(pageskinnedAdUnitAgent, grabPageSkinSponsorshipsFromStore(dfpPageSkinnedAdUnitsKey))
   }
 }
