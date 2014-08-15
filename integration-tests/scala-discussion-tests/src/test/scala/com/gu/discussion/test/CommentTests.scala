@@ -2,9 +2,11 @@ package com.gu.discussion.test
 
 import com.gu.automation.core.{GivenWhenThen, WebDriverFeatureSpec}
 import com.gu.discussion.step.CommentSteps
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
+import org.openqa.selenium.{WebElement, By, WebDriver}
 import org.scalatest.Tag
-import com.gu.automation.support.CookieManager
+import com.gu.automation.support.{Config, CookieManager}
+import java.util.concurrent.TimeUnit.SECONDS
 
 class CommentTests extends WebDriverFeatureSpec with GivenWhenThen {
 
@@ -23,7 +25,7 @@ class CommentTests extends WebDriverFeatureSpec with GivenWhenThen {
       }
     }
 
-    scenarioWeb("Reply to a top level comment") {
+    scenarioWeb("Reply to a top level comment", Tag("WIP")) {
       implicit driver: WebDriver =>
       given {
         CommentSteps().iAmSignedInAsStaff()
@@ -107,7 +109,22 @@ class CommentTests extends WebDriverFeatureSpec with GivenWhenThen {
 
   override protected def startDriver(testName: String) = {
     implicit val driver = super.startDriver(testName)
+    driver.manage().timeouts().implicitlyWait(10, SECONDS)
     CookieManager.addCookie("gu.test", "true")
+    hideNextGenFeedbackBar(driver)
     driver
+  }
+
+  def hideNextGenFeedbackBar(driver: WebDriver) {
+    driver.get(Config().getTestBaseUrl)
+    val wait = new WebDriverWait(driver, 2)
+    try {
+      val closeButton = wait.until(
+        ExpectedConditions.visibilityOfElementLocated(By.className("site-message__close-btn")))
+      closeButton.click
+    }catch {
+      case toe: org.openqa.selenium.TimeoutException =>
+        logger.info("Feedback bar not found")
+    }
   }
 }
