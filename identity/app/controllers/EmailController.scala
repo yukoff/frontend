@@ -100,6 +100,7 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
   protected def populateForm(userId: String, auth: Auth, trackingData: TrackingData): Future[Form[EmailPrefsData]] = {
     val futureUser = api.user(userId, auth)
     val futureSubscriber = api.userEmails(userId, trackingData)
+
     futureForm(futureUser, futureSubscriber, emailPrefsForm){
       (user, subscriber) =>
         emailPrefsForm.fill(
