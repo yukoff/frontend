@@ -12,6 +12,7 @@ trait JsonBodyParser extends Logging {
   def extractErrorFromResponse(json: JValue, statusCode: Int): List[Error]
 
   def extract[T](extractJsonObj: JValue => JValue = {json => json})(httpResponseResponse: Response[HttpResponse])(implicit successType: Manifest[T]): Response[T] = {
+    println(httpResponseResponse)
     httpResponseResponse.right.flatMap { httpResponse =>
       try {
         httpResponse match {

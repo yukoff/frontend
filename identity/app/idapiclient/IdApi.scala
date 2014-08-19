@@ -153,8 +153,7 @@ abstract class IdApi(val apiRootUrl: String, http: Http, jsonBodyParser: JsonBod
            auth: Option[Auth] = None,
            trackingParameters: Option[TrackingData] = None,
            body: Option[String] = None) = {
-      println(apiUrl(apiPath))
-      println(body)
+
       http.POST(apiUrl(apiPath), body, buildParams(auth, trackingParameters), buildHeaders(auth))
   }
 }

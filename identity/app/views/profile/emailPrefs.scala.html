@@ -8,11 +8,18 @@
     <div class="identity-wrapper monocolumn-wrapper">
         <h1 class="identity-title">Email preferences</h1>
 
-        <form action="@emailSubscriptionFormAction" method="post">
+
+        <h1>Sub: @emailPrefsForm("subscriptions").value</h1>
+        <form action="@emailSubscriptionFormAction" method="post" class="email-subscriptions">
             @views.html.helper.CSRF.formField
-            <fieldset class="fieldset">
-                <h3 class="fieldset__heading">Your email subscriptions</h3>
-                <button type="submit" name="listId" value="37" class="submit-input">Subscribe</button>
+            <fieldset class="fieldset email-subscription">
+                <div class="email-subscription__name">theguardian</div>
+                <div class="email-subscription__slogan">today</div>
+                <div class="email-subscription__edition">Aus edition</div>
+                <div class="email-subscription__section">News</div>
+                <div class="email-subscription__frequency">Every weekday morning</div>
+                <p class="email-subscription__description">Our editors' picks for the day's top news and commentary delivered to your inbox each morning.</p>
+                <button type="submit" name="listId" value="37" class="submit-input email-subscription__subscribe">Subscribe</button>
             </fieldset>
         </form>
 

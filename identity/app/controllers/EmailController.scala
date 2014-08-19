@@ -36,6 +36,7 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
     authAction.async {
       implicit request =>
         val idRequest = idRequestParser(request)
+
         populateForm(request.user.getId(), request.auth, idRequest.trackingData) map {
           form =>
             checkForm(form)
@@ -97,7 +98,8 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
           EmailPrefsData(
             user.statusFields.isReceiveGnmMarketing,
             user.statusFields.isReceive3rdPartyMarketing,
-            prefs.htmlPreference
+            prefs.htmlPreference,
+            prefs.subscriptions
           )
         )
     }
@@ -108,8 +110,15 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
     val userId = request.user.id
     val auth = request.auth
     val listId = emailSubscriptionData.listId
-    val futureNothing = api.updateUserEmailSubscription(userId, EmailList(listId), auth, tracking)
-    api.updateUserEmails(userId, Subscriber("Text", Nil), auth, tracking)
+    api.updateUserEmailSubscription(userId, EmailList(listId), auth, tracking) map { result =>
+      logExceptions{
+        result match {
+          case Right(subs) => println(subs); subs
+          case Left(subs) => println(subs); subs
+        }
+      }
+    }
+
     Future.successful(emailSubscriptionForm.fill(EmailSubscriptionData(listId)))
   }
 
@@ -125,13 +134,16 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
   protected def populateForm(userId: String, auth: Auth, trackingData: TrackingData): Future[Form[EmailPrefsData]] = {
     val futureUser = api.user(userId, auth)
     val futureSubscriber = api.userEmails(userId, trackingData)
+    println(futureSubscriber)
+    futureSubscriber.map(println(_))
     futureEmailPrefsForm(futureUser, futureSubscriber, emailPrefsForm){
       (user, subscriber) =>
         emailPrefsForm.fill(
           EmailPrefsData(
             user.statusFields.isReceiveGnmMarketing,
             user.statusFields.isReceive3rdPartyMarketing,
-            subscriber.htmlPreference
+            subscriber.htmlPreference,
+            subscriber.subscriptions.map(_.listId)
           )
         )
     }
@@ -196,7 +208,7 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
   }
 }
 
-case class EmailPrefsData(receiveGnmMarketing: Boolean, receive3rdPartyMarketing: Boolean, htmlPreference: String)
+case class EmailPrefsData(receiveGnmMarketing: Boolean, receive3rdPartyMarketing: Boolean, htmlPreference: String, subscriptions: List[String])
 object EmailPrefsData {
   protected val validPrefs = Set("HTML", "Text")
   def isValidHtmlPreference(pref: String): Boolean =  validPrefs contains pref
@@ -205,7 +217,8 @@ object EmailPrefsData {
     Forms.mapping(
       "statusFields.receiveGnmMarketing" -> Forms.boolean,
       "statusFields.receive3rdPartyMarketing" -> Forms.boolean,
-      "htmlPreference" -> Forms.text().verifying(isValidHtmlPreference _)
+      "htmlPreference" -> Forms.text().verifying(isValidHtmlPreference _),
+      "subscriptions" -> Forms.list(Forms.text)
     )(EmailPrefsData.apply)(EmailPrefsData.unapply)
   )
 }
