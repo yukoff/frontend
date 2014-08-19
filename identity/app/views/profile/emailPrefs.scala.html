@@ -1,4 +1,4 @@
-@(page: model.MetaData, emailPrefsForm: Form[EmailPrefsData], formActionUrl: String)(implicit request: RequestHeader)
+@(page: model.MetaData, emailPrefsForm: Form[EmailPrefsData], emailPrefsFormAction: String, emailSubscriptionFormAction: String)(implicit request: RequestHeader)
 
 @import views.html.fragments.form.{checkboxField, radioField}
 @import form.IdFormHelpers._
@@ -8,7 +8,15 @@
     <div class="identity-wrapper monocolumn-wrapper">
         <h1 class="identity-title">Email preferences</h1>
 
-        <form class="form" novalidate action="@formActionUrl" role="main" method="post">
+        <form action="@emailSubscriptionFormAction" method="post">
+            @views.html.helper.CSRF.formField
+            <fieldset class="fieldset">
+                <h3 class="fieldset__heading">Your email subscriptions</h3>
+                <button type="submit" name="listId" value="37" class="submit-input">Subscribe</button>
+            </fieldset>
+        </form>
+
+        <form class="form" novalidate action="@emailPrefsFormAction" role="main" method="post">
             @views.html.helper.CSRF.formField
             @if(emailPrefsForm.globalError.isDefined) {
               <div class="form__error">@emailPrefsForm.globalErrors.map(_.message).mkString(", ")</div>

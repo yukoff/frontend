@@ -1,6 +1,6 @@
 package idapiclient
 
-import com.gu.identity.model.{Subscriber, LiftJsonConfig, User}
+import com.gu.identity.model.{EmailList, Subscriber, LiftJsonConfig, User}
 import client.{Anonymous, Auth, Response, Parameters}
 import client.connection.{Http, HttpResponse}
 import scala.concurrent.{Future, ExecutionContext}
@@ -140,6 +140,9 @@ abstract class IdApi(val apiRootUrl: String, http: Http, jsonBodyParser: JsonBod
   def updateUserEmails(userId: String, subscriber: Subscriber, auth: Auth, trackingParameters: TrackingData): Future[Response[Unit]] =
     post(urlJoin("useremails", userId), Some(auth), Some(trackingParameters), Some(write(subscriber))) map extractUnit
 
+  def updateUserEmailSubscription(userId: String, emailList: EmailList, auth: Auth, trackingParameters: TrackingData): Future[Response[Unit]] =
+    post(urlJoin("useremails", userId, "subscriptions"), Some(auth), Some(trackingParameters), Some(write(emailList))) map extractUnit
+
   def validateEmail(token: String, trackingParameters: TrackingData): Future[Response[Unit]] =
     post(urlJoin("user","validate-email", token), trackingParameters = Some(trackingParameters)) map extractUnit
 
@@ -149,8 +152,11 @@ abstract class IdApi(val apiRootUrl: String, http: Http, jsonBodyParser: JsonBod
   def post(apiPath: String,
            auth: Option[Auth] = None,
            trackingParameters: Option[TrackingData] = None,
-           body: Option[String] = None) =
-    http.POST(apiUrl(apiPath), body, buildParams(auth, trackingParameters), buildHeaders(auth))
+           body: Option[String] = None) = {
+      println(apiUrl(apiPath))
+      println(body)
+      http.POST(apiUrl(apiPath), body, buildParams(auth, trackingParameters), buildHeaders(auth))
+  }
 }
 
 class SynchronousIdApi(apiRootUrl: String, http: Http, jsonBodyParser: JsonBodyParser, clientAuth: Auth)
