@@ -8,15 +8,15 @@ import common.ExecutionContexts
 import utils.SafeLogging
 import play.api.mvc._
 import scala.concurrent.Future
-import model.IdentityPage
+import model.{EmailSubscriptions, IdentityPage}
 import play.api.data._
 import client.{Auth, Error}
-import net.liftweb.json.JsonDSL._
 import com.gu.identity.model.{User, Subscriber}
 import play.filters.csrf._
 import scala.util.{Try, Failure, Success}
 import client.Response
 import actions.AuthRequest
+import net.liftweb.json.JsonDSL._
 
 
 @Singleton
@@ -38,7 +38,7 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
         populateForm(request.user.getId(), request.auth, idRequest.trackingData) map {
           form =>
             checkForm(form)
-            val template = views.html.profile.emailPrefs(page, form, formActionUrl(idUrlBuilder, idRequest))
+            val template = views.html.profile.emailPrefs(page, form, formActionUrl(idUrlBuilder, idRequest), EmailSubscriptions())
             Ok(template)
         }
     }
@@ -52,13 +52,13 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
           case formWithErrors: Form[EmailPrefsData] =>
             logger.info(s"Error saving user email preference, ${formWithErrors.errors}")
             val idRequest = idRequestParser(request)
-            Future.successful(Ok(views.html.profile.emailPrefs(page, formWithErrors, formActionUrl(idUrlBuilder, idRequest))))
+            Future.successful(Ok(views.html.profile.emailPrefs(page, formWithErrors, formActionUrl(idUrlBuilder, idRequest), EmailSubscriptions())))
         }, {
           case prefs: EmailPrefsData =>
             val idRequest = idRequestParser(request)
             updatePrefs(prefs, boundForm, idRequest.trackingData) map {
               form =>
-                Ok(views.html.profile.emailPrefs(page, form, formActionUrl(idUrlBuilder, idRequest)))
+                Ok(views.html.profile.emailPrefs(page, form, formActionUrl(idUrlBuilder, idRequest), EmailSubscriptions()))
             }
         })
     }
@@ -81,7 +81,8 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
           EmailPrefsData(
             user.statusFields.isReceiveGnmMarketing,
             user.statusFields.isReceive3rdPartyMarketing,
-            prefs.htmlPreference
+            prefs.htmlPreference,
+            prefs.emailListSubscriptions
           )
         )
     }
@@ -97,7 +98,7 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
   }
 
   protected def populateForm(userId: String, auth: Auth, trackingData: TrackingData): Future[Form[EmailPrefsData]] = {
-    val futureUser= api.user(userId, auth)
+    val futureUser = api.user(userId, auth)
     val futureSubscriber = api.userEmails(userId, trackingData)
     futureForm(futureUser, futureSubscriber, emailPrefsForm){
       (user, subscriber) =>
@@ -105,7 +106,8 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
           EmailPrefsData(
             user.statusFields.isReceiveGnmMarketing,
             user.statusFields.isReceive3rdPartyMarketing,
-            subscriber.htmlPreference
+            subscriber.htmlPreference,
+            subscriber.subscriptions.map(_.listId)
           )
         )
     }
@@ -146,7 +148,7 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
   }
 }
 
-case class EmailPrefsData(receiveGnmMarketing: Boolean, receive3rdPartyMarketing: Boolean, htmlPreference: String)
+case class EmailPrefsData(receiveGnmMarketing: Boolean, receive3rdPartyMarketing: Boolean, htmlPreference: String, emailListSubscriptions: List[String])
 object EmailPrefsData {
   protected val validPrefs = Set("HTML", "Text")
   def isValidHtmlPreference(pref: String): Boolean =  validPrefs contains pref
@@ -155,7 +157,8 @@ object EmailPrefsData {
     Forms.mapping(
       "statusFields.receiveGnmMarketing" -> Forms.boolean,
       "statusFields.receive3rdPartyMarketing" -> Forms.boolean,
-      "htmlPreference" -> Forms.text().verifying(isValidHtmlPreference _)
+      "htmlPreference" -> Forms.text().verifying(isValidHtmlPreference _),
+      "emailListSubscriptions" -> Forms.list(Forms.text)
     )(EmailPrefsData.apply)(EmailPrefsData.unapply)
   )
 }

@@ -1,4 +1,4 @@
-@(page: model.MetaData, emailPrefsForm: Form[EmailPrefsData], formActionUrl: String)(implicit request: RequestHeader)
+@(page: model.MetaData, emailPrefsForm: Form[EmailPrefsData], formActionUrl: String, emailSubscriptions: EmailSubscriptions)(implicit request: RequestHeader)
 
 @import views.html.fragments.form.{checkboxField, radioField}
 @import form.IdFormHelpers._
@@ -7,6 +7,13 @@
 }{
     <div class="identity-wrapper monocolumn-wrapper">
         <h1 class="identity-title">Email preferences</h1>
+        @defining(emailPrefsForm("emailListSubscriptions")) { field =>
+            <p>Field @field</p>
+            <p>Values: @field.value</p>
+            @field.value.map{ v =>
+                <p>Value: @v</p>
+            }
+        }
 
         <form class="form" novalidate action="@formActionUrl" role="main" method="post">
             @views.html.helper.CSRF.formField
