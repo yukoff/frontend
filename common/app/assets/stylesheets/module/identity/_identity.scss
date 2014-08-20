@@ -667,6 +667,7 @@
     }
 }
 
+
 /* Membership Keyframe animations
    ========================================================================== */
 
@@ -709,4 +710,31 @@
         background-color: #ffffff;
         color: inherit;
     }
+}
+
+
+/* Email subscriptions
+   ========================================================================== */
+.email-subscriptions {}
+.email-subscription {
+
+}
+
+.email-subscription__section {
+    @include fs-textSans(1);
+
+}
+.email-subscription__name {
+    @include fs-headline(2);
+}
+.email-subscription__frequency {
+    @include fs-textSans(1);
+    margin-top: $gs-baseline/1.5;
+    .i {
+        margin-right: $gs-gutter/4;
+        vertical-align: text-top;
+    }
+}
+.email-subscription__description {
+    @include fs-bodyCopy(1);
 }
