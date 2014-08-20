@@ -1,11 +1,11 @@
 package com.gu.discussion.test
 
-import com.gu.automation.core.{GivenWhenThen, WebDriverFeatureSpec}
+import com.gu.automation.core.{WebDriverFactory, GivenWhenThen, WebDriverFeatureSpec}
 import com.gu.discussion.step.CommentSteps
 import org.openqa.selenium.support.ui.{WebDriverWait, ExpectedConditions}
 import org.openqa.selenium.{WebElement, By, WebDriver}
 import org.scalatest.Tag
-import com.gu.automation.support.{Config, CookieManager}
+import com.gu.automation.support.{Browser, Config, CookieManager}
 import java.util.concurrent.TimeUnit.SECONDS
 
 class CommentTests extends WebDriverFeatureSpec with GivenWhenThen {
@@ -107,15 +107,28 @@ class CommentTests extends WebDriverFeatureSpec with GivenWhenThen {
 
   }
 
-  override protected def startDriver(testName: String) = {
-    implicit val driver = super.startDriver(testName)
-    driver.manage().timeouts().implicitlyWait(10, SECONDS)
-    CookieManager.addCookie("gu.test", "true")
-    hideNextGenFeedbackBar(driver)
-    driver
-  }
+//  override protected def startDriver(testName: String) = {
+//    implicit val driver = super.startDriver(testName)
+//    driver.manage().timeouts().implicitlyWait(10, SECONDS)
+//    CookieManager.addCookie("gu.test", "true")
+//    hideNextGenFeedbackBar(driver)
+//    driver
+//  }
 
-  def hideNextGenFeedbackBar(driver: WebDriver) {
+//    override def startDriver(testName: String, targetBrowser: Browser, extraCapabilities: Map[String, String] = Map()): WebDriver = {
+//      WebDriverFactory.newInstance(getClass().getSimpleName() + "." + testName, targetBrowser, extraCapabilities)
+
+    override protected def startDriver(testName: String, targetBrowser: Browser, extraCapabilities: Map[String, String] = Map()): WebDriver = {
+      implicit val driver = WebDriverFactory.newInstance(getClass().getSimpleName() + "." + testName, targetBrowser, extraCapabilities)
+      driver.manage().timeouts().implicitlyWait(10, SECONDS)
+      CookieManager.addCookie("gu.test", "true")
+      hideNextGenFeedbackBar(driver)
+      driver
+    }
+
+
+
+      def hideNextGenFeedbackBar(driver: WebDriver) {
     driver.get(Config().getTestBaseUrl)
     val wait = new WebDriverWait(driver, 2)
     try {
