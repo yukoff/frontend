@@ -1,6 +1,6 @@
 package idapiclient
 
-import com.gu.identity.model.{Subscriber, LiftJsonConfig, User}
+import com.gu.identity.model.{StatusFields, Subscriber, LiftJsonConfig, User}
 import client.{Anonymous, Auth, Response, Parameters}
 import client.connection.{Http, HttpResponse}
 import scala.concurrent.{Future, ExecutionContext}
@@ -83,6 +83,10 @@ abstract class IdApi(val apiRootUrl: String, http: Http, jsonBodyParser: JsonBod
 
   def updateUser(user: User, auth: Auth, trackingData: TrackingData): Future[Response[User]] =
     post("user", Some(auth), Some(trackingData), Some(write(user))) map extractUser
+
+  def updateUserStatusFields(userId: String, auth: Auth, trackingData: TrackingData, data: JValue): Future[Response[StatusFields]] = {
+    post(urlJoin("user" :: userId :: List("statusFields") : _*), Some(auth), Some(trackingData), Some(write(data))) map extract(jsonField("statusFields"))
+  }
 
   def register(user: User, trackingParameters: TrackingData): Future[Response[User]] = {
     val userData = write(user)

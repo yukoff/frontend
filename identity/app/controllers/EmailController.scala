@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import model.{EmailSubscriptions, IdentityPage}
 import play.api.data._
 import client.{Auth, Error}
-import com.gu.identity.model.{User, Subscriber}
+import com.gu.identity.model.{EmailList, User, Subscriber}
 import play.filters.csrf._
 import scala.util.{Try, Failure, Success}
 import client.Response
@@ -38,8 +38,8 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
         populateForm(request.user.getId(), request.auth, idRequest.trackingData) map {
           form =>
             checkForm(form)
-            val template = views.html.profile.emailPrefs(page, form, formActionUrl(idUrlBuilder, idRequest), EmailSubscriptions())
-            Ok(template)
+            val subscribedTo = form.data.filter(_._1.startsWith("emailListSubscriptions")).map(_._2)
+            Ok(views.html.profile.emailPrefs(page, form, formActionUrl(idUrlBuilder, idRequest), EmailSubscriptions(subscribedTo)))
         }
     }
   }
@@ -68,24 +68,43 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
                            (implicit request: AuthRequest[A]): Future[Form[EmailPrefsData]] = {
     logger.trace("Updating user email prefs")
     val userId = request.user.id
-    val auth= request.auth
+    val auth = request.auth
     val newStatusFields = ("receiveGnmMarketing" -> prefs.receiveGnmMarketing) ~ ("receive3rdPartyMarketing" -> prefs.receive3rdPartyMarketing)
-    val subscriber = Subscriber(prefs.htmlPreference, Nil)
+    val subscriber = Subscriber(prefs.htmlPreference, prefs.emailListSubscriptions.map{ listId => EmailList(listId = listId) })
 
-    val futureUser = api.updateUser(userId, auth, tracking, "statusFields", newStatusFields)
+    val futureStatusFields = api.updateUserStatusFields(userId, auth, tracking, newStatusFields)
     val futureNothing = api.updateUserEmails(userId, subscriber, auth, tracking)
+    // Kick off the requests
+    val f1 = futureStatusFields
+    val f2 = futureNothing
 
-    futureForm(futureUser, futureNothing, boundForm){
-      case (user, _) =>
-        emailPrefsForm.fill(
+    val form = for {
+      statusFields <- f1
+      nothing <- f2
+    } yield {
+      (statusFields, nothing) match {
+        case (Right(sf), Right(n)) => emailPrefsForm.fill(
           EmailPrefsData(
-            user.statusFields.isReceiveGnmMarketing,
-            user.statusFields.isReceive3rdPartyMarketing,
-            prefs.htmlPreference,
-            prefs.emailListSubscriptions
+            sf.isReceiveGnmMarketing,
+            sf.isReceive3rdPartyMarketing,
+            subscriber.htmlPreference,
+            subscriber.subscriptions.map(_.listId)
           )
         )
+        case (eitherStatusFields, eitherNothing) => {
+          val errors = eitherStatusFields.left.getOrElse(Nil) ++ eitherNothing.left.getOrElse(Nil)
+          // TODO: Add errors to form
+          emailPrefsForm.fill(EmailPrefsData(
+            prefs.receiveGnmMarketing,
+            prefs.receive3rdPartyMarketing,
+            subscriber.htmlPreference,
+            subscriber.subscriptions.map(_.listId)
+          ))
+        }
+      }
     }
+
+    form
   }
 
   protected def checkForm(form: Form[EmailPrefsData]){

@@ -3,20 +3,33 @@
 @import views.html.fragments.form.{checkboxField, radioField}
 @import form.IdFormHelpers._
 
+@emailListCategoryList(theme: String, subscriptions: List[EmailSubscription], isActive: Boolean) = {
+    @fragments.dropdown(theme, isActive = isActive) {
+        @subscriptions.zipWithRowInfo.map { case (subscription, row) =>
+            <form class="email-subscription @if(row.isFirst){email-subscription--first} u-cf" action="/subscribe-to-email">
+                @views.html.helper.CSRF.formField
+                <div class="email-subscription__name">@subscription.name</div>
+                <div class="email-subscription__description">@subscription.description</div>
+                <div class="email-subscription__meta u-cf">
+                    <button class="email-subscription__button">
+                        <input name="emailListSubscriptions[@row.rowNum]" value="@subscription.listId" type="checkbox" class="email-subscription__checkbox" @if(subscription.subscribedTo){checked="checked"} />
+                        @if(subscription.subscribedTo){Unsubscribe}else{Subscribe}
+                    </button>
+                    <div class="email-subscription__frequency"><i class="i i-clock-light-grey"></i>@subscription.frequency</div>
+                </div>
+            </form>
+        }
+    }
+}
+
 @identityMain(page, conf.Switches.all){
 }{
     <div class="identity-wrapper monocolumn-wrapper">
         <h1 class="identity-title">Email preferences</h1>
 
         <div class="email-subscriptions">
-            @emailSubscriptions.subscriptions.map { subscription =>
-                @fragments.dropdown(name = subscription.name){
-                    <div class="email-subscription">
-                        <div class="email-subscription__section">@subscription.section</div>
-                        <div class="email-subscription__description">@subscription.description</div>
-                        <div class="email-subscription__frequency"><i class="i i-clock-light-grey"></i>@subscription.frequency</div>
-                    </div>
-                }
+            @List("news", "sport", "culture", "lifestyle").zipWithIndex.map { case(theme, index) =>
+              @emailListCategoryList(theme, emailSubscriptions.subscriptions.filter(_.theme == theme), index == 0)
             }
         </div>
 
