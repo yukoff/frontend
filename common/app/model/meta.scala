@@ -3,6 +3,7 @@ package model
 import common.{NavItem, Edition, ManifestData, Pagination}
 import conf.Configuration
 import dfp.DfpAgent
+import play.api.libs.json.{JsBoolean, JsValue, JsString}
 
 trait MetaData extends Tags {
   def id: String
@@ -19,7 +20,7 @@ trait MetaData extends Tags {
   def hasClassicVersion: Boolean = !special
 
   // Special means "Next Gen platform only".
-  def special = id.contains("-sp-")
+  private lazy val special = id.contains("-sp-")
 
   def title: Option[String] = None
   // this is here so it can be included in analytics.
@@ -37,19 +38,19 @@ trait MetaData extends Tags {
 
   def hasPageSkin(edition: Edition) = false
 
-  def isSurging = 0
+  def isSurging: Seq[Int] = Seq(0)
 
-  def metaData: Map[String, Any] = Map(
-    ("page-id", id),
-    ("section", section),
-    ("web-title", webTitle),
-    ("build-number", buildNumber),
-    ("analytics-name", analyticsName),
-    ("blockVideoAds", false),
-    ("is-front", isFront),
-    ("ad-unit", s"/${Configuration.commercial.dfpAccountId}/${Configuration.commercial.dfpAdUnitRoot}/$adUnitSuffix/ng"),
-    ("is-surging", isSurging),
-    ("has-classic-version", hasClassicVersion)
+  def metaData: Map[String, JsValue] = Map(
+    ("pageId", JsString(id)),
+    ("section", JsString(section)),
+    ("webTitle", JsString(webTitle)),
+    ("buildNumber", JsString(buildNumber)),
+    ("analyticsName", JsString(analyticsName)),
+    ("blockVideoAds", JsBoolean(false)),
+    ("isFront", JsBoolean(isFront)),
+    ("adUnit", JsString(s"/${Configuration.commercial.dfpAccountId}/${Configuration.commercial.dfpAdUnitRoot}/$adUnitSuffix/ng")),
+    ("isSurging", JsString(isSurging.mkString(","))),
+    ("hasClassicVersion", JsBoolean(hasClassicVersion))
   )
 
   def openGraph: Map[String, Any] = Map(

@@ -15,7 +15,9 @@ define([
     'common/utils/template',
     'common/utils/url',
     'common/utils/context',
-    'common/bootstraps/article'
+    'common/bootstraps/article',
+    'common/modules/ui/message',
+    'common/utils/preferences'
 ], function (
     mediator,
     $,
@@ -33,7 +35,9 @@ define([
     template,
     url,
     getContext,
-    Article
+    Article,
+    Message,
+    preferences
 ) {
     'use strict';
 
@@ -190,6 +194,32 @@ define([
                     autoUpdate.setManipulationType('prepend');
                 }
             });
+        },
+
+        showFootballLiveBlogMessage: function(config){
+            var isFootballLiveBlog = config.page.pageId.indexOf('football/live/') === 0;
+            var notMobile = detect.getBreakpoint() !== 'mobile';
+
+            if (isFootballLiveBlog && notMobile && !preferences.hasOptedIntoResponsive()) {
+
+                var msg = '<p class="site-message__message" id="site-message__message">' +
+                    'We’ve redesigned our Football live blogs to make it easier to follow the match. We’d love to hear what you think.' +
+                    '</p>' +
+                    '<ul class="site-message__actions u-unstyled">' +
+                    '<li class="site-message__actions__item">' +
+                    '<i class="i i-arrow-white-right"></i>' +
+                    '<a href="https://www.surveymonkey.com/s/guardianliveblogs_football" target="_blank">Leave feedback</a>' +
+                    '</li>' +
+                    '<li class="site-message__actions__item">' +
+                    '<i class="i i-arrow-white-right"></i>' +
+                    '<a href="http://next.theguardian.com" target="_blank">Find out more</a>' +
+                    '</li>' +
+                    '</ul>';
+
+                var releaseMessage = new Message('football-live-blog', {pinOnHide: true});
+
+                releaseMessage.show(msg);
+            }
         }
     };
 

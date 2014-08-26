@@ -16,7 +16,8 @@ define([
     'common/modules/component',
     'common/modules/analytics/beacon',
     'common/modules/ui/message',
-    'raven'
+    'raven',
+    'common/utils/preferences'
 ], function(
     $,
     ajax,
@@ -34,10 +35,10 @@ define([
     Component,
     beacon,
     Message,
-    raven
+    raven,
+    preferences
 ) {
-
-    var autoplay = config.isMedia && /desktop|wide/.test(detect.getBreakpoint()),
+    var isDesktop = /desktop|wide/.test(detect.getBreakpoint()),
         QUARTILES = [25, 50, 75],
         // Advert and content events used by analytics. The expected order of bean events is:
         EVENTS = [
@@ -55,12 +56,15 @@ define([
         return mediaEl ? mediaEl.tagName.toLowerCase() : 'video';
     }
 
+    function shouldAutoPlay(player) {
+        return $('.vjs-tech', player.el()).attr('data-auto-play') === 'true' && isDesktop;
+    }
+
     function constructEventName(eventName, player) {
         return getMediaType(player) + ':' + eventName;
     }
 
     var modules = {
-
         ophanRecord: function(id, event, player) {
             if(id) {
                 require('ophan/ng', function (ophan) {
@@ -130,7 +134,7 @@ define([
                     player.one('adstart', events.play);
                     player.one('adend', events.end);
 
-                    if (autoplay) {
+                    if (shouldAutoPlay(player)) {
                         player.play();
                     }
                 }
@@ -174,7 +178,7 @@ define([
                     player.on('timeupdate', _throttle(events.timeupdate, 1000));
                     player.one('ended', events.end);
 
-                    if (autoplay) {
+                    if (shouldAutoPlay(player)) {
                         player.play();
                     }
                 }
@@ -342,8 +346,7 @@ define([
                                         timeout: 3000
                                     });
                                     player.vast({
-                                        url: modules.getVastUrl(),
-                                        vidFormats: ['video/mp4', 'video/webm', 'video/ogv', 'video/x-flv']
+                                        url: modules.getVastUrl()
                                     });
                                 } else {
                                     modules.bindContentEvents(player);
@@ -380,17 +383,11 @@ define([
                 });
             });
         },
-        generateEndSlateUrlFromPage: function() {
-            var seriesId = config.page.seriesId;
-            var sectionId = config.page.section;
-            var url = (seriesId)  ? '/video/end-slate/series/' + seriesId : '/video/end-slate/section/' + sectionId;
-            return url + '.json?shortUrl=' + config.page.shortUrl;
-        },
         initEndSlate: function(player, endSlatePath) {
             var endSlate = new Component(),
                 endState = 'vjs-has-ended';
 
-            endSlate.endpoint = endSlatePath || modules.generateEndSlateUrlFromPage();
+            endSlate.endpoint = endSlatePath;
             endSlate.fetch(player.el(), 'html');
 
             player.one(constructEventName('content:play', player), function() {
@@ -457,7 +454,11 @@ define([
             modules.initMostViewedMedia();
         }
 
-        if (config.page.contentType.toLowerCase() === 'video' && detect.getBreakpoint() !== 'mobile') {
+        if (config.page.contentType &&
+            config.page.contentType.toLowerCase() === 'video' &&
+            detect.getBreakpoint() !== 'mobile' &&
+            !preferences.hasOptedIntoResponsive()
+        ) {
             modules.displayReleaseMessage();
         }
     };

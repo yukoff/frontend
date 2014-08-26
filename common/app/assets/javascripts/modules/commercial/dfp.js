@@ -13,6 +13,7 @@ define([
     'lodash/objects/isArray',
     'lodash/objects/pairs',
     'common/utils/$',
+    'common/utils/$css',
     'common/utils/_',
     'common/utils/config',
     'common/utils/cookies',
@@ -39,6 +40,7 @@ define([
     isArray,
     pairs,
     $,
+    $css,
     _,
     globalConfig,
     cookies,
@@ -439,16 +441,16 @@ define([
                 return bonzo(adSlot);
             })
             .filter(function ($adSlot) {
-                // bonzo needs these - use currentStyle (not as reliable?) if unavailable (e.g. IE8)
-                return (window.document.defaultView && window.document.defaultView.getComputedStyle)
-                    ? $adSlot.css('display') !== 'none' : $adSlot[0].currentStyle.display;
+                return $css($adSlot, 'display') !== 'none';
             })
             .valueOf();
 
         if (adSlots.length > 0) {
-            // if we don't already have googletag, create command queue (assumes it's loaded further up the chain)
+            // if we don't already have googletag, create command queue and load it async
             if (!window.googletag) {
                 window.googletag = { cmd: [] };
+                // load the library asynchronously
+                require(['googletag']);
             }
 
             window.googletag.cmd.push(setListeners);
