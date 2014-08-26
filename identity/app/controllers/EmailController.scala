@@ -44,12 +44,6 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
     }
   }
 
-  def saveEmailSubscription = CSRFCheck {
-    authAction.async { implicit request =>
-      
-    }
-  }
-
   def savePreferences = CSRFCheck {
     authAction.async {
       implicit request =>
@@ -67,6 +61,12 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
                 Ok(views.html.profile.emailPrefs(page, form, formActionUrl(idUrlBuilder, idRequest), EmailSubscriptions()))
             }
         })
+    }
+  }
+
+  def saveEmailListSubscription = CSRFCheck {
+    authAction.async { implicit request =>
+
     }
   }
 
@@ -186,13 +186,5 @@ object EmailPrefsData {
       "htmlPreference" -> Forms.text().verifying(isValidHtmlPreference _),
       "emailListSubscriptions" -> Forms.list(Forms.text)
     )(EmailPrefsData.apply)(EmailPrefsData.unapply)
-  )
-}
-case class EmailSubscriptionData(listId: String)
-object EmailSubscriptionData {
-  val emailSubscriptionForm = Form(
-    Forms.mapping(
-      "listId"-> Forms.text
-    )(EmailSubscriptionData.apply)(EmailSubscriptionData.unapply)
   )
 }
