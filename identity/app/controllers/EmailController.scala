@@ -44,6 +44,12 @@ class EmailController @Inject()(returnUrlVerifier: ReturnUrlVerifier,
     }
   }
 
+  def saveEmailSubscription = CSRFCheck {
+    authAction.async { implicit request =>
+      
+    }
+  }
+
   def savePreferences = CSRFCheck {
     authAction.async {
       implicit request =>
