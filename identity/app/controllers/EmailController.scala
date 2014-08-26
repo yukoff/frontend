@@ -188,3 +188,11 @@ object EmailPrefsData {
     )(EmailPrefsData.apply)(EmailPrefsData.unapply)
   )
 }
+case class EmailSubscriptionData(listId: String)
+object EmailSubscriptionData {
+  val emailSubscriptionForm = Form(
+    Forms.mapping(
+      "listId"-> Forms.text
+    )(EmailSubscriptionData.apply)(EmailSubscriptionData.unapply)
+  )
+}
