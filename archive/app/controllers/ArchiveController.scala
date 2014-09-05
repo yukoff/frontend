@@ -5,7 +5,7 @@ import play.api.mvc._
 import services.{Archive, DynamoDB, Googlebot404Count}
 import java.net.URLDecoder
 import model.Cached
-
+import conf.Switches.UnhandledRedirectionsLastChanceSwitch
 
 object ArchiveController extends Controller with Logging with ExecutionContexts {
 
@@ -20,10 +20,11 @@ object ArchiveController extends Controller with Logging with ExecutionContexts 
 
       // if we do not have a location in the database then follow these rules
       path match {
-        case Decoded(decodedPath) => redirectTo(decodedPath)
-        case Gallery(gallery)     => redirectTo(gallery)
-        case Century(century)     => redirectTo(century)
-        case Lowercase(lower)     => redirectTo(lower)
+        case Decoded(decodedPath)                 => redirectTo(decodedPath)
+        case Gallery(gallery)                     => redirectTo(gallery)
+        case Century(century)                     => redirectTo(century)
+        case Lowercase(lower)                     => redirectTo(lower)
+        case UnhandledRedirectable(unhandledPath) => redirectTo(unhandledPath)
 
         case _ =>
           log404(request)
@@ -85,6 +86,27 @@ object ArchiveController extends Controller with Logging with ExecutionContexts 
         case "www.theguardian.com" :: section :: other if section.exists(_.isUpper) =>
           Some(s"www.theguardian.com/${section.toLowerCase}/${other.mkString("/")}")
         case _ => None
+    }
+  }
+
+  private object UnhandledRedirectable {
+    private val notesAndQueriesCategoryEx = """www.theguardian.com\/(notesandqueries\/category\/)(.*)""".r
+    private val ngNotesAndQueriesTarget = "www.theguardian.com/lifeandstyle/series/notes-and-queries"
+
+    private val guardianFilmsEx = """www.theguardian.com\/(guardianfilms\/)(.*)""".r
+    private val ngGuardianFilmsTarget = "www.theguardian.com/news/guardianfilms"
+
+    def unapply(path: String): Option[String] = {
+      if (UnhandledRedirectionsLastChanceSwitch.isSwitchedOn) {
+        path match {
+          case notesAndQueriesCategoryEx(_, _) => Some(ngNotesAndQueriesTarget)
+          case guardianFilmsEx(_, _) => Some(ngGuardianFilmsTarget)
+          case _ => None
+        }
+      } else {
+        // this feature is switched off
+        None
+      }
     }
   }
 

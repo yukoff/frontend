@@ -304,6 +304,11 @@ object Switches extends Collections {
     safeState = On, sellByDate = new LocalDate(2014, 9, 8)
   )
 
+  val UnhandledRedirectionsLastChanceSwitch = Switch("Feature", "unhandled-redirection-last-chance-switch",
+    "If switched on, we try to redirect known old-style url patterns to modern equivalents",
+    safeState = Off, sellByDate = new LocalDate(2014, 9, 19)
+  )
+
   // A/B Tests
 
   val ABHighCommercialComponent = Switch("A/B Tests", "ab-high-commercial-component",
@@ -408,6 +413,7 @@ object Switches extends Collections {
     FaciaToolCachedContentApiSwitch,
     FaciaToolDraftContent,
     GuShiftCookieSwitch,
+    UnhandledRedirectionsLastChanceSwitch,
     ABHighCommercialComponent,
     ABSoulmatesLabelling,
     EnhancedMediaPlayerSwitch,

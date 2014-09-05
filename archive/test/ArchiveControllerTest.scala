@@ -3,6 +3,7 @@ package test
 import play.api.test.Helpers._
 import org.scalatest.Matchers
 import org.scalatest.FlatSpec
+import conf.Switches.UnhandledRedirectionsLastChanceSwitch
 
 class ArchiveControllerTest extends FlatSpec with Matchers {
 
@@ -77,4 +78,31 @@ class ArchiveControllerTest extends FlatSpec with Matchers {
     val result = controllers.ArchiveController.lookup("www.theguardian.com/discover-culture/2014/jul/22/mid-century-textiles-then-and-now")(TestRequest())
     status(result) should be (404)
   }
+
+  it should "redirect an R1-style notesandqueries url to an NGW target when enabled" in Fake {
+    UnhandledRedirectionsLastChanceSwitch.switchOn()
+    val result = controllers.ArchiveController.lookup("www.theguardian.com/notesandqueries/category/0,,-11,00.html")(TestRequest())
+    status(result) should be (301)
+    header("Location", result).head should be ("http://www.theguardian.com/lifeandstyle/series/notes-and-queries")
+  }
+
+  it should "NOT redirect an R1-style notesandqueries url to an NGW target when DISABLED" in Fake {
+    UnhandledRedirectionsLastChanceSwitch.switchOff()
+    val result = controllers.ArchiveController.lookup("www.theguardian.com/notesandqueries/category/0,,-11,00.html")(TestRequest())
+    status(result) should be (404)
+  }
+
+  it should "redirect an R1-style guardian films url to an NGW target when enabled" in Fake {
+    UnhandledRedirectionsLastChanceSwitch.switchOn()
+    val result = controllers.ArchiveController.lookup("www.theguardian.com/guardianfilms/0,,,00.html?gusrc=gpd")(TestRequest())
+    status(result) should be (301)
+    header("Location", result).head should be ("http://www.theguardian.com/news/guardianfilms")
+  }
+
+  it should "NOT redirect an R1-style guardian films url to an NGW target when DISABLED" in Fake {
+    UnhandledRedirectionsLastChanceSwitch.switchOff()
+    val result = controllers.ArchiveController.lookup("www.theguardian.com/guardianfilms/0,,,00.html?gusrc=gpd")(TestRequest())
+    status(result) should be (404)
+  }
+
 }
