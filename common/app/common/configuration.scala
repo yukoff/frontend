@@ -287,6 +287,8 @@ class GuardianConfiguration(val application: String, val webappConfDirectory: St
     lazy val contentApiPostEndpoint = configuration.getStringProperty("contentapi.post.endpoint")
     lazy val frontPressCronQueue = configuration.getStringProperty("frontpress.sqs.cron_queue_url")
     lazy val frontPressToolQueue = configuration.getStringProperty("frontpress.sqs.tool_queue_url")
+    /** When retrieving items from Content API, maximum number of requests to make concurrently */
+    lazy val frontPressItemBatchSize = configuration.getIntegerProperty("frontpress.item_batch_size", 30)
     lazy val configBeforePressTimeout: Int = 1000
 
     val oauthCredentials: Option[OAuthCredentials] =
@@ -305,7 +307,7 @@ class GuardianConfiguration(val application: String, val webappConfDirectory: St
 
   object pa {
     lazy val apiKey = configuration.getMandatoryStringProperty("pa.api.key")
-    lazy val cricketKey = configuration.getMandatoryStringProperty("pa.cricket.api.key")
+    lazy val cricketKey = configuration.getStringProperty("pa.cricket.api.key")
 
     lazy val host = configuration.getStringProperty("football.api.host").getOrElse("http://pads6.pa-sport.com")
   }
