@@ -17,7 +17,6 @@
     .tone-media {
         .item__timestamp:before {
             @include icon(clock-yellow, false);
-            @extend %facia-card-media-icon;
         }
     }
 
@@ -43,14 +42,12 @@
     .tone-live {
         .item__timestamp:before {
             @include icon(clock-light-pink, false);
-            @extend %facia-card-media-icon;
         }
     }
 
     .tone-feature {
         .item__timestamp:before {
             @include icon(clock-light-pink, false);
-            @extend %facia-card-media-icon;
         }
     }
 
@@ -60,11 +57,6 @@
             @extend %facia-card-media-icon;
             height: .8em;
             width: 1em;
-        }
-
-        .item__timestamp:before {
-            @include icon(clock-grey, false);
-            @extend %facia-card-media-icon;
         }
     }
 }
