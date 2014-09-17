@@ -15,9 +15,11 @@
 @if(items.nonEmpty) {
     <div class="linkslist-container js-container--show-more">
         <ul class="linkslist u-unstyled l-row l-row--items-4 l-row--layout-m facia-slice">
-        @items.zipWithIndex.map { case (trail, index) =>
-            @list(trail, index + indexOffset, containerIndex)
-        }
+            @items.zipWithIndex.map { case (trail, index) =>
+                <li class="@GetClasses.forCollectionItem(trail)">
+                    @list(trail, index + indexOffset, containerIndex)
+                </li>
+            }
         </ul>
     </div>
 }

@@ -5,7 +5,6 @@
 @import views.support.{GetClasses, RemoveOuterParaHtml, RenderClasses, SnapData}
 @import views.html.fragments.items.facia_cards.meta
 
-<li class="@GetClasses.forCollectionItem(trail)">
 @defining((trail.visualTone, containerIndex == 0)) { case (tone, isFirstContainer) =>
 <div class="@GetClasses.forNewStyleItem(trail, isFirstContainer)"
     @if(trail.isCommentable) {
@@ -45,4 +44,3 @@
         <a @LinkTo(trail).map{url=>href="@url"} class="u-faux-block-link__overlay" data-link-name="article" tabindex="-1">@RemoveOuterParaHtml(trail.headline)</a>
     </div>
 }
-</li>
