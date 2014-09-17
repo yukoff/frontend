@@ -42,8 +42,39 @@
                 }
             }
         }
-        .item--has-cutout {
-            padding-bottom: $gs-baseline * 2.5;
+    }
+
+    .item-list {
+        width: 100%;
+        float: left;
+        @include flex-display;
+        @include flex-direction(column);
+
+        .item-list__item {
+            position: relative;
+            @include flex-display;
+            @include flex(1);
+            margin-bottom: $gs-baseline;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .item {
+
+            .has-flex-wrap & {
+                @include flex-grow(0);
+                @include flex-basis(100%);
+
+                @include mq(mobileLandscape) {
+                    @include flex-basis(100%);
+                }
+            }
+
+            .item--has-cutout {
+                padding-bottom: $gs-baseline * 2.5;
+            }
         }
     }
 }
