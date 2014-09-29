@@ -1,7 +1,7 @@
-@(page: MetaData, collection: Collection, style: NewsContainer, containerIndex: Int)(implicit request: RequestHeader, templateDeduping: TemplateDeduping, config: Config)
+@(page: model.MetaData, collection: Collection, style: NewsContainer, containerIndex: Int)(implicit request: RequestHeader, templateDeduping: TemplateDeduping, config: Config)
 
 @import common.Edition
-@import model.{Collection, Config, FaciaComponentName, MetaData}
+@import model.{Collection, Config, FaciaComponentName}
 @import views.support.{GetClasses, NewsContainer, RenderClasses, TemplateDeduping}
 
 @defining(config.displayName.orElse(collection.displayName)) { title =>
@@ -22,9 +22,15 @@
                         <div class="container__border tone-@style.tone tone-accent-border"></div>
                         <div class="@RenderClasses(Map(
                             ("container__header", true),
-                            ("hide-on-mobile", (FaciaComponentName(config, collection) == "top-stories"))))">
+                            ("hide-on-mobile", FaciaComponentName(config, collection) == "top-stories")))">
                             <h2 class="container__title">
-                                @fragments.containers.elements.dateOrTitle(collection, items)
+                                @if(Edition.isEditionFront) {
+                                    @fragments.containers.elements.editionTitle(collection, items)
+                                } else {
+                                    @config.displayName.orElse(collection.displayName).map { title =>
+                                        @fragments.containers.elements.pageTitle(title)
+                                    }
+                                }
                             </h2>
                         </div>
                         <div class="container__body container--rolled-up-hide">

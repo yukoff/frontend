@@ -1,0 +1,8 @@
+@(title: String)(implicit request: RequestHeader, config: model.Config)
+
+@if(config.href) {
+    <a class="container__title__label u-text-hyphenate" data-link-name="section heading"
+    href="@config.href">@title</a>
+} else {
+    <span class="container__title__label u-text-hyphenate">@title</span>
+}

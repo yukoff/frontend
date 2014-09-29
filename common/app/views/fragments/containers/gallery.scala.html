@@ -6,7 +6,7 @@
 
 @defining(config.displayName.orElse(collection.displayName)) { title =>
     @defining(templateDeduping(10, collection.items)) { items =>
-        @defining(Edition.editionFronts.contains(request.uri.toLowerCase)) { isEdition =>
+        @defining(Edition.isEditionFront) { isEdition =>
             @if(items.nonEmpty) {
                 <section
                     class="@GetClasses.forContainer(style, config, containerIndex, title.nonEmpty, if (!isEdition) Seq("container--tag") else Nil) container--gallery"
@@ -26,7 +26,9 @@
                                     ("container__header", true),
                                     ("hide-on-mobile", (FaciaComponentName(config, collection) == "top-stories"))))">
                                     <h2 class="container__title">
-                                        @fragments.containers.elements.dateOrTitle(collection, items)
+                                        @config.displayName.orElse(collection.displayName).map { title =>
+                                            @fragments.containers.elements.pageTitle(title)
+                                        }
                                     </h2>
                                 </div>
                                 <div class="container__body container--rolled-up-hide">
