@@ -1,6 +1,7 @@
 package model
 
 import com.gu.openplatform.contentapi.model.{Tag => ApiTag, Podcast}
+import conf.Configuration.facebook
 import common.{Pagination, Reference}
 import play.api.libs.json.{JsArray, JsString, JsValue}
 import views.support.{Contributor, ImgSrc, Item140}
@@ -22,9 +23,11 @@ case class Tag(private val delegate: ApiTag, override val pagination: Option[Pag
 
   lazy val contributorImagePath: Option[String] = delegate.bylineImageUrl.map(ImgSrc(_, Contributor))
 
-  lazy val openGraphImage: Option[String] = delegate.bylineImageUrl.map(ImgSrc(_, Item140)).map { s: String =>
-    if (s.startsWith("//")) s"http:$s" else s
-  }
+  lazy val openGraphImage: Option[String] =
+    delegate.bylineImageUrl.map { s: String => if (s.startsWith("//")) s"http:$s" else s }
+    .orElse(Some(facebook.imageFallback))
+    .map(ImgSrc(_, Item140))
+
   lazy val openGraphDescription: Option[String] = if (bio.nonEmpty) Some(bio) else description
 
   lazy val contributorLargeImagePath: Option[String] = delegate.bylineLargeImageUrl.map(ImgSrc(_, Item140))
