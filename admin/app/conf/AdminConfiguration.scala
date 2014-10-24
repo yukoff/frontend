@@ -44,6 +44,8 @@ object AdminConfiguration {
       secret <- configuration.getStringProperty("admin.omniture.secret")
     } yield OmnitureCredentials(userName, secret)
 
+  lazy val googleWMTApiKey: Option[String] = configuration.getStringProperty("admin.google.wmt.api.key")
+
   object db {
     object default {
       lazy val driver = configuration.getStringProperty("default.driver")
