@@ -15,7 +15,7 @@ class AccountFormData$Test extends FunSuite with Matchers {
       billingPostcode = None
     ))
 
-    AccountFormData(user).billingAddress should equal(None)
+    AccountFormData(user).billingAddress should equal(AddressFormData(None, None, None, None, None, None))
   }
 
   test("if at list one billing address field present in the ID API for a given user than populate the form field") {
@@ -28,7 +28,7 @@ class AccountFormData$Test extends FunSuite with Matchers {
       billingPostcode = None
     ))
 
-    AccountFormData(user).billingAddress should equal(Some(AddressFormData("address 1", "", "", "", "", "")))
+    AccountFormData(user).billingAddress should equal(AddressFormData(Some("address 1"), None, None, None, None, None))
   }
 
 }

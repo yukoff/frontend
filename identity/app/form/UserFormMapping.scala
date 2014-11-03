@@ -29,4 +29,11 @@ trait UserFormData {
     case (nv, Some(curr)) if(nv == curr) => None
     case (nv, _) => Some(nv)
   }
+
+  protected def toUpdate[T](newValue: Option[T], current: Option[T]): Option[T] = (newValue, current) match {
+    case (None, Some(value)) => Some(value)
+    case (Some(value), None) => Some(value)
+    case (None, None) => None
+    case (Some(x), Some(y)) => Some(x)
+  }
 }

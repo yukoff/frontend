@@ -13,12 +13,12 @@ trait AddressMapping extends Mappings{
   )
 
   val idAddress = mapping(
-    ("line1", idAddressLine),
-    ("line2", idAddressLine),
-    ("line3", idAddressLine),
-    ("line4", idAddressLine),
-    ("postcode", textField),
-    ("country", idCountry)
+    ("line1", optional(idAddressLine)),
+    ("line2", optional(idAddressLine)),
+    ("line3", optional(idAddressLine)),
+    ("line4", optional(idAddressLine)),
+    ("postcode", optional(textField)),
+    ("country", optional(idCountry))
   )(AddressFormData.apply)(AddressFormData.unapply) verifying(
     "error.postcode",
     { address => address.isValidPostcodeOrZipcode
@@ -27,29 +27,24 @@ trait AddressMapping extends Mappings{
 }
 
 case class AddressFormData(
-  address1: String,
-  address2: String,
-  address3: String,
-  address4: String,
-  postcode: String,
-  country: String
+  address1: Option[String],
+  address2: Option[String],
+  address3: Option[String],
+  address4: Option[String],
+  postcode: Option[String],
+  country: Option[String]
 ){
   import Countries.{UK, US}
 
   lazy val isValidPostcodeOrZipcode: Boolean = country match{
-    case UK =>  isValidUkPostcode
-    case US =>  isValidUsZipcode
+    case Some(UK) =>  isValidUkPostcode.isDefined
+    case Some(US) =>  isValidUsZipcode.isDefined
     case _ => true
   }
 
   private val ZipcodePattern = """^\d{5}(?:[-\s]\d{4})?$""".r
-  private lazy val isValidUsZipcode = {
-      postcode.isEmpty || ZipcodePattern.findFirstIn(postcode).isDefined
-  }
+  private lazy val isValidUsZipcode = postcode.filter( x => x.isEmpty || ZipcodePattern.findFirstIn(x).isDefined )
 
-   private val PostcodePattern = """^(GIR 0AA)|((([A-Z-[QVX]][0-9][0-9]?)|(([A-Z-[QVX]][A-Z-[IJZ]][0-9][0-9]?)|(([A-Z-[QVX]][0-9][A-HJKSTUW])|([A-Z-[QVX]][A-Z-[IJZ]][0-9][ABEHMNPRVWXY])))) [0-9][A-Z-[CIKMOV]]{2})$""".r
-
-  private lazy val isValidUkPostcode = {
-      postcode.isEmpty || PostcodePattern.findFirstIn(postcode).isDefined
-  }
+  private val PostcodePattern = """^(GIR 0AA)|((([A-Z-[QVX]][0-9][0-9]?)|(([A-Z-[QVX]][A-Z-[IJZ]][0-9][0-9]?)|(([A-Z-[QVX]][0-9][A-HJKSTUW])|([A-Z-[QVX]][A-Z-[IJZ]][0-9][ABEHMNPRVWXY])))) [0-9][A-Z-[CIKMOV]]{2})$""".r
+  private lazy val isValidUkPostcode = postcode.filter( x => x.isEmpty || PostcodePattern.findFirstIn(x).isDefined )
 }

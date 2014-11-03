@@ -16,7 +16,7 @@ object AccountDetailsMapping extends UserFormMapping[AccountFormData] with Addre
       ("gender", comboList(genders)),
       "birthDate" -> dateMapping,
       "address" -> idAddress,
-      "billingAddress" -> optional(idAddress)
+      "billingAddress" -> idAddress
     )(AccountFormData.apply)(AccountFormData.unapply)
   }
 
@@ -53,7 +53,7 @@ case class AccountFormData(
   gender: String,
   birthDate: DateFormData,
   address: AddressFormData,
-  billingAddress: Option[AddressFormData]
+  billingAddress: AddressFormData
 ) extends UserFormData {
 
   def toUserUpdate(currentUser: User): UserUpdate = UserUpdate(
@@ -69,44 +69,35 @@ case class AccountFormData(
       address4 = toUpdate(address.address4, currentUser.privateFields.address4),
       postcode = toUpdate(address.postcode, currentUser.privateFields.postcode),
       country = toUpdate(address.country, currentUser.privateFields.country),
-      billingAddress1 = billingAddress.flatMap(x => toUpdate(x.address1, currentUser.privateFields.billingAddress1)),
-      billingAddress2 = billingAddress.flatMap(x => toUpdate(x.address2, currentUser.privateFields.billingAddress2)),
-      billingAddress3 = billingAddress.flatMap(x => toUpdate(x.address3, currentUser.privateFields.billingAddress3)),
-      billingAddress4 = billingAddress.flatMap(x => toUpdate(x.address4, currentUser.privateFields.billingAddress4)),
-      billingPostcode = billingAddress.flatMap(x => toUpdate(x.postcode, currentUser.privateFields.billingPostcode)),
-      billingCountry = billingAddress.flatMap(x => toUpdate(x.country, currentUser.privateFields.billingCountry))
+      billingAddress1 = toUpdate(billingAddress.address1, currentUser.privateFields.billingAddress1),
+      billingAddress2 = toUpdate(billingAddress.address2, currentUser.privateFields.billingAddress2),
+      billingAddress3 = toUpdate(billingAddress.address3, currentUser.privateFields.billingAddress3),
+      billingAddress4 = toUpdate(billingAddress.address4, currentUser.privateFields.billingAddress4),
+      billingPostcode = toUpdate(billingAddress.postcode, currentUser.privateFields.billingPostcode),
+      billingCountry = toUpdate(billingAddress.country, currentUser.privateFields.billingCountry)
     ))
   )
 }
 
 object AccountFormData {
 
-  def apply(user: User): AccountFormData = AccountFormData(
-    primaryEmailAddress = user.primaryEmailAddress,
-    firstName = user.privateFields.firstName getOrElse "",
-    secondName = user.privateFields.secondName getOrElse "",
-    gender = user.privateFields.gender getOrElse "unknown",
-    birthDate = DateFormData(user.dates.birthDate),
-    address = AddressFormData(
-      address1 = user.privateFields.address1 getOrElse "",
-      address2 = user.privateFields.address2 getOrElse "",
-      address3 = user.privateFields.address3 getOrElse "",
-      address4 = user.privateFields.address4 getOrElse "",
-      postcode = user.privateFields.postcode getOrElse "",
-      country = user.privateFields.country getOrElse ""
-    ),
-    billingAddress = {
-      import user.privateFields._
-      if (List(billingAddress1, billingAddress2, billingAddress3, billingAddress4, billingPostcode, billingCountry).flatten.isEmpty)
-        None
-      else
-        Some(AddressFormData(
-          billingAddress1.getOrElse(""),
-          billingAddress2.getOrElse(""),
-          billingAddress3.getOrElse(""),
-          billingAddress4.getOrElse(""),
-          billingPostcode.getOrElse(""),
-          billingCountry.getOrElse("")))
-    }
-  )
+  def apply(user: User): AccountFormData = {
+    import user.privateFields._
+    AccountFormData(
+      primaryEmailAddress = user.primaryEmailAddress,
+      firstName = firstName getOrElse "",
+      secondName = secondName getOrElse "",
+      gender = gender getOrElse "unknown",
+      birthDate = DateFormData(user.dates.birthDate),
+      address = AddressFormData(address1, address2, address3,  address4, postcode, country),
+      billingAddress = AddressFormData(
+        billingAddress1,
+        billingAddress2,
+        billingAddress3,
+        billingAddress4,
+        billingPostcode,
+        billingCountry
+      )
+    )
+  }
 }
