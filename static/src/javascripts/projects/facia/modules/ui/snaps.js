@@ -73,8 +73,8 @@ define([
 
         // Wrapping iframe to fix iOS height-setting bug
         bonzo(el).html(template(
-            '<div style="height:{{height}}px; overflow:hidden; width: 100%;">' +
-                '<iframe src="{{src}}" style="height:{{height}}px; width: 100%; border: none;"></iframe>' +
+            '<div style="min-height:{{height}}px; overflow:hidden; width: 100%;">' +
+                '<iframe src="{{src}}" style="height:400px; width: 100%; border: none;"></iframe>' +
             '</div>',
             {src: el.getAttribute('data-snap-uri'), height: Math.min(Math.max(spec.height || 0, minIframeHeight), maxIframeHeight)}
         ));
