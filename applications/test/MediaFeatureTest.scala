@@ -1,5 +1,6 @@
 package test
 
+import conf.Switches
 import org.scalatest.{DoNotDiscover, Matchers, GivenWhenThen, FeatureSpec}
 
 @DoNotDiscover class MediaFeatureTest extends FeatureSpec with GivenWhenThen with Matchers with ConfiguredTestSuite {
@@ -68,7 +69,8 @@ import org.scalatest.{DoNotDiscover, Matchers, GivenWhenThen, FeatureSpec}
       }
     }
 
-    scenario("Twitter cards should appear in video article meta data") {
+    scenario("Twitter cards should appear in video article meta data and be of type 'summary_large_image' when TwitterShareWithInlineVideo is switched OFF") {
+      Switches.TwitterShareWithInlineVideo.switchOff()
       goTo("/world/video/2014/nov/05/easyjet-flight-aborts-landing-last-minute-video") { browser =>
         import browser._
         findFirst("meta[name='twitter:site']").getAttribute("content") should be("@guardian")
@@ -76,5 +78,30 @@ import org.scalatest.{DoNotDiscover, Matchers, GivenWhenThen, FeatureSpec}
         findFirst("meta[name='twitter:card']").getAttribute("content") should be("summary_large_image")
       }
     }
+
+    scenario("Twitter cards should appear in video article meta data and be of type 'player' when TwitterShareWithInlineVideo is switched ON") {
+      Switches.TwitterShareWithInlineVideo.switchOn()
+      goTo("/world/video/2014/nov/05/easyjet-flight-aborts-landing-last-minute-video") { browser =>
+        import browser._
+        val url = findFirst("link[rel='canonical']").getAttribute("href")
+        findFirst("meta[name='twitter:site']").getAttribute("content") should be("@guardian")
+        findFirst("meta[name='twitter:app:url:googleplay']").getAttribute("content") should be("guardian://www.theguardian.com/world/video/2014/nov/05/easyjet-flight-aborts-landing-last-minute-video")
+        findFirst("meta[name='twitter:card']").getAttribute("content") should be("player")
+        val player = findFirst("meta[name='twitter:player']")
+        // TODO: find https source of video pages
+        //player.getAttribute("content") should startWith("https://")
+        player.getAttribute("content") should endWith("/world/video/2014/nov/05/easyjet-flight-aborts-landing-last-minute-video")
+        findFirst("meta[name='twitter:player:width']").getAttribute("content") should be("360")
+        findFirst("meta[name='twitter:player:height']").getAttribute("content") should be("480")
+        val stream = findFirst("meta[name='twitter:player:stream']")
+        // TODO: find https source of video files
+        //stream.getAttribute("content") should startWith("https://")
+        stream.getAttribute("content") should endWith(".mp4")
+        findFirst("meta[name='twitter:player:stream:content_type']").getAttribute("content") should be("video/mp4")
+      }
+      Switches.TwitterShareWithInlineVideo.switchOff()
+    }
   }
+
+
 }

@@ -324,6 +324,11 @@ object Switches extends Collections {
     safeState = Off, sellByDate = never
   )
 
+  val TwitterShareWithInlineVideo = Switch("Feature", "tweet-share-inline-video",
+    "If this switch is ON, we'll create video player twitter cards. Off, we'll just use the image.",
+    safeState = Off, sellByDate = new LocalDate(2014, 11, 30)
+  )
+
   val EnhancedMediaPlayerSwitch = Switch("Feature", "enhanced-media-player",
     "If this is switched on then videos are enhanced using our JavaScript player",
     safeState = On, sellByDate = never

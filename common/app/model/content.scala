@@ -6,6 +6,7 @@ import com.gu.contentapi.client.model.{
 }
 import common.{LinkCounts, LinkTo, Reference}
 import conf.Configuration.facebook
+import conf.Switches
 import dfp.DfpAgent
 import fronts.MetadataDefaults
 import ophan.SurgingContentAgent
@@ -595,9 +596,34 @@ class Video(content: ApiContentWithMeta) extends Media(content) {
 
   def endSlatePath = EndSlateComponents.fromContent(this).toUriPath
 
-  override def cards: List[(String, String)] = super.cards ++ List(
-    "twitter:card" -> "summary_large_image"
-  )
+  override def cards: List[(String, String)] = {
+
+    // TODO: remove the switch when we're done
+    //Switches.TwitterShareWithInlineVideo.switchOn()
+
+    val videoCard = if (Switches.TwitterShareWithInlineVideo.isSwitchedOn) {
+      videoAssets.filter(videoIsValidForTwitterCard).toList.map { vAsset =>
+        List(
+          "twitter:card" -> "player",
+          "twitter:player" -> content.delegate.webUrl, // TODO: not sure this is correct for "container"
+          "twitter:player:width" -> vAsset.height.toString,
+          "twitter:player:height" -> vAsset.width.toString,
+          "twitter:player:stream" -> vAsset.url.get, // TODO: this needs to be on an https url
+          "twitter:player:stream:content_type" -> vAsset.mimeType.get
+        )
+      }.headOption.getOrElse(List("twitter:card" -> "summary_large_image"))
+    } else {
+      List("twitter:card" -> "summary_large_image")
+    }
+    super.cards ++ videoCard
+  }
+
+  private def videoIsValidForTwitterCard(videoAsset: VideoAsset) = {
+    videoAsset.mimeType.isDefined &&
+      videoAsset.url.isDefined &&
+      videoAsset.mimeType.isDefined &&
+      videoAsset.mimeType.get == "video/mp4"
+  }
 }
 
 object Video {
