@@ -49,7 +49,7 @@ function (
                 var capiItem,
                     icc,
                     err,
-                    convertSnapMsg = 'Click OK to create a { ' + vars.CONST.latestSnapPrefix + resultsTitle + ' } item, or Cancel to just create a link...';
+                    convertSnapMsg = 'Click OK to create a { ' + vars.CONST.latestSnapPrefix + (resultsTitle || '...') + ' } item, or Cancel to just create a link...';
 
                 // ContentApi item
                 if (results && results.length === 1) {

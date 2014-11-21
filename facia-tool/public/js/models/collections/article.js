@@ -642,16 +642,23 @@ define([
 
         Article.prototype.convertToLatestSnap = function(kicker) {
             this.meta.snapType('latest');
-            this.meta.snapUri(urlAbsPath(this.id()));
+
+            if (urlHost(this.id()).indexOf('guardianapis') > -1) {
+                this.meta.snapUri(urlAbsPath(this.id(), true));
+                this.id(undefined)
+            } else {
+                this.meta.snapUri(urlAbsPath(this.id()));
+            }
 
             this.meta.showKickerCustom(true);
-            this.meta.customKicker(vars.CONST.latestSnapPrefix + kicker);
+            this.meta.customKicker(vars.CONST.latestSnapPrefix + (kicker || '...'));
 
             this.meta.headline(undefined);
             this.meta.trailText(undefined);
             this.meta.byline(undefined);
 
             this.state.enableContentOverrides(false);
+
 
             this.convertToSnap();
         };

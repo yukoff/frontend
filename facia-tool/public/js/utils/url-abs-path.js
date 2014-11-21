@@ -1,5 +1,5 @@
 define(function() {
-    return function(url) {
+    return function(url, withQuery) {
         var a, path;
         if(typeof url !== 'string') { return; }
 
@@ -8,7 +8,7 @@ define(function() {
 
         a = document.createElement('a');
         a.href = url;
-        path = a.pathname;
+        path = a.pathname + (withQuery ? a.search : '');
 
         // Return the abspath without a leading slash (because ContentApi ids are formed like that)
         return path.indexOf('/') === 0 ? path.substr(1) : path;
