@@ -264,8 +264,8 @@ case class PictureCleaner(article: Article) extends HtmlCleaner with implicits.N
             val html = views.html.fragments.share.blockLevelSharing(hashSuffix, article.elementShares(Some(hashSuffix), image.url), article.contentType)
             img.after(html.toString())
 
-            img.wrap("<a href='" + article.url + "#img-" + linkIndex + "' class='gallery2__img-container js-gallerythumbs' data-link-name='Launch Article Lightbox' data-is-ajax></a>")
-            img.after("<span class='gallery2__fullscreen'><i class='i i-expand-white'></i><i class='i i-expand-black'></i></span>")
+            img.wrap("<a href='" + article.url + "#img-" + linkIndex + "' class='article__img-container js-gallerythumbs' data-link-name='Launch Article Lightbox' data-is-ajax></a>")
+            img.after("<span class='article__fullscreen'><i class='i i-expand-white'></i><i class='i i-expand-black'></i></span>")
           }
         }
 
@@ -746,6 +746,18 @@ object `package` extends Formats {
   implicit class Seq2zipWithRowInfo[A](seq: Seq[A]) {
     def zipWithRowInfo = seq.zipWithIndex.map {
       case (item, index) => (item, RowInfo(index + 1, seq.length == index + 1))
+    }
+  }
+}
+
+object AuFriendlyFormat {
+  def apply(date: DateTime)(implicit request: RequestHeader): String = {
+    val edition = Edition(request)
+    val timezone = edition.timezone
+
+    edition.id match {
+      case "AU" => date.toString(DateTimeFormat.forPattern("HH.mm").withZone(timezone)) + " AEST"
+      case _ => date.toString(DateTimeFormat.forPattern("HH.mm z").withZone(timezone))
     }
   }
 }

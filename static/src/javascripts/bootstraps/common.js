@@ -55,7 +55,8 @@ define([
     'bootstraps/identity',
 
     'text!common/views/release-message.html',
-    'text!common/views/release-message-compulsory.html'
+    'text!common/views/release-message-compulsory.html',
+    'text!common/views/release-message-launched.html'
 ], function (
     bean,
     bonzo,
@@ -110,7 +111,8 @@ define([
     identity,
 
     releaseMessageTpl,
-    releaseMessageCompulsoryTpl
+    releaseMessageCompulsoryTpl,
+    releaseMessageLaunchedTpl
 ) {
 
     var modules = {
@@ -257,9 +259,10 @@ define([
             // display a flash message to devices over 600px who don't have the mobile cookie
             displayReleaseMessage: function () {
 
-                var exitLink, feedbackLink, shift,
+                var exitLink, shift,
                     path = (document.location.pathname) ? document.location.pathname : '/',
-                    releaseMessage = new Message('alpha', {pinOnHide: true});
+                    releaseMessage = new Message('alpha', {pinOnHide: true}),
+                    feedbackLink = 'https://www.surveymonkey.com/s/theguardian-' + (config.page.edition || 'uk').toLowerCase() + '-edition-feedback';
 
                 if (
                     config.switches.releaseMessage &&
@@ -270,9 +273,6 @@ define([
                     cookies.add('GU_VIEW', 'responsive', 365);
 
                     exitLink = '/preference/platform/classic?page=' + encodeURIComponent(path + '?view=classic');
-
-                    feedbackLink = 'https://www.surveymonkey.com/s/theguardian-' +
-                        (config.page.edition || 'uk').toLowerCase() + '-edition-feedback';
 
                     // The shift cookie may be 'in|...', 'ignore', or 'out'.
                     shift = cookies.get('GU_SHIFT') || '';
@@ -293,6 +293,13 @@ define([
                             }
                         ));
                     }
+                } else if (config.page.edition === 'AU' &&  config.page.section === 'commentisfree') {
+                    releaseMessage.show(template(
+                        releaseMessageLaunchedTpl,
+                        {
+                            feedbackLink: feedbackLink
+                        }
+                    ));
                 }
             },
 
@@ -407,6 +414,15 @@ define([
                 }
             },
 
+            adTestCookie: function () {
+                var queryParams = url.getUrlVars();
+                if (queryParams.adtest === 'clear') {
+                    cookies.remove('adtest');
+                } else if (queryParams.adtest) {
+                    cookies.add('adtest', encodeURIComponent(queryParams.adtest), 10);
+                }
+            },
+
             initReleaseMessage: function () {
                 releaseMessage.init();
             },
@@ -448,6 +464,7 @@ define([
             modules.initDiscussion();
             modules.initFastClick();
             modules.testCookie();
+            modules.adTestCookie();
             modules.windowEventListeners();
             modules.initShareCounts();
             modules.initialiseFauxBlockLink();

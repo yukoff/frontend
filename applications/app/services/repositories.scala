@@ -9,8 +9,9 @@ import common._
 import com.gu.contentapi.client.model.{SearchResponse, ItemResponse}
 import org.joda.time.DateTime
 import org.scala_tools.time.Implicits._
-import contentapi.QueryDefaults
+import contentapi.{Paths, QueryDefaults}
 import slices._
+import views.support.{ReviewKicker, TagKicker, CartoonKicker}
 import scala.concurrent.Future
 import play.api.mvc.{RequestHeader, Result => PlayResult}
 import com.gu.contentapi.client.GuardianContentApiError
@@ -36,16 +37,40 @@ object IndexPagePagination {
 case class MpuState(injected: Boolean)
 
 object IndexPage {
-  def containerWithMpu(numberOfItems: Int): Option[ContainerDefinition] = numberOfItems match {
-    case 2 => Some(FixedContainers.indexPageMpuII)
-    case 4 => Some(FixedContainers.indexPageMpuIV)
-    case 6 => Some(FixedContainers.indexPageMpuVI)
-    case n if n >= 9 => Some(FixedContainers.indexPageMpuIX)
+  val TagsThatForceDayView = Set(
+    "world/series/eyewitness",
+    "type/cartoon",
+    "type/gallery",
+    "lifeandstyle/series/last-bites",
+    "news/series/ten-best-photographs-of-the-day"
+  )
+
+  def fastContainerWithMpu(numberOfItems: Int): Option[ContainerDefinition] = numberOfItems match {
+    case 2 => Some(FixedContainers.fastIndexPageMpuII)
+    case 4 => Some(FixedContainers.fastIndexPageMpuIV)
+    case 6 => Some(FixedContainers.fastIndexPageMpuVI)
+    case n if n >= 9 => Some(FixedContainers.fastIndexPageMpuIX)
+    case _ => None
+  }
+
+  def slowContainerWithMpu(numberOfItems: Int): Option[ContainerDefinition] = numberOfItems match {
+    case 2 => Some(FixedContainers.slowIndexPageMpuII)
+    case 4 => Some(FixedContainers.slowIndexPageMpuIV)
+    case 5 => Some(FixedContainers.slowIndexPageMpuV)
+    case 7 => Some(FixedContainers.slowIndexPageMpuVII)
     case _ => None
   }
 
   def makeFront(indexPage: IndexPage, edition: Edition) = {
-    val grouped = IndexPageGrouping.fromContent(indexPage.trails, edition.timezone)
+    val isCartoonPage = indexPage.isTagWithId("type/cartoon")
+    val isReviewPage = indexPage.isTagWithId("tone/reviews")
+
+    val isDayViewForced = TagsThatForceDayView.exists(indexPage.isTagWithId)
+
+    val grouped = if (isDayViewForced)
+      IndexPageGrouping.byDay(indexPage.trails, edition.timezone)
+    else
+      IndexPageGrouping.fromContent(indexPage.trails, edition.timezone)
 
     val containerDefinitions = grouped.toList.mapAccumL(MpuState(injected = false)) {
       case (mpuState, grouping) =>
@@ -53,21 +78,36 @@ object IndexPage {
           grouping.items
         )
 
-        val (container, newMpuState) = containerWithMpu(grouping.items.length).filter(const(!mpuState.injected)) map { mpuContainer =>
+        val mpuContainer = (if (isDayViewForced)
+          slowContainerWithMpu(grouping.items.length)
+        else
+          fastContainerWithMpu(grouping.items.length)).filter(const(!mpuState.injected))
+
+        val (container, newMpuState) = mpuContainer map { mpuContainer =>
           (mpuContainer, mpuState.copy(injected = true))
         } getOrElse {
-          (ContainerDefinition.forNumberOfItems(grouping.items.length), mpuState)
+          val containerDefinition = if (isDayViewForced) {
+            ContainerDefinition.slowForNumberOfItems(grouping.items.length)
+          } else {
+            ContainerDefinition.fastForNumberOfItems(grouping.items.length)
+          }
+
+          (containerDefinition, mpuState)
         }
 
-        (newMpuState, ((CollectionConfigWithId(grouping.dateHeadline.displayString, CollectionConfig.emptyConfig.copy(
-          displayName = Some(grouping.dateHeadline.displayString)
-        )), collection),
-          Fixed(container)))
+        val containerConfig = ContainerDisplayConfig(
+          CollectionConfigWithId(grouping.dateHeadline.displayString, CollectionConfig.emptyConfig.copy(
+            displayName = Some(grouping.dateHeadline.displayString)
+          )),
+          showSeriesAndBlogKickers = true
+        )
+
+        (newMpuState, ((containerConfig, collection), Fixed(container)))
     }._2.toSeq
 
     val front = Front.fromConfigsAndContainers(
       containerDefinitions,
-      ContainerLayoutContext(Set.empty, hideCutOuts = true)
+      ContainerLayoutContext(Set.empty, hideCutOuts = indexPage.page.isContributorPage)
     )
 
     val headers = grouped.map(_.dateHeadline).zipWithIndex map { case (headline, index) =>
@@ -98,14 +138,39 @@ object IndexPage {
         showTimestamps = true,
         dateLinkPath = Some(s"/${indexPage.page.id}")
       ).transformCards({ card =>
-        card.copy(timeStampDisplay = Some(timeStampDisplay))
+        card.copy(
+          timeStampDisplay = Some(timeStampDisplay),
+          byline = if (indexPage.page.isContributorPage) None else card.byline
+        ).setKicker(card.header.kicker flatMap {
+          case ReviewKicker if isReviewPage => None
+          case CartoonKicker if isCartoonPage => None
+          case TagKicker(_, _, id) if indexPage.isTagWithId(id) => None
+          case otherKicker => Some(otherKicker)
+        })
       })
     }))
   }
 }
 
 case class IndexPage(page: MetaData, trails: Seq[Content],
-                     date: DateTime = DateTime.now)
+                     date: DateTime = DateTime.now) {
+  def isTagWithId(id: String) = page match {
+    case section: Section =>
+      val sectionId = section.id
+
+      Set(
+        Some(s"$sectionId/$sectionId"),
+        Paths.withoutEdition(sectionId) map { idWithoutEdition => s"$idWithoutEdition/$idWithoutEdition" }
+      ).flatten contains id
+
+    case tag: Tag => tag.id == id
+
+    case combiner: TagCombiner =>
+      combiner.leftTag.id == id || combiner.rightTag.id == id
+
+    case _ => false
+  }
+}
 
 trait Index extends ConciergeRepository with QueryDefaults {
 
@@ -166,15 +231,8 @@ trait Index extends ConciergeRepository with QueryDefaults {
           //we can use .head here as the query is guaranteed to return the 2 tags
           val tag1 = findTag(head, firstTag)
           val tag2 = findTag(head, secondTag)
-          val pageName = s"${tag1.name} + ${tag2.name}"
-          val page = Page(
-            s"$leftSide+$rightSide",
-            tag1.section,
-            pageName,
-            s"GFE:${tag1.section}:$pageName",
-            pagination = pagination(response),
-            maybeContentType = Some(GuardianContentTypes.TagIndex)
-          )
+
+          val page = new TagCombiner(s"$leftSide+$rightSide", tag1, tag2, pagination(response))
 
           Left(IndexPage(page, trails))
       }
