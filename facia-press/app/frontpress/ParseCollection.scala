@@ -169,11 +169,18 @@ trait ParseCollection extends ExecutionContexts with QueryDefaults with Logging 
           if (collectionItem.isSnap) {
             if (collectionItem.meta.exists(_.snapType.exists(_ == "latest")))
               ls.get(collectionItem.meta.flatMap(_.snapUri).getOrElse("")).map { item =>
+
+                val newTrailMetaData =
+                  if (collectionItem.meta.exists(_.snapUri.exists(_.startsWith("search"))))
+                    collectionItem.meta.map(trailMetaData => trailMetaData.copy(json = trailMetaData.json - "snapUri"))
+                  else
+                    collectionItem.meta
+
                 SnapLatest(
                   item.id,
                   Nil, //No Supporting for a latest snap
                   new DateTime(collectionItem.frontPublicationDate),
-                  collectionItem.meta,
+                  newTrailMetaData,
                   item.elements.getOrElse(Nil),
                   item.safeFields,
                   item.tags.map(Tag(_))
