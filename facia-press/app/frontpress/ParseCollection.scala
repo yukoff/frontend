@@ -108,12 +108,26 @@ trait ParseCollection extends ExecutionContexts with QueryDefaults with Logging 
       .filter(c => c.meta.exists(_.snapType.exists(_ == "latest")))
       .flatMap(c => c.meta.flatMap(_.snapUri))
 
-    Future.traverse(latestSnapSearches) { id =>
-      LiveContentApi.item(id, Edition.defaultEdition)
-        .showFields(showFieldsWithBodyQuery)
-        .pageSize(1)
-        .response
-        .map(_.results.headOption.map(id -> _))
+    Future.traverse(latestSnapSearches) {
+        case id@Path(Seg("search" :: Nil)) =>
+          val queryParams: Map[String, String] = QueryParams.get(id).mapValues(_.mkString(""))
+          val queryParamsWithEdition = queryParams + ("edition" -> queryParams.getOrElse("edition", Edition.defaultEdition.id))
+          val search = client.search(Edition.defaultEdition)
+            .showElements("all")
+            .pageSize(20)
+          val newSearch = queryParamsWithEdition.foldLeft(search) {
+            case (query, (key, value)) => query.stringParam(key, value)
+          }.showFields(showFieldsQuery)
+
+          newSearch.response
+            .map(_.results.headOption.map(id -> _))
+
+        case Path(uri) =>
+          LiveContentApi.item(uri, Edition.defaultEdition)
+            .showFields(showFieldsWithBodyQuery)
+            .pageSize(1)
+            .response
+            .map(_.results.headOption.map(uri -> _))
     }
     .map(_.flatten)
     .map(_.toMap)
