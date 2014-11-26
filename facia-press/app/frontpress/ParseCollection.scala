@@ -108,7 +108,7 @@ trait ParseCollection extends ExecutionContexts with QueryDefaults with Logging 
       .filter(c => c.meta.exists(_.snapType.exists(_ == "latest")))
       .flatMap(c => c.meta.flatMap(_.snapUri))
 
-    Future.traverse(latestSnapSearches) {
+    Futures.batchedTraverse(latestSnapSearches, Configuration.faciatool.frontPressItemSearchBatchSize) {
         case id@Path(Seg("search" :: Nil)) =>
           val queryParams: Map[String, String] = QueryParams.get(id).mapValues(_.mkString(""))
           val queryParamsWithEdition = queryParams + ("edition" -> queryParams.getOrElse("edition", Edition.defaultEdition.id))
