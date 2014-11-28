@@ -316,6 +316,11 @@ object Switches extends Collections {
     safeState = On, sellByDate = never
   )
 
+  val RestrictGalleryPortraitImageHeightForOpengraphSwitch = Switch("Feature", "opengraph-portrait-height-restrict",
+    "ON: restricts height of portrait gallery opengraph images to ~630px. OFF: use the largest available images (default).",
+    safeState = Off, sellByDate = new LocalDate(2014, 12, 11)
+  )
+
   val IdentityFormstackSwitch = Switch("Feature", "id-formstack",
     "If this switch is on, formstack forms will be available",
     safeState = Off, sellByDate = never
@@ -443,6 +448,7 @@ object Switches extends Collections {
     InlineCriticalCss,
     FacebookAutoSigninSwitch,
     FacebookShareUseTrailPicFirstSwitch,
+    RestrictGalleryPortraitImageHeightForOpengraphSwitch,
     IdentityFormstackSwitch,
     IdentityAvatarUploadSwitch,
     ToolDisable,

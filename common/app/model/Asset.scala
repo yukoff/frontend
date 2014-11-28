@@ -28,6 +28,10 @@ case class ImageAsset(delegate: Asset, index: Int) {
   lazy val photographer: Option[String] = fields.get("photographer")
   lazy val credit: Option[String] = fields.get("credit")
   lazy val displayCredit: Boolean = fields.get("displayCredit").exists(_=="true")
+
+  def isLandscape: Boolean = width > height
+  def isPortrait: Boolean = height > width
+
 }
 
 case class VideoAsset(private val delegate: Asset, image: Option[ImageContainer]) {

@@ -1,6 +1,6 @@
 package test
 
-import conf.Switches.FacebookShareUseTrailPicFirstSwitch
+import conf.Switches.{FacebookShareUseTrailPicFirstSwitch, RestrictGalleryPortraitImageHeightForOpengraphSwitch}
 import org.scalatest.{DoNotDiscover, Matchers, FlatSpec}
 import scala.collection.JavaConversions._
 
@@ -55,6 +55,28 @@ import scala.collection.JavaConversions._
     goTo("/lifeandstyle/gallery/2014/nov/24/flying-dogs-in-pictures") { browser =>
       import browser._
       $("meta[property='og:image']").getAttributes("content").head should endWith ("e3867edb-e9d5-4be9-9c51-12258b686869-1498x2040.jpeg")
+    }
+  }
+
+  it should "use limited-height portrait crops in opengraph tags when RestrictGalleryPortraitImageHeightForOpengraphSwitch is ON" in {
+    RestrictGalleryPortraitImageHeightForOpengraphSwitch.switchOn()
+    goTo("/lifeandstyle/gallery/2014/nov/24/flying-dogs-in-pictures") { browser =>
+      import browser._
+      val ogImages = $("meta[property='og:image']").getAttributes("content")
+      ogImages.size should be(11)
+      ogImages.get(1) should endWith("e3867edb-e9d5-4be9-9c51-12258b686869-440x600.jpeg")
+      ogImages.get(10) should endWith("926433c6-02d8-4d0a-914a-f71da4c1238b-449x600.jpeg")
+    }
+  }
+
+  it should "use full-height portrait crops in opengraph tags when RestrictGalleryPortraitImageHeightForOpengraphSwitch is OFF" in {
+    RestrictGalleryPortraitImageHeightForOpengraphSwitch.switchOff()
+    goTo("/lifeandstyle/gallery/2014/nov/24/flying-dogs-in-pictures") { browser =>
+      import browser._
+      val ogImages = $("meta[property='og:image']").getAttributes("content")
+      ogImages.size should be(11)
+      ogImages.get(1) should endWith("e3867edb-e9d5-4be9-9c51-12258b686869-1498x2040.jpeg")
+      ogImages.get(10) should endWith("926433c6-02d8-4d0a-914a-f71da4c1238b-1528x2040.jpeg")
     }
   }
 

@@ -6,7 +6,7 @@ import com.gu.contentapi.client.model.{
 }
 import common.{LinkCounts, LinkTo, Reference}
 import conf.Configuration.facebook
-import conf.Switches.FacebookShareUseTrailPicFirstSwitch
+import conf.Switches.{FacebookShareUseTrailPicFirstSwitch, RestrictGalleryPortraitImageHeightForOpengraphSwitch}
 import dfp.DfpAgent
 import fronts.MetadataDefaults
 import ophan.SurgingContentAgent
@@ -64,7 +64,7 @@ class Content protected (val apiContent: ApiContentWithMeta) extends Trail with 
 
   private def largestImageUrl(i: ImageContainer) = i.largestImage.flatMap(_.url)
 
-  protected def bestOpenGraphImage: Option[String] = {
+  protected def bestOpenGraphImageUrl: Option[String] = {
     if (FacebookShareUseTrailPicFirstSwitch.isSwitchedOn) {
       trailPicture.flatMap(largestImageUrl)
     } else {
@@ -75,7 +75,7 @@ class Content protected (val apiContent: ApiContentWithMeta) extends Trail with 
   // read this before modifying
   // https://developers.facebook.com/docs/opengraph/howtos/maximizing-distribution-media-content#images
   lazy val openGraphImage: String = {
-    bestOpenGraphImage
+    bestOpenGraphImageUrl
       .orElse(mainPicture.flatMap(largestImageUrl))
       .orElse(trailPicture.flatMap(largestImageUrl))
       .getOrElse(facebook.imageFallback)
@@ -654,8 +654,8 @@ class Gallery(content: ApiContentWithMeta) extends Content(content) {
 
   lazy val size = galleryImages.size
   override lazy val contentType = GuardianContentTypes.Gallery
-  lazy val landscapes = largestCrops.filter(i => i.width > i.height).sortBy(_.index)
-  lazy val portraits = largestCrops.filter(i => i.width < i.height).sortBy(_.index)
+  lazy val largeLandscapes = largestCrops.filter(_.isLandscape).sortBy(_.index)
+  lazy val largePortraits = largestCrops.filter(_.isPortrait).sortBy(_.index)
   lazy val isInPicturesSeries = tags.exists(_.id == "lifeandstyle/series/in-pictures")
   override protected lazy val pageShareOrder = List("facebook", "twitter", "email", "pinterestPage", "gplus", "whatsapp")
   override protected lazy val elementShareOrder = List("facebook", "twitter", "pinterestBlock")
@@ -669,12 +669,30 @@ class Gallery(content: ApiContentWithMeta) extends Content(content) {
   )
 
   override lazy val openGraphImage: String = {
-    bestOpenGraphImage
+    bestOpenGraphImageUrl
       .orElse(galleryImages.headOption.flatMap(_.largestImage.flatMap(_.url)))
       .getOrElse(conf.Configuration.facebook.imageFallback)
   }
 
-  override def openGraphImages: Seq[String] = largestCrops.flatMap(_.url)
+  override def openGraphImages: Seq[String] = {
+    if (RestrictGalleryPortraitImageHeightForOpengraphSwitch.isSwitchedOn) {
+      val facebookRecommendedMinHeight = 630
+      val shorterPortraits = galleryPortraitCrops.collect {
+        case crop if crop.height <= facebookRecommendedMinHeight => crop
+      }
+      val ogPortraits = if (shorterPortraits.nonEmpty) {
+        val idealHeight = shorterPortraits.head.height
+        shorterPortraits.collect {
+          case crop if crop.height >= idealHeight => crop
+        }
+      } else {
+        galleryPortraitCrops
+      }
+      largeLandscapes ++ ogPortraits flatMap (_.url)
+    } else {
+      largestCrops.flatMap(_.url)
+    }
+  }
 
   override def schemaType = Some("http://schema.org/ImageGallery")
 
@@ -692,6 +710,8 @@ class Gallery(content: ApiContentWithMeta) extends Content(content) {
 
   lazy val galleryImages: Seq[ImageElement] = images.filter(_.isGallery)
   lazy val largestCrops: Seq[ImageAsset] = galleryImages.flatMap(_.largestImage)
+  lazy val galleryLandscapeCrops: Seq[ImageAsset] = galleryImages.flatMap(_.landscapeCrops)
+  lazy val galleryPortraitCrops: Seq[ImageAsset] = galleryImages.flatMap(_.portraitCrops)
 
   override def cards: List[(String, String)] = super.cards ++ Seq(
     "twitter:card" -> "gallery",
