@@ -194,6 +194,9 @@ Comments.prototype.renderComments = function(resp) {
     var contentEl = bonzo.create(resp.html),
         comments = qwery(this.getClass('comment'), contentEl);
 
+
+    $('.d-comment__body', contentEl).addClass('d-comment__body--not-annotated');
+
     bonzo(this.elem).empty().append(contentEl);
     this.addMoreRepliesButtons(comments);
 

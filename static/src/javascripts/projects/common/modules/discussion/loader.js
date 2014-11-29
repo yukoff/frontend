@@ -16,6 +16,7 @@ define([
     'common/modules/analytics/register',
     'common/modules/component',
     'common/modules/discussion/api',
+    'common/modules/discussion/annotate',
     'common/modules/discussion/comment-box',
     'common/modules/discussion/comments',
     'common/modules/identity/api',
@@ -36,6 +37,7 @@ define([
     register,
     Component,
     DiscussionApi,
+    annotate,
     CommentBox,
     Comments,
     Id,
@@ -263,6 +265,8 @@ Loader.prototype.ready = function() {
             this.removeState('truncated');
         }
     }.bind(this));
+
+    annotate.init();
 
     register.end('discussion');
 };
