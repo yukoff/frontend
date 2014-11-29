@@ -21,26 +21,21 @@ define([
 
     function addEmbed(bodyEl, embed) {
         console.log('addEmbed', bodyEl, embed);
-        $(embed).css({
-            position: 'absolute',
-            right: '-320px',
-            marginTop: '-100px'
-        }).prependTo(bodyEl)
+        $.create('<aside class="comment-annotation"></aside>')
+            .append(embed)
+            .prependTo(bodyEl);
     }
 
     function guardianResolver(url) {
         var matches = url.match(/^(?:http:\/\/www.theguardian.com)?\/(.*\/\d{4}\/[a-z]{3}\/\d{2}\/.*)(\?.*)*(#.*)*/);
         if (matches && matches[1]) {
             var contentId = matches[1];
-            console.log('MATCH', contentId);
+            console.log('GU CONTENT', contentId);
             return ajax({
                 url: 'http://embed.theguardian.com/embed/card/' + contentId + '.json',
                 crossOrigin: true
             }).then(function(response) {
-                var $flyer = $.create(response.html);
-                $flyer.css({width: '300px'});
-                console.log($flyer[0]);
-                return $flyer[0];
+                return response.html;
             });
         }
         return false;
@@ -57,32 +52,62 @@ define([
         return false;
     }
 
+    function embedlyResolver(url) {
+        var embedlyables = {
+            'wiki': /https?:\/\/.*\.wikipedia\.org\/wiki\/.*/
+        };
+        var match = _(embedlyables).pairs().find(function(embedlyable) { return url.match(embedlyable[1]); });
+        if (match) {
+            return ajax({
+                url: 'http://api.embed.ly/1/oembed?url=' + encodeURIComponent(url) + '&maxwidth=300',
+                crossOrigin: true,
+                type: 'json'
+            }).then(function(response) {
+                var $wiki = $.create(response.html).css({
+                    padding: '5px',
+                    border: '1px solid #dfdfdf'
+                });
+                $.create('<img src="http://www.kachingle.com/assets/sites/2/2842-wikipedia-logo-kx.jpg">')
+                    .css({
+                        width: '34px',
+                        float: 'left',
+                        padding: '2px 5px'
+                    })
+                    .prependTo($wiki[0]);
+                return $.create('<aside class="comment-annotation__' + match[0] +'"></aside>')
+                    .append($wiki[0])[0];
+            });
+        }
+    }
+
     var resolvers = [
         guardianResolver,
-        youtubeResolver
+        youtubeResolver,
+        embedlyResolver
     ];
 
     function annotateLink(bodyEl, link) {
         var $link = $(link),
             href = $link.attr('href');
 
-
-        _.some(resolvers, function(resolver) {
-            var resolved = resolver(href);
-            if (!resolved) { return false; }
-            if (typeof resolved.then === 'function') {
-                resolved.then(_.curry(addEmbed)(bodyEl))
-            } else if (typeof resolved === 'string') {
-                console.log('STRING', resolved);
-                addEmbed(bodyEl, bonzo.create(resolved)[0]);
-            }
-            return true;
-        });
+        if (href) {
+            return _.some(resolvers, function(resolver) {
+                var resolved = resolver(href);
+                if (!resolved) { return false; }
+                if (typeof resolved.then === 'function') {
+                    resolved.then(_.curry(addEmbed)(bodyEl))
+                } else if (typeof resolved === 'string') {
+                    console.log('STRING', resolved);
+                    addEmbed(bodyEl, bonzo.create(resolved)[0]);
+                }
+                return true;
+            });
+        }
     }
 
     function annotateEl(el) {
         $(el).removeClass('d-comment__body--not-annotated');
-        $('a', el).each(_.curry(annotateLink)(el));
+        _.some(qwery('a', el), _.curry(annotateLink)(el));
     }
 
     function isElInWindow(windowTop, windowBottom, el) {

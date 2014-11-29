@@ -121,12 +121,12 @@ object Switches extends Collections {
 
   val DiscussionSwitch = Switch("Performance", "discussion",
     "If this switch is on, comments are displayed on articles. Turn this off if the Discussion API is blowing up.",
-    safeState = Off, sellByDate = never
+    safeState = On, sellByDate = never
   )
 
   val DiscussionPageSizeSwitch = Switch("Performance", "discussion-page-size",
     "If this is switched on then users will have the option to change their discussion page size",
-    safeState = Off, sellByDate = never
+    safeState = On, sellByDate = never
   )
 
   val OpenCtaSwitch = Switch("Performance", "open-cta",

@@ -1362,3 +1362,22 @@ $comment-recommend-button-size: 19px;
         border-color: colour(guardian-brand);
     }
 }
+
+.comment-annotation {
+  border-radius: 3px;
+  box-shadow: 0px 6px 15px -2px #aaa, 0 0 6px #eee;
+  position: absolute;
+  right: -320px;
+  marginTop: -20px;
+  width: 300px;
+}
+
+.comment-annotation__wiki {
+  > p:first-child {
+    margin: 0;
+  }
+}
+
+.comment-annotation__youtube {
+  height: 225px;
+}
