@@ -24,6 +24,8 @@
         }
         role="main">
 
+        <div class="js-most-popular-in-tag"></div>
+
         @defining(IndexPage.makeFront(index, Edition(request)).containers) { containers =>
             @containers.map { containerDefinition =>
                 @container(containerDefinition, empty)

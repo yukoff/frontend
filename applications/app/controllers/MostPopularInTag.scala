@@ -9,7 +9,7 @@ import play.api.libs.json.{Json, JsNull}
 import play.api.mvc.{AnyContent, Request, Action, Controller}
 import services.CollectionConfigWithId
 import slices.MostPopular
-import views.html.fragments.containers.facia_cards.container
+import views.html.fragments.collections.popular
 
 import scala.concurrent.Future
 
@@ -42,7 +42,7 @@ object MostPopularInTag extends Controller with ExecutionContexts {
     Cached(60)(Ok(Json.toJson(MostPopularInTagResponse(
       OrderOfPreference.filter(mostPopular.availablePeriods.contains),
       period,
-      container(FaciaContainer.fromConfig(
+      popular(FaciaContainer.fromConfig(
         0,
         MostPopular,
         CollectionConfigWithId(
