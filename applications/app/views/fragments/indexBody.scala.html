@@ -24,7 +24,19 @@
         }
         role="main">
 
-        <div class="js-most-popular-in-tag"></div>
+        <div class="fc-container">
+            <div class="fc-container__inner">
+                <div class="fc-container__header js-container__header">
+                    <h2 class="fc-container__header__title">
+                        popular
+                    </h2>
+                </div>
+
+                <div class="fc-container__body fc-container--rolled-up-hide js-popular-trails">
+                    <div class="js-most-popular-in-tag"></div>
+                </div>
+            </div>
+        </div>
 
         @defining(IndexPage.makeFront(index, Edition(request)).containers) { containers =>
             @containers.map { containerDefinition =>
