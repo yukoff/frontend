@@ -1,11 +1,13 @@
 define([
     'common/utils/$',
     'common/utils/ajax',
-    'common/utils/config'
+    'common/utils/config',
+    'common/modules/ui/tabs'
 ], function (
     $,
     ajax,
-    config
+    config,
+    Tabs
 ) {
     function injectContainer(tagId) {
         ajax({
@@ -13,15 +15,17 @@ define([
             method: 'get',
             type: 'json',
             success: function (data) {
-                if (data) {
-                    $('.js-most-popular-in-tag').html(data.body);
+                var $mostPopularInTag = $('.js-most-popular-in-tag');
+
+                if (data && $mostPopularInTag) {
+                    $mostPopularInTag.html(data.body);
+                    new Tabs().init($mostPopularInTag[0]);
                 }
             }
         });
     }
 
     return function () {
-        console.log(config.contentType, config.pageId);
         if (config.page.contentType === 'Tag') {
             injectContainer(config.page.pageId);
         }
