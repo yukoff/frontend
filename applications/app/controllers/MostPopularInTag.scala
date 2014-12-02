@@ -42,21 +42,42 @@ object MostPopularInTag extends Controller with ExecutionContexts {
     Cached(60)(Ok(Json.toJson(MostPopularInTagResponse(
       OrderOfPreference.filter(mostPopular.availablePeriods.contains),
       period,
-      popular(FaciaContainer.fromConfig(
-        0,
-        MostPopular,
-        CollectionConfigWithId(
-          "most-popular",
-          CollectionConfig.emptyConfig
-        ),
-        CollectionEssentials.fromTrails(trails),
-        None,
-        None
-      )).toString()
+      popular(
+        Seq(
+          model.MostPopular(
+            period,
+            period,
+            trails
+          )
+        )
+      ).toString()
     ))))
   }
 
   def emptyResponse = Future.successful(Cached(60)(Ok(Json.toJson(JsNull))))
+
+  def renderAll(tagId: String) = Action.async { implicit request =>
+    (for {
+      mostPopular <- MostPopularApi.getMostPopular(tagId)
+      firstPeriod <- OrderOfPreference.find(mostPopular.availablePeriods.contains)
+    } yield for {
+      periods <- Future.traverse(OrderOfPreference.filter(mostPopular.availablePeriods.contains)) { period =>
+        MostPopularTrails.get(mostPopular.byTimePeriod(period), Edition(request)).map(period -> _)
+      }
+    } yield Cached(60)(Ok(Json.toJson(MostPopularInTagResponse(
+      OrderOfPreference.filter(mostPopular.availablePeriods.contains),
+      firstPeriod,
+      popular(
+        periods.toSeq map { case (period, trails) =>
+          model.MostPopular(
+            period,
+            period,
+            trails
+          )
+        }
+      ).toString()
+    ))))) getOrElse emptyResponse
+  }
 
   def render(tagId: String) = Action.async { implicit request =>
     (for {

@@ -43,7 +43,7 @@ GET        /$path<[\w\d-]*(/[\w\d-]*)?/(interactive|ng-interactive)/.*>.json    
 GET        /$path<[\w\d-]*(/[\w\d-]*)?/(interactive|ng-interactive)/.*>         controllers.InteractiveController.renderInteractive(path)
 
 # Most popular in tag
-GET        /most-popular-in-tag/$path<[\w\d-]*(/[\w\d-]*)?(/[\w\d-]*)?>.json    controllers.MostPopularInTag.render(path)
+GET        /most-popular-in-tag/$path<[\w\d-]*(/[\w\d-]*)?(/[\w\d-]*)?>.json    controllers.MostPopularInTag.renderAll(path)
 GET        /most-popular-in-tag-by-period/$period<daily|weekly|monthly|yearly>/$path<[\w\d-]*(/[\w\d-]*)?(/[\w\d-]*)?>.json controllers.MostPopularInTag.renderPeriod(path, period)
 
 # Note: culture|sport|australia are already routed to front.
