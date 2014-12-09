@@ -48,6 +48,7 @@ define([
 
         // CONFIG
         this.showEndslate = detect.getBreakpoint() !== 'mobile' && config.page.section !== 'childrens-books-site' && config.page.contentType !== 'Article';
+        this.showControls = config.page.lightboxImages.images.length > 1
         this.useSwipe = detect.hasTouchScreen();
         this.swipeThreshold = 0.05;
 
@@ -57,40 +58,57 @@ define([
             return template(tmpl, {label: label});
         }
 
+        //function generateMultipleImageControls(showControls) {
+        //    if(showControls) {
+        //        return '<div class="gallery-lightbox__progress  gallery-lightbox__progress--sidebar">' +
+        //            '<span class="gallery-lightbox__index js-gallery-index"></span>' +
+        //            '<span class="gallery-lightbox__progress-separator"></span>' +
+        //            '<span class="gallery-lightbox__count js-gallery-count"></span>' +
+        //            '</div>' +
+        //            generateButtonHTML('next') +
+        //            generateButtonHTML('prev')
+        //    } else {
+        //        return '';
+        //    }
+        //}
+
         this.galleryLightboxHtml =
             '<div class="overlay gallery-lightbox gallery-lightbox--closed gallery-lightbox--hover">' +
             '<div class="gallery-lightbox__sidebar">' +
             generateButtonHTML('close') +
+            generateButtonHTML('info-button') +
+            '</div>' +
+            '<div class="js-gallery-swipe gallery-lightbox__swipe-container">' +
+            '<ul class="gallery-lightbox__content js-gallery-content">' +
+            '</ul>' +
+            '</div>' +
+            '</div>';
+
+        this.galleryLightboxControls =
             '<div class="gallery-lightbox__progress  gallery-lightbox__progress--sidebar">' +
             '<span class="gallery-lightbox__index js-gallery-index"></span>' +
             '<span class="gallery-lightbox__progress-separator"></span>' +
             '<span class="gallery-lightbox__count js-gallery-count"></span>' +
             '</div>' +
             generateButtonHTML('next') +
-            generateButtonHTML('prev') +
-            generateButtonHTML('info-button') +
-            '</div>' +
-
-            '<div class="js-gallery-swipe gallery-lightbox__swipe-container">' +
-            '<ul class="gallery-lightbox__content js-gallery-content">' +
-            '</ul>' +
-            '</div>' +
-
-            '</div>';
+            generateButtonHTML('prev');
 
         // ELEMENT BINDINGS
         this.lightboxEl = bonzo.create(this.galleryLightboxHtml);
         this.$lightboxEl = bonzo(this.lightboxEl).prependTo(document.body);
+        if(this.showControls) {
+            $('.js-gallery-info-button').before(this.galleryLightboxControls);
+            this.nextBtn = qwery('.js-gallery-next', this.lightboxEl)[0];
+            this.prevBtn = qwery('.js-gallery-prev', this.lightboxEl)[0];
+            bean.on(this.nextBtn, 'click', this.trigger.bind(this, 'next'));
+            bean.on(this.prevBtn, 'click', this.trigger.bind(this, 'prev'));
+        }
         this.$indexEl = $('.js-gallery-index', this.lightboxEl);
         this.$countEl = $('.js-gallery-count', this.lightboxEl);
         this.$contentEl = $('.js-gallery-content', this.lightboxEl);
-        this.nextBtn = qwery('.js-gallery-next', this.lightboxEl)[0];
-        this.prevBtn = qwery('.js-gallery-prev', this.lightboxEl)[0];
         this.closeBtn = qwery('.js-gallery-close', this.lightboxEl)[0];
         this.infoBtn = qwery('.js-gallery-info-button', this.lightboxEl)[0];
         this.$swipeContainer = $('.js-gallery-swipe');
-        bean.on(this.nextBtn, 'click', this.trigger.bind(this, 'next'));
-        bean.on(this.prevBtn, 'click', this.trigger.bind(this, 'prev'));
         bean.on(this.closeBtn, 'click', this.close.bind(this));
         bean.on(this.infoBtn, 'click', this.trigger.bind(this, 'toggle-info'));
         this.handleKeyEvents = this.handleKeyEvents.bind(this); // bound for event handler
