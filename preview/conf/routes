@@ -10,6 +10,8 @@ GET        /_healthcheck                                                        
 
 GET        /responsive-viewer/*path                                                            controllers.ResponsiveViewerController.preview(path)
 
+GET        /preview/internal/*code                                                             controllers.PreviewController.previewById(code)
+
 #Login
 # authentication endpoints
 GET           /login                                                                           controllers.OAuthLoginController.login
