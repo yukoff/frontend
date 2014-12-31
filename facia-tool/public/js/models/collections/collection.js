@@ -4,6 +4,7 @@ define([
     'knockout',
     'modules/vars',
     'utils/as-observable-props',
+    'utils/fetch-visible-stories',
     'utils/human-time',
     'utils/mediator',
     'utils/populate-observables',
@@ -16,6 +17,7 @@ define([
     ko,
     vars,
     asObservableProps,
+    fetchVisibleStories,
     humanTime,
     mediator,
     populateObservables,
@@ -40,8 +42,11 @@ define([
 
         this.isDynamic = !!_.findWhere(vars.CONST.typesDynamic, {name: opts.type});
 
+        this.dom = undefined;
+
         // properties from the config, about this collection
         this.configMeta   = asObservableProps([
+            'type',
             'displayName',
             'uneditable']);
         populateObservables(this.configMeta, opts);
@@ -63,7 +68,8 @@ define([
             'editingConfig',
             'count',
             'timeAgo',
-            'alsoOnVisible']);
+            'alsoOnVisible',
+            'showIndicators']);
 
         this.itemDefaults = _.reduce({
             showTags: 'showKickerTag',
@@ -156,9 +162,10 @@ define([
     };
 
     Collection.prototype.drop = function(item) {
-        var front = this.front;
+        var front = this.front, self = this;
         this.setPending(true);
 
+        self.updateVisibleStories();
         authedAjax.updateCollections({
             remove: {
                 collection: this,
@@ -200,6 +207,10 @@ define([
         .always(function() {
             self.setPending(false);
         });
+    };
+
+    Collection.prototype.registerElement = function (element) {
+        this.dom = element;
     };
 
     Collection.prototype.hasOpenArticles = function() {
@@ -245,6 +256,7 @@ define([
             }
         }
 
+        this.refreshVisibleStories();
         this.setPending(false);
     };
 
@@ -286,12 +298,47 @@ define([
         });
     };
 
+    Collection.prototype.refreshVisibleStories = function () {
+        fetchVisibleStories(
+            this.configMeta.type(),
+            this.groups
+        ).then(
+            this.updateVisibleStories.bind(this),
+            this.updateVisibleStories.bind(this, false)
+        );
+    };
+
     Collection.prototype.getTimeAgo = function(date) {
         return date ? humanTime(date) : '';
     };
 
     Collection.prototype.alsoOnToggle = function () {
         this.state.alsoOnVisible(!this.state.alsoOnVisible());
+    };
+
+    Collection.prototype.updateVisibleStories = function (numbers) {
+        var container = this.dom;
+        if (!container || !numbers || this.state.collapsed()) {
+            this.state.showIndicators(false);
+            return;
+        }
+
+        this.state.showIndicators(true);
+        var top = container.querySelector('.article-group').getBoundingClientRect().top,
+            bottom = {
+                Desktop: 0,
+                Mobile: 0
+            };
+
+        _.each(['desktop', 'mobile'], function (target) {
+            var bottomElementPosition = numbers[target] - 1,
+                bottomElement = bottomElementPosition ? container.querySelectorAll('.article')[bottomElementPosition] : null,
+                bottom = bottomElement ? bottomElement.getBoundingClientRect().bottom : NaN,
+                height = bottom - top - 15,
+                indicator = container.querySelector('.' + target + '-indicator .indicator');
+
+            indicator.style.height = (height || 0) + 'px';
+        });
     };
 
     return Collection;

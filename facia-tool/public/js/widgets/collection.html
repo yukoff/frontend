@@ -65,8 +65,20 @@
     </div>
 
     <!-- ko if: !state.collapsed() -->
-        <div data-bind="
-            css: {'pending': isPending()},
-            template: {name: 'template_groups', foreach: groups}"></div>
+        <div class="article-group">
+            <!-- ko if: state.showIndicators -->
+                <div class="desktop-indicator">
+                    <i class="fa fa-laptop"></i>
+                    <div class="indicator"></div>
+                </div>
+                <div class="mobile-indicator">
+                    <i class="fa fa-mobile"></i>
+                    <div class="indicator"></div>
+                </div>
+            <!-- /ko -->
+            <div data-bind="
+                css: {'pending': isPending()},
+                template: {name: 'template_groups', foreach: groups}"></div>
+        </div>
     <!-- /ko -->
 </div>
