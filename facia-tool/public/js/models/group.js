@@ -22,6 +22,7 @@ define([
         this.parentType = opts.parentType;
         this.keepCopy   = opts.keepCopy;
         this.front      = opts.front;
+        this.dom        = null;
 
         this.elementHasFocus = opts.elementHasFocus || (opts.front ? opts.front.elementHasFocus.bind(opts.front) : null);
 
@@ -104,6 +105,10 @@ define([
             sourceContext: source.sourceItem.front,
             targetContext: targetGroup.front
         });
+    };
+
+    Group.prototype.registerElement = function (el) {
+        this.dom = el;
     };
 
     return Group;

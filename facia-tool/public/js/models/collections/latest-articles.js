@@ -154,7 +154,7 @@ define([
                             opts.uneditable = true;
                             newArticles.push(new Article(opts, true));
                         });
-                        self.articles(newArticles);
+                        self.articles(newArticles.slice(0, 5));
                         self.lastSearch(request);
                         self.totalPages(response.pages);
                         self.page(response.currentPage);

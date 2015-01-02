@@ -11,6 +11,10 @@
         <i class="icon-remove" data-bind="click: clearAlerts"></i>
     </div>
 
+    <div class="key-navigation-help" data-bind="fadeVisible: keyNav.help">
+        <span data-bind="html: keyNav.help"></span>
+    </div>
+
     <div data-bind="template: {
         name: 'vertical_layout',
         foreach: layout.columns,
@@ -80,7 +84,10 @@
                 underDrag: underDrag() && !underControlDrag(),
                 underControlDrag: underDrag() && underControlDrag()
             },
-            template: {name: 'template_article', foreach: items}"></div>
+            ownerClass: $data">
+            <div data-bind="template: {name: 'template_article', foreach: items}"></div>
+            <div class="group-separator"></div>
+        </div>
     </script>
 
     <script type="text/html" id="template_article">
@@ -91,8 +98,11 @@
                 open: state.isOpen,
                 underDrag: state.underDrag() && !state.underControlDrag(),
                 underControlDrag: state.underDrag() && state.underControlDrag(),
+                focus: state.focus,
+                selected: state.selected,
                 imageHidden: meta.imageHide
-            }">
+            },
+            ownerClass: $data">
 
             <a class="thumb" data-bind="
                 style: {backgroundImage: thumbImage() ? 'url(' + thumbImage() + ')' : ''},
@@ -119,8 +129,10 @@
                             css: {
                                 underDrag: underDrag() && !underControlDrag(),
                                 underControlDrag: underDrag() && underControlDrag()
-                            },
-                            template: {name: 'template_article', foreach: items}"></div>
+                            }">
+                                <div data-bind="template: {name: 'template_article', foreach: items}"></div>
+                                <div class="group-separator"></div>
+                        </div>
                     </div>
                     <span class="supporting-message">Drop content above, hold Ctrl key to replace item</span>
                 </div>

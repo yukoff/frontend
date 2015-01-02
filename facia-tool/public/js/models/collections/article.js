@@ -265,6 +265,8 @@ define([
 
             this.meta = asObservableProps(_.pluck(metaFields, 'key'));
 
+            this.dom = null;
+
             populateObservables(this.meta, opts.meta);
 
             this.metaDefaults = {};
@@ -277,6 +279,8 @@ define([
                 'enableContentOverrides',
                 'underDrag',
                 'underControlDrag',
+                'focus',
+                'selected',
                 'isOpen',
                 'isLoaded',
                 'isEmpty',
@@ -778,6 +782,10 @@ define([
             });
         };
 
+        Article.prototype.registerElement = function (el) {
+            this.dom = el;
+        };
+
         function getMainMediaType(contentApiArticle) {
             return _.chain(contentApiArticle.elements).where({relation: 'main'}).pluck('type').first().value();
         }
@@ -845,6 +853,12 @@ define([
                         mediator.emit('ui:open', formFields[nextIndex].meta, self, self.front);
                     }
                 });
+            }
+        };
+
+        ko.bindingHandlers.keyNav = {
+            init: function(el, valueAccessor) {
+                valueAccessor()(el);
             }
         };
 

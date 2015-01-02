@@ -1,20 +1,21 @@
-define([
-    'EventEmitter'
-], function (
-    EventEmitter
-) {
-    var bus = new EventEmitter(),
-        registeredListeners = {};
+/* globals _ */
+define(function () {
+    var registeredListeners = {};
 
     function registerListener (event, callback) {
         if (!registeredListeners[event]) {
-            registeredListeners[event] = function (eventObject) {
-                bus.emit(event, eventObject);
-            };
-
-            (event === 'resize' ? $(window) : $('document, body')).on(event, registeredListeners[event]);
+            registeredListeners[event] = [];
+            (event === 'resize' ? $(window) : $('document, body')).on(event, handle.bind(null, event));
         }
-        bus.on(event, callback);
+
+        registeredListeners[event].push(callback);
+    }
+
+    function handle (event, eventObject) {
+        return !_.find(registeredListeners[event], function (callback) {
+            // Stop when a callback return false
+            return callback(eventObject) === false;
+        });
     }
 
     return {

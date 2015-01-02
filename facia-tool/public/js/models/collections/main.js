@@ -7,6 +7,7 @@ define([
     'utils/mediator',
     'utils/fetch-settings',
     'utils/global-listeners',
+    'utils/keyboard-navigation',
     'utils/layout-from-url',
     'utils/parse-query-params',
     'utils/update-scrollables',
@@ -25,6 +26,7 @@ define([
     mediator,
     fetchSettings,
     globalListeners,
+    keyboardNavigation,
     layoutFromUrl,
     parseQueryParams,
     updateScrollables,
@@ -64,6 +66,8 @@ define([
             model.alert(false);
             mediator.emit('alert:dismiss');
         };
+
+        model.keyNav = keyboardNavigation;
 
         model.title = ko.computed(function() {
             return pageConfig.priority + ' fronts';

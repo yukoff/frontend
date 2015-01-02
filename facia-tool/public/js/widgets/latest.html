@@ -20,8 +20,10 @@
             css: {
                 underDrag: underDrag() && !underControlDrag(),
                 underControlDrag: underDrag() && underControlDrag()
-            },
-            template: {name: 'template_article', foreach: items}"></div>
+            }">
+            <div data-bind="template: {name: 'template_article', foreach: items}"></div>
+            <div class="group-separator"></div>
+        </div>
     </div>
 </div>
 

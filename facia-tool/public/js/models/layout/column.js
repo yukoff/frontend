@@ -47,6 +47,8 @@ define([
         this.isOphan = ko.computed(isType.bind(this, 'ophan'), this);
         this.isIframe = ko.computed(isType.bind(this, 'iframe'), this);
 
+        this.widgets = [];
+
         globalListeners.on('resize', _.debounce(function () {
             column.recomputeWidth();
         }, 25));
@@ -105,6 +107,49 @@ define([
         this.style.isNarrow(isNarrow(this));
     };
 
+    Column.prototype.registerWidget = function (widget) {
+        this.widgets.push(widget);
+    };
+
+    Column.prototype.focus = function (reference, forward) {
+        if (!reference) {
+            return _.find(this.widgets, function (widget) {
+                return widget.focus && widget.focus();
+            });
+        } else {
+            var position = _.indexOf(this.widgets, reference);
+            if (position !== -1) {
+                for (var i = position; i >= 0 && i < this.widgets.length; forward ? i += 1 : i -= 1) {
+                    var widget = this.widgets[i];
+                    if (widget.focus(forward)) {
+                        console.log('focus says yes');
+                        return widget;
+                    }
+                }
+            }
+            console.log('return the reference');
+            return reference;
+        }
+    };
+
+    Column.prototype.focusTarget = function (reference, focus, forward) {
+        if (!reference) {
+            return _.find(this.widgets, function (widget) {
+                return widget.focusTarget && widget.focusTarget(forward, focus);
+            });
+        } else {
+            var position = _.indexOf(this.widgets, reference);
+            if (position !== -1) {
+                for (var i = position; i >= 0 && i < this.widgets.length; forward ? i += 1 : i -= 1) {
+                    var widget = this.widgets[i];
+                    if (widget.focusTarget(forward)) {
+                        return widget;
+                    }
+                }
+            }
+            return reference;
+        }
+    };
 
     function cloneObservables (object, into) {
         _.chain(object).keys().each(function (key) {

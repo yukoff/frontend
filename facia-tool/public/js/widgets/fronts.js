@@ -19,6 +19,7 @@ define([
     updateScrollables
 ) {
     function Front (params) {
+        params.column.registerWidget(this);
         var frontId, listeners = mediator.scope();
 
         this.column = params.column;
@@ -30,6 +31,10 @@ define([
         this.position = params.position;
         this.collections = ko.observableArray();
         this.listeners = listeners;
+        this.currentFocus = null;
+        this.currentTarget = null;
+        this.currentActive = null;
+
 
         this.front.subscribe(this.onFrontChange.bind(this));
         this.liveMode.subscribe(this.onModeChange.bind(this));
@@ -232,6 +237,152 @@ define([
         return meta === this.uiOpenElement();
     };
 
+
+    Front.prototype.focus = function (direction) {
+        var allArticles = [],
+            focusPosition = NaN,
+            focused = null,
+            nextId = 0,
+            next = null;
+
+        _.each(this.collections(), function (collection) {
+            _.each(collection.groups, function (group) {
+                _.each(group.items(), function (article) {
+                    allArticles.push(article);
+                    if (article.state.focus()) {
+                        focused = article;
+                        focusPosition = allArticles.length - 1;
+                    }
+                });
+            });
+        });
+
+        if (focused) {
+            if (direction === true) {
+                nextId = focusPosition + 1;
+            } else if (direction === false) {
+                nextId = focusPosition - 1;
+            } else {
+                nextId = 0;
+            }
+        } else {
+            nextId = 0;
+        }
+        next = allArticles[nextId];
+
+        if (next) {
+            if (focused) {
+                focused.state.focus(false);
+            }
+            next.state.focus(true);
+            next.dom.scrollIntoView(false);
+            this.currentFocus = next;
+            return true;
+        }
+        return focused;
+    };
+
+    Front.prototype.blur = function (active) {
+        if (this.currentFocus) {
+            this.currentFocus.state.focus(false);
+            this.currentFocus = null;
+        }
+        if (this.currentTarget) {
+            if (this.currentTarget.state) {
+                this.currentTarget.state.underDrag(false);
+            } else {
+                this.currentTarget.underDrag(false);
+            }
+            this.currentTarget = null;
+        }
+    };
+
+    Front.prototype.select = function () {
+        _.find(this.collections(), function (collection) {
+            return _.find(collection.groups, function (group) {
+                return _.find(group.items(), function (article) {
+                    if (article.state.focus()) {
+                        article.state.focus(false);
+                        article.state.selected(true);
+                        this.currentActive = article;
+                        return true;
+                    }
+                }, this);
+            }, this);
+        }, this);
+    };
+
+    Front.prototype.deselect = function () {
+        if (this.currentActive) {
+            this.currentActive.state.selected(false);
+            this.currentActive = null;
+        }
+    };
+
+    Front.prototype.focusTarget = function (direction) {
+        var allDroppable = [],
+            focusPosition = NaN,
+            focused = null,
+            nextId = 0,
+            next = null,
+            dom = null,
+            active = NaN;
+
+        _.each(this.collections(), function (collection) {
+            _.each(collection.groups, function (group) {
+                _.each(group.items(), function (article) {
+                    allDroppable.push(article);
+                    if (article.state.underDrag()) {
+                        focused = article.state;
+                        focusPosition = allDroppable.length - 1;
+                    }
+                    if (article.state.selected()) {
+                        active = allDroppable.length - 1;
+                    }
+                });
+                allDroppable.push(group);
+                if (group.underDrag()) {
+                    focused = group;
+                    focusPosition = allDroppable.length - 1;
+                }
+            });
+        });
+
+        if (!focused) {
+            focusPosition = active;
+        }
+
+        if (direction === true) {
+            nextId = focusPosition + 1;
+            if (nextId === active) {
+                nextId += 1;
+            }
+        } else if (direction === false) {
+            nextId = focusPosition - 1;
+            if (nextId === active) {
+                nextId -= 1;
+            }
+        } else {
+            nextId = 0;
+        }
+        next = allDroppable[nextId];
+
+        if (next) {
+            if (focused) {
+                focused.underDrag(false);
+            }
+            if (next.state) {
+                next.state.underDrag(true);
+            } else {
+                next.underDrag(true);
+            }
+            next.dom.scrollIntoView(false);
+            this.currentTarget = next;
+            return true;
+        }
+        return false;
+    };
+
     Front.prototype.dispose = function () {
         this.listeners.dispose();
         _.each(this.setIntervals, function (timeout) {
@@ -242,6 +393,14 @@ define([
         });
         mediator.emit('front:disposed', this);
     };
+
+    // TODO uh?
+    Front.prototype.keyNav = {
+        selected: false,
+        message: function () {
+            return 'Press <strong>enter</strong> to select and start dragging.';
+        }
+    }
 
     return Front;
 });

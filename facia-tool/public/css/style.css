@@ -511,12 +511,14 @@ h1 {
 .droppable {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    min-height: 20px;
-    padding: 0 0 20px;
     -webkit-transition: background-color 50ms;
     -moz-transition: background-color 50ms;
     transition: background-color 50ms;
     overflow: auto;
+}
+
+.group-separator {
+    height: 20px;
 }
 
 .supporting .droppable {
@@ -524,15 +526,15 @@ h1 {
     margin: 0 0 0 -4px;
 }
 
-.droppable.underDrag {
+.underDrag > .group-separator {
     background-color: #2ea3eb;
 }
 
-.open .droppable.underDrag {
+.open .underDrag > .group-separator {
     background-color: #999999;
 }
 
-.open .droppable.underControlDrag {
+.open .underControlDrag > .group-separator {
     background-color: #cdbbfb;
 }
 
@@ -696,6 +698,21 @@ collection-widget:first-child .collection {
             transition: border-color 150ms;
 }
 
+.article.focus,
+.article.selected {
+    border: 0 solid #fff;
+    margin-top: 10px;
+    min-height: 50px;
+    margin-bottom: 1px;
+    z-index: 5;
+}
+.article.focus {
+    box-shadow: 0px 1px 6px #039BE5, 0px -1px 6px #039BE5;
+}
+.article.selected {
+    box-shadow: 0px 1px 6px #E53935, 0px -1px 6px #E53935;
+}
+
 .live-mode .article {
     border-color: #EEFFEE;
     background: #EEFFEE;
@@ -742,6 +759,10 @@ collection-widget:first-child .collection {
     background-size: auto 100%;
     background-repeat: no-repeat;
     background-position-x: right;
+}
+
+.article .thumb:focus {
+    outline: 0;
 }
 
 .article.imageHidden .thumb {
@@ -1763,6 +1784,26 @@ collection-widget {
 }
 .mobile-indicator .indicator {
     background-color: #FF9800;
+}
+
+.key-navigation-help {
+    position: fixed;
+    z-index: 15;
+    top: 14px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.key-navigation-help span {
+    text-align: left;
+    background-color: #212121;
+    color: white;
+    padding: 16px 24px 12px;
+}
+
+.key-navigation-help strong {
+    color: #FFEB3B;
 }
 
 /*****************************************/
