@@ -9,11 +9,6 @@
 }
 
 @metaBody() = {
-    @*@if(((content.hasTonalHeaderByline && content.contributorBio.isEmpty && content.contributors.headOption.map(_.twitterHandle) == Some(None)) || content.byline.isEmpty) && !content.isVideo) { u-h }*@
-    @*@if(content.showBylinePic) { meta__author--has-byline-image }*@
-    @*@if(content.hasTonalHeaderByline) { meta__author--comment }*@
-    @*@if(content.contributors.headOption.map(_.twitterHandle) != Some(None)) { has-twitter }">*@
-
     @if(!content.hasTonalHeaderByline) {
         @byline(content)
     }
