@@ -169,9 +169,11 @@ $header-image-size-desktop: 100px;
 }
 
 .fc-container__header__title--stickies {
+    position: absolute;
     display: none;
     visibility: hidden;
     margin-top: 100px;
+    z-index: 9;
 
     .has-page-skin & {
         display: none;
@@ -180,7 +182,6 @@ $header-image-size-desktop: 100px;
     &.fixed {
         position: fixed;
         bottom: 0;
-        z-index: 99;
     }
 
     @include mq(leftCol) {
