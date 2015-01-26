@@ -70,7 +70,7 @@
             @include simple-gradient(transparent, #f6f6f6);
             height: $gs-baseline*1.5;
             border-bottom: 1px solid colour(neutral-3);
-            bottom: $gs-baseline*2.75-2;
+            bottom: ($gs-baseline * 2.75) - 2;
             content: ' ';
             left: 0;
             position: absolute;
