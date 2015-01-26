@@ -2,7 +2,8 @@ module.exports = function(grunt, options) {
     return {
         dist: {
             options: {
-                report: 'min'
+                report: 'min',
+                restructure: false
             },
             files: [{
                 expand: true,
