@@ -71,6 +71,7 @@ module.exports = function (grunt) {
         }
 
         grunt.task.run(['px_to_rem']);
+        grunt.task.run(['csso']);
 
         if (isOnlyTask(this) && !fullCompile) {
             grunt.task.run('asset_hash');
