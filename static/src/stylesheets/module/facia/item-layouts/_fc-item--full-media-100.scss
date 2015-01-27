@@ -35,11 +35,6 @@ x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
     .fc-item__header {
         @include fs-headline(4, true);
         @include headline-boost(5);
-
-        @include mq(desktop) {
-            @include fs-headline(6, true);
-            @include headline-boost(7);
-        }
     }
 
     &.fc-item--has-cutout {
@@ -55,10 +50,6 @@ x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
         .fc-item__content {
             width: auto;
             max-width: gs-span(6);
-
-            @include mq(desktop) {
-                max-width: gs-span(8);
-            }
         }
 
         .fc-item__standfirst {
@@ -74,10 +65,6 @@ x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
     .fc-item__avatar__media {
         right: -15%;
-
-        @include mq(tablet) {
-            right: -5%;
-        }
     }
 
     &:not(.fc-item--has-cutout) {

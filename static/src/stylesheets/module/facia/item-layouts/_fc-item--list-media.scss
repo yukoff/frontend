@@ -26,12 +26,6 @@ Media list item. Looks a bit like this:
         min-height: $item-min-height + ($mobile-media-padding * 2);
     }
 
-    @include mq(tablet) {
-        .fc-item__content {
-            min-height: $item-min-height;
-        }
-    }
-
     .fc-item__container,
     .fc-item__content,
     .fc-item__footer,
@@ -58,10 +52,6 @@ Media list item. Looks a bit like this:
 
         .fc-item__container {
             padding-left: $image-width + $mobile-media-padding;
-
-            @include mq(tablet) {
-                padding-left: $image-width;
-            }
         }
     }
 
@@ -81,19 +71,10 @@ Media list item. Looks a bit like this:
         width: $image-width;
         margin-top: $mobile-media-padding;
         margin-bottom: $mobile-media-padding;
-
-        @include mq(tablet) {
-            margin-top: 0;
-            margin-bottom: 0;
-        }
     }
 
     .fc-item__kicker--dreamsnap-list {
         margin-left: 0 - $image-width - $mobile-media-padding;
-
-        @include mq(tablet) {
-            margin-left: 0 - $image-width;
-        }
     }
 
     &[class*="fc-item--has-sublinks"] .fc-item__media-wrapper {
