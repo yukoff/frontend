@@ -3,13 +3,13 @@ module.exports = function(grunt, options) {
 
     return {
         options: {
-            // style: 'nested',
-            // sourcemap: options.isDev,
-            // noCache: true,
-            // quiet: options.isDev ? false : true,
-            // bundleExec: true
-            outputStyle: 'nested',
-            precision: 5
+            style: 'nested',
+            sourcemap: options.isDev,
+            noCache: true,
+            quiet: options.isDev ? false : true,
+            bundleExec: true
+            // outputStyle: 'nested',
+            // precision: 5
         },
         compileStyleguide: {
             files: [{
