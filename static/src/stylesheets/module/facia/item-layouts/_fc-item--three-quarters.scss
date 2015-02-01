@@ -25,8 +25,21 @@ Three quarter item. Looks like a wide standard, a bit like this:
 
     @include fc-item--horizontal(65.5%); // Works out as same width as 6 col on desktop and 4.5 col on tablet to align with other items
 
+    .fc-item__header {
+        @include mq(desktop) {
+            @include fs-headline(4, true);
+            @include headline-boost(5);
+        }
+    }
+
     .fc-item__image-container {
         display: block;
+    }
+
+    .fc-item__standfirst {
+        @include mq(desktop) {
+            display: block;
+        }
     }
 
     &.fc-item--has-no-image {
@@ -52,15 +65,27 @@ Three quarter item. Looks like a wide standard, a bit like this:
         .fc-item__content {
             width: auto;
             max-width: gs-span(5);
+
+            @include mq(desktop) {
+                max-width: gs-span(6);
+            }
         }
     }
 
     .fc-item__avatar {
         height: gs-height(6);
+
+        @include mq(desktop) {
+            height: gs-height(7);
+        }
     }
 
     .fc-item__avatar__media {
         right: -12%;
+
+        @include mq(desktop) {
+            right: -12%;
+        }
     }
 
     .vjs-big-play-button > span {

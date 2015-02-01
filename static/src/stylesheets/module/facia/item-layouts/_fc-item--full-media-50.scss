@@ -22,6 +22,11 @@ Full item with 50% width media.
 
     .fc-item__header {
         @include fs-headline(3, true);
+
+        @include mq(desktop) {
+            @include fs-headline(5, true);
+            @include headline-boost(6);
+        }
     }
 
     .fc-item__standfirst,
@@ -62,11 +67,20 @@ Full item with 50% width media.
             @include flex-basis(initial);
             width: auto;
             max-width: gs-span(6);
+
+            @include mq(desktop) {
+                max-width: gs-span(8);
+            }
         }
 
         .fc-item__header {
             @include fs-headline(4, true);
             @include headline-boost(5);
+
+            @include mq(desktop) {
+                @include fs-headline(6, true);
+                @include headline-boost(7);
+            }
         }
 
         .fc-item__standfirst {
