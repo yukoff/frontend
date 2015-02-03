@@ -1,6 +1,7 @@
 package dfp
 
 import com.google.api.ads.dfp.axis.utils.v201411.StatementBuilder
+import com.google.api.ads.dfp.axis.v201411.RoadblockingType.ALL_ROADBLOCK
 import com.google.api.ads.dfp.axis.v201411._
 import common.Logging
 import conf.Configuration.commercial.guMerchandisingAdvertiserId
@@ -244,17 +245,17 @@ class DfpDataHydrator extends Logging {
 
   private def isPageSkin(dfpLineItem: LineItem) = {
 
-    def hasA1x1Pixel(placeholders: Array[CreativePlaceholder]): Boolean = {
-      val outOfPagePlaceholder: Array[CreativePlaceholder] = for {
-        placeholder <- placeholders
-        companion <- placeholder.getCompanions
-        if companion.getSize.getHeight == 1 && companion.getSize.getWidth == 1
-      } yield companion
-      outOfPagePlaceholder.nonEmpty
+    val mustShowAllCreatives = dfpLineItem.getRoadblockingType == ALL_ROADBLOCK
+
+    lazy val targetsOutOfPageSlot = {
+      val placeholders = Option(dfpLineItem.getCreativePlaceholders) map (_.toSeq) getOrElse Nil
+      placeholders exists { placeholder =>
+        val size = placeholder.getSize
+        size.getWidth == 1 && size.getHeight == 1
+      }
     }
 
-    dfpLineItem.getRoadblockingType == RoadblockingType.CREATIVE_SET &&
-      hasA1x1Pixel(dfpLineItem.getCreativePlaceholders)
+    mustShowAllCreatives && targetsOutOfPageSlot
   }
 
   private def buildCustomTargetSets(customCriteriaSet: CustomCriteriaSet,
