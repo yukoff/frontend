@@ -4,7 +4,7 @@ define([
     config
 ) {
 
-    var ammaUrl = '//c.supert.ag/the-guardian/the-guardian/supertag-async.js';
+    var amaaUrl = '//c.supert.ag/inception-digital/theguardian/supertag-async.js';
 
     function load() {
         if (config.switches.amaa) {
