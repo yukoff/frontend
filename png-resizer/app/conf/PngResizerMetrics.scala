@@ -19,6 +19,11 @@ object PngResizerMetrics {
     "Time to quantize a PNG after it's been resized"
   )
 
+  val webPTime = FrontendTimingMetric(
+    "png-resizer-webp-resize-time",
+    "Time to resize a PNG to a WebP after it's been downloaded"
+  )
+
   val notModifiedCount = CountMetric(
     "png-resizer-not-modified-count",
     "Number of 304 responses sent because the PNG wasn't modified"
@@ -39,10 +44,17 @@ object PngResizerMetrics {
     "Number of 302 responses sent because we thought it would be too slow to resize the image"
   )
 
+  val webPCount = CountMetric(
+    "png-resizer-webp-count",
+    "Number of responses sent as WebP"
+  )
+
   lazy val all = List(
     downloadTime,
     resizeTime,
     quantizeTime,
+    webPTime,
+    webPCount,
     notModifiedCount,
     redirectCount,
     wontMakeBiggerCount,

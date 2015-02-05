@@ -5,6 +5,7 @@ import conf.PngResizerMetrics
 import data.Backends
 import lib.FutureEither._
 import lib.HeadersImplicits._
+import lib.Im4Java.{WebP, PNG}
 import lib.Streams._
 import lib.WS._
 import lib.{Im4Java, IntString, PngQuant, Time}
@@ -86,8 +87,8 @@ object Resizer extends Controller with Logging with implicits.Requests {
   def resize(backend: String, path: String, widthString: String, qualityString: String) =
     Action.async { request =>
 
-      (Backends.uri(backend, path), widthString, qualityString) match {
-        case (Some(uri), IntString(width), IntString(quality)) =>
+      (Backends.uri(backend, path), widthString) match {
+        case (Some(uri), IntString(width)) =>
 
           // Left here is the http result, right is the data that still needs computation
           val resultEitherT = for {
@@ -98,21 +99,26 @@ object Resizer extends Controller with Logging with implicits.Requests {
             (originalWidth, originalHeight) = originalSize
             _ <- EitherT(future.point(redirectScaleUpAttempts(originalWidth, width, uri)))
             _ <- EitherT(future.point(redirectTooBigAttempts(originalWidth, originalHeight, width, uri)))
-            processed <- EitherT(resizeWithLoadLimit(request, uri, width, quality, bytesPreResize))
-            result = Ok(processed).as("image/png").withHeaders(cacheHeaders: _*)
+            imageData <- EitherT(resizeWithLoadLimit(request, uri, width, bytesPreResize))
+            ImageData(processed, contentType) = imageData
+            result = Ok(processed).as(contentType).withHeaders(cacheHeaders: _*)
           } yield result
 
           resultEitherT.fold(identity, identity)
 
-        case (None, _, _) => future.point(NotFound(s"$backend is not a backend we support"))
+        case (None, _) => future.point(NotFound(s"$backend is not a backend we support"))
 
         case _ => future.point(BadRequest(s"width and quality must be integers"))
       }
     }
 
-  def resizeWithLoadLimit(request: Request[AnyContent], uri: String, width: Int, quality: Int, bytesPreResize: Array[Byte]): Future[Result \/ Array[Byte]] = {
-    LoadLimit.tryOperation[Result \/ Array[Byte]](request.isHealthcheck) {
-      resizePngBytes(width, quality, bytesPreResize).map(\/-.apply)
+  def resizeWithLoadLimit(request: Request[AnyContent], uri: String, width: Int, bytesPreResize: Array[Byte]): Future[Result \/ ImageData] = {
+    LoadLimit.tryOperation[Result \/ ImageData](request.isHealthcheck) {
+      if (request.isWebp) {
+        resizeToWebP(width, bytesPreResize).map(\/-.apply)
+      } else {
+        resizePngBytes(width, bytesPreResize).map(\/-.apply)
+      }
     } {
       noCapacity(request, uri)
     }
@@ -126,10 +132,20 @@ object Resizer extends Controller with Logging with implicits.Requests {
     future.point(-\/(Cached(60)(Found(uri))))
   }
 
-  def resizePngBytes(width: Int, quality: Int, bytesPreResize: Array[Byte]): Future[Array[Byte]] = {
+  case class ImageData(body: Array[Byte], contentType: String)
+
+  def resizePngBytes(width: Int, bytesPreResize: Array[Byte]): Future[ImageData] = {
     for {
-      resized <- Time(Im4Java.resizeBufferedImage(width)(bytesPreResize), "resize image", PngResizerMetrics.resizeTime)
-      quanted <- Time(PngQuant(resized, quality), "quantize image", PngResizerMetrics.quantizeTime)
-    } yield quanted
+      resized <- Time(Im4Java.resizeBufferedImage(width, PNG)(bytesPreResize), "resize image", PngResizerMetrics.resizeTime)
+      quanted <- Time(PngQuant(resized), "quantize image", PngResizerMetrics.quantizeTime)
+    } yield ImageData(quanted, "image/png")
   }
+
+  def resizeToWebP(width: Int, bytesPreResize: Array[Byte]): Future[ImageData] = {
+    PngResizerMetrics.webPCount.increment()
+    for {
+      resized <- Time(Im4Java.resizeBufferedImage(width, WebP)(bytesPreResize), "resize image to WebP", PngResizerMetrics.webPTime)
+    } yield ImageData(resized, "image/webp")
+  }
+
 }

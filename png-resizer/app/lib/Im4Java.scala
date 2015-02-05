@@ -10,7 +10,7 @@ import scala.concurrent.Future
 import scala.concurrent.blocking
 
 object Im4Java {
-  def apply(operation: IMOperation, format: String = "png")(imageBytes: Array[Byte]): Array[Byte] = {
+  def apply(operation: IMOperation)(imageBytes: Array[Byte]): Array[Byte] = {
     val cmd = new ConvertCmd(false)
 
     val pipeIn = new Pipe(new ByteArrayInputStream(imageBytes), null)
@@ -28,14 +28,18 @@ object Im4Java {
     baos.toByteArray
   }
 
-  def resizeBufferedImage(width: Int)(imageBytes: Array[Byte]) = Future {
+  sealed class Format(val name: String, val quality: Int)
+  case object PNG extends Format("png", 0)
+  case object WebP extends Format("webp", 80)
+
+  def resizeBufferedImage(width: Int, format: Format)(imageBytes: Array[Byte]) = Future {
     val operation = new IMOperation
 
     operation.addImage("-")
     operation.resize(width)
     operation.sharpen(1.0)
-    operation.quality(0)
-    operation.addImage("png:-")
+    operation.quality(format.quality)
+    operation.addImage(s"${format.name}:-")
 
     apply(operation)(imageBytes)
   }

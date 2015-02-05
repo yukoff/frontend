@@ -8,7 +8,7 @@ import scala.io.Source
 import scala.concurrent.{Future, blocking}
 
 object PngQuant extends Logging with ExecutionContexts {
-  def apply(image: Array[Byte], quality: Int) = {
+  def apply(image: Array[Byte]) = {
     val options = Seq("-q", "100", "-")
     val process = Process("pngquant", options)
     val baos = new ByteArrayOutputStream
