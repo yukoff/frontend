@@ -131,6 +131,10 @@ define([
             {tid: 'seriesId',   tname: 'series'},
             {tid: 'authorIds',  tname: 'author'}
         ],
+        bucketWeights = {
+            tags: 1,
+            fronts: 10
+        };
 
         summaryPeriodDays = 30,
         forgetUniquesAfter = 10,
@@ -165,6 +169,14 @@ define([
         return historyCache;
     }
 
+    function getBucketNames() {
+        return _.keys(bucketWeights);
+    }
+
+    function getBuckets(summary) {
+        return _.map(getBucketNames(), function(k) { return summary[k]; });
+    }
+
     function getSummary() {
         if (summaryCache) {
             return summaryCache;
@@ -172,20 +184,27 @@ define([
 
         summaryCache = storage.local.get(storageKeySummary);
 
-        if (!_.isObject(summaryCache) || !_.isObject(summaryCache.tags) || !_.isNumber(summaryCache.periodEnd)) {
+        if (!_.isObject(summaryCache) || !_.isNumber(summaryCache.periodEnd)) {
             summaryCache = {
                 periodEnd: today,
-                tags: {},
                 showInMegaNav: true
             };
         }
+
+        _.each(getBucketNames(), function(bucketName) {
+            summaryCache[bucketName] = summaryCache[bucketName] || {};
+        });
+
         return summaryCache;
     }
 
     function deleteFromSummary(tag) {
         var summary = getSummary();
 
-        delete summary.tags[tag];
+        _.each(getBuckets(summary), function(bucket) {
+            delete bucket[tag];
+        });
+
         saveSummary(summary);
     }
 
@@ -202,23 +221,25 @@ define([
         if (updateBy !== 0) {
             summary.periodEnd = newToday;
 
-            _.each(summary.tags, function (nameAndFreqs, tid) {
-                var freqs = _.chain(nameAndFreqs[1])
-                    .map(function (freq) {
-                        var newAge = freq[0] + updateBy;
-                        return newAge < summaryPeriodDays && newAge >= 0 ? [newAge, freq[1]] : false;
-                    })
-                    .compact()
-                    .value();
+            _.each(getBuckets(summary), function(bucket) {
+                _.each(bucket, function (nameAndFreqs, tid) {
+                    var freqs = _.chain(nameAndFreqs[1])
+                        .map(function (freq) {
+                            var newAge = freq[0] + updateBy;
+                            return newAge < summaryPeriodDays && newAge >= 0 ? [newAge, freq[1]] : false;
+                        })
+                        .compact()
+                        .value();
 
-                if (freqs.length > 1 || (freqs.length === 1 && freqs[0][0] < forgetUniquesAfter)) {
-                    summary.tags[tid] = [nameAndFreqs[0], freqs];
-                } else {
-                    delete summary.tags[tid];
-                }
+                    if (freqs.length > 1 || (freqs.length === 1 && freqs[0][0] < forgetUniquesAfter)) {
+                        bucket[tid] = [nameAndFreqs[0], freqs];
+                    } else {
+                        delete bucket[tid];
+                    }
+                });
             });
 
-            if (_.isEmpty(summary.tags)) {
+            if (_.every(buckets, _.isEmpty)) {
                 summary.periodEnd = newToday;
             }
         }
@@ -227,9 +248,15 @@ define([
     }
 
     function getPopular(number, filtered) {
-        var tags = getSummary().tags,
-            tids = _.keys(tags),
-            blacklist;
+        var blacklist,
+            buckets = getBuckets(summary),
+            tids = _.chain(buckets)
+                .map(function(bucket) { return _.keys(bucket); })
+                .flatten()
+                .uniq()
+                .value();
+
+        // TODO got to here!!
 
         if (filtered) {
             blacklist = getTopNavItems();
@@ -267,9 +294,9 @@ define([
         return popularFilteredCache;
     }
 
-    function tally(freqs) {
+    function tally(freqs, weight) {
         return _.reduce(freqs, function (tally, freq) {
-            return tally + (9 + freq[1]) * (summaryPeriodDays - freq[0]);
+            return tally + (9 + freq[1]) * weight * (summaryPeriodDays - freq[0]);
         }, 0);
     }
 
@@ -315,20 +342,24 @@ define([
     }
 
     function logSummary(pageConfig, mockToday) {
-        var summary = pruneSummary(getSummary(), mockToday);
+        var summary = pruneSummary(getSummary(), mockToday),
+            isFront = false,
+            tagMeta =  _.chain(pageMeta)
+                .reduceRight(function (m, tag) {
+                    var tid = firstCsv(pageConfig[tag.tid]),
+                        tname = tid && firstCsv(pageConfig[tag.tname]);
 
-        _.chain(pageMeta)
-            .reduceRight(function (tags, tag) {
-                var tid = firstCsv(pageConfig[tag.tid]),
-                    tname = tid && firstCsv(pageConfig[tag.tname]);
+                    if (tid && tname) {
+                        m[collapseTag(tid)] = tname;
+                        isFront = isFront || tid === pageConfig.pageId;
+                    }
+                    return m;
+                }, {})
+                .value(),
+            bucket = summary[isFront ? 'fronts' : 'tags'];
 
-                if (tid && tname) {
-                    tags[collapseTag(tid)] = tname;
-                }
-                return tags;
-            }, {})
-            .each(function (tname, tid) {
-                var nameAndFreqs = summary.tags[tid],
+            tagMeta.each(function (tname, tid) {
+                var nameAndFreqs = bucket[tid],
                     freqs = nameAndFreqs && nameAndFreqs[1],
                     freq = freqs && _.find(freqs, function (freq) { return freq[0] === 0; });
 
@@ -337,7 +368,7 @@ define([
                 } else if (freqs) {
                     freqs.unshift([0, 1]);
                 } else {
-                    summary.tags[tid] = [tname, [[0, 1]]];
+                    bucket[tid] = [tname, [[0, 1]]];
                 }
 
                 if (nameAndFreqs) {
