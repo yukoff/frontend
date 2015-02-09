@@ -134,7 +134,7 @@ define([
         bucketWeights = {
             tags: 1,
             fronts: 10
-        };
+        },
 
         summaryPeriodDays = 30,
         forgetUniquesAfter = 10,
@@ -174,26 +174,24 @@ define([
     }
 
     function getBuckets(summary) {
-        return _.map(getBucketNames(), function(k) { return summary[k]; });
+        return _.map(getBucketNames(), function (k) { return summary[k]; });
     }
 
     function getSummary() {
-        if (summaryCache) {
-            return summaryCache;
+        if (!summaryCache) {
+            summaryCache = storage.local.get(storageKeySummary);
+
+            if (!_.isObject(summaryCache) || !_.isNumber(summaryCache.periodEnd)) {
+                summaryCache = {
+                    periodEnd: today,
+                    showInMegaNav: true
+                };
+            }
+
+            _.each(getBucketNames(), function (bucketName) {
+                summaryCache[bucketName] = summaryCache[bucketName] || {};
+            });
         }
-
-        summaryCache = storage.local.get(storageKeySummary);
-
-        if (!_.isObject(summaryCache) || !_.isNumber(summaryCache.periodEnd)) {
-            summaryCache = {
-                periodEnd: today,
-                showInMegaNav: true
-            };
-        }
-
-        _.each(getBucketNames(), function(bucketName) {
-            summaryCache[bucketName] = summaryCache[bucketName] || {};
-        });
 
         return summaryCache;
     }
@@ -201,7 +199,7 @@ define([
     function deleteFromSummary(tag) {
         var summary = getSummary();
 
-        _.each(getBuckets(summary), function(bucket) {
+        _.each(getBuckets(summary), function (bucket) {
             delete bucket[tag];
         });
 
@@ -216,12 +214,14 @@ define([
 
     function pruneSummary(summary, mockToday) {
         var newToday = mockToday || today,
-            updateBy = newToday - summary.periodEnd;
+            updateBy = newToday - summary.periodEnd,
+            buckets;
 
         if (updateBy !== 0) {
             summary.periodEnd = newToday;
+            buckets = getBuckets(summary);
 
-            _.each(getBuckets(summary), function(bucket) {
+            _.each(getBuckets(summary), function (bucket) {
                 _.each(bucket, function (nameAndFreqs, tid) {
                     var freqs = _.chain(nameAndFreqs[1])
                         .map(function (freq) {
@@ -249,14 +249,13 @@ define([
 
     function getPopular(number, filtered) {
         var blacklist,
+            summary = getSummary(),
             buckets = getBuckets(summary),
             tids = _.chain(buckets)
-                .map(function(bucket) { return _.keys(bucket); })
+                .map(function (bucket) { return _.keys(bucket); })
                 .flatten()
                 .uniq()
                 .value();
-
-        // TODO got to here!!
 
         if (filtered) {
             blacklist = getTopNavItems();
@@ -266,15 +265,17 @@ define([
 
         return _.chain(tids)
             .map(function (tid) {
-                var nameAndFreqs = tags[tid],
-                    freqs = nameAndFreqs[1];
+                return _.reduce(bucketWeights, function (result, bucketWeight, bucketName) {
+                    var nameAndFreqs = summary[bucketName][tid],
+                        freqs = nameAndFreqs && nameAndFreqs[1];
 
-                if (freqs.length) {
-                    return {
-                        keep: [tid, nameAndFreqs[0]],
-                        rank: tally(freqs)
-                    };
-                }
+                    if (freqs && freqs.length) {
+                        result = result || {};
+                        result.keep = result.keep || [tid, nameAndFreqs[0]];
+                        result.rank = (result.rank || 0) + getRank(freqs, bucketWeight);
+                    }
+                    return result;
+                }, null);
             })
             .compact()
             .sortBy('rank')
@@ -294,9 +295,9 @@ define([
         return popularFilteredCache;
     }
 
-    function tally(freqs, weight) {
-        return _.reduce(freqs, function (tally, freq) {
-            return tally + (9 + freq[1]) * weight * (summaryPeriodDays - freq[0]);
+    function getRank(freqs, weight) {
+        return _.reduce(freqs, function (rank, freq) {
+            return rank + (9 + freq[1]) * weight * (summaryPeriodDays - freq[0]);
         }, 0);
     }
 
@@ -305,7 +306,7 @@ define([
     }
 
     function collapseTag(t) {
-        t = t.replace(/^\/|\/$/g, '');
+        t = (t || '').replace(/^\/|\/$/g, '');
         if (t.match(isEditionalisedRx)) {
             t = t.replace(stripEditionRx, '');
         }
@@ -350,7 +351,8 @@ define([
                         tname = tid && firstCsv(pageConfig[tag.tname]);
 
                     if (tid && tname) {
-                        m[collapseTag(tid)] = tname;
+                        tid = collapseTag(tid);
+                        m[tid] = tname;
                         isFront = isFront || tid === pageConfig.pageId;
                     }
                     return m;
@@ -358,23 +360,27 @@ define([
                 .value(),
             bucket = summary[isFront ? 'fronts' : 'tags'];
 
-            tagMeta.each(function (tname, tid) {
-                var nameAndFreqs = bucket[tid],
-                    freqs = nameAndFreqs && nameAndFreqs[1],
-                    freq = freqs && _.find(freqs, function (freq) { return freq[0] === 0; });
+        _.forEach(tagMeta, function (tname, tid) {
+            console.log('000');
+            var nameAndFreqs = bucket[tid],
+                freqs = nameAndFreqs && nameAndFreqs[1],
+                freq = freqs && _.find(freqs, function (freq) { return freq[0] === 0; });
 
-                if (freq) {
-                    freq[1] = freq[1] + 1;
-                } else if (freqs) {
-                    freqs.unshift([0, 1]);
-                } else {
-                    bucket[tid] = [tname, [[0, 1]]];
-                }
+            if (freq) {
+                console.log(111);
+                freq[1] = freq[1] + 1;
+            } else if (freqs) {
+                console.log(222);
+                freqs.unshift([0, 1]);
+            } else {
+                console.log(333);
+                bucket[tid] = [tname, [[0, 1]]];
+            }
 
-                if (nameAndFreqs) {
-                    nameAndFreqs[0] = tname;
-                }
-            });
+            if (nameAndFreqs) {
+                nameAndFreqs[0] = tname;
+            }
+        });
 
         saveSummary(summary);
     }
