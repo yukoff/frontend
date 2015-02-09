@@ -361,19 +361,15 @@ define([
             bucket = summary[isFront ? 'fronts' : 'tags'];
 
         _.forEach(tagMeta, function (tname, tid) {
-            console.log('000');
             var nameAndFreqs = bucket[tid],
                 freqs = nameAndFreqs && nameAndFreqs[1],
                 freq = freqs && _.find(freqs, function (freq) { return freq[0] === 0; });
 
             if (freq) {
-                console.log(111);
                 freq[1] = freq[1] + 1;
             } else if (freqs) {
-                console.log(222);
                 freqs.unshift([0, 1]);
             } else {
-                console.log(333);
                 bucket[tid] = [tname, [[0, 1]]];
             }
 
