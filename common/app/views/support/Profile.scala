@@ -29,7 +29,7 @@ sealed trait ElementProfile {
   def altTextFor(image: ImageContainer): Option[String] =
     elementFor(image).flatMap(_.altText)
 
-  def resizeString = s"/w-${toResizeString(width)}/h-${toResizeString(height)}/q-$compression"
+  def resizeString = s"?w=${toResizeString(width)}&q=$compression&auto=format"
 
 
   private def toResizeString(i: Option[Int]) = i.map(_.toString).getOrElse("-")
@@ -108,8 +108,8 @@ object ImgSrc {
   private val imageHost = Configuration.images.path
 
   private val hostPrefixMapping = Map(
-    "static.guim.co.uk" -> "static",
-    "media.guim.co.uk" -> "media"
+    "static.guim.co.uk" -> "http://static-guim.imgix.net",
+    "media.guim.co.uk" -> "http://media-guim.imgix.net"
   )
 
   def apply(url: String, imageType: ElementProfile): String = {
@@ -122,13 +122,13 @@ object ImgSrc {
     hostPrefixMapping.get(uri.getHost)
       .filter(_ => isSupportedImage)
       .filter(_ => ImageServerSwitch.isSwitchedOn)
-      .map( pathPrefix =>
-        s"$imageHost/$pathPrefix${imageType.resizeString}${uri.getPath}"
+      .map( host =>
+        s"$host${uri.getPath}${imageType.resizeString}"
       ).getOrElse(url)
   }
 
   object Imager extends Profile(None, None) {
-    override def resizeString = "/w-{width}/h--/q-95"
+    override def resizeString = "?w={width}&q=95&auto=format"
   }
 
   // always, and I mean ALWAYS think carefully about the size image you use
