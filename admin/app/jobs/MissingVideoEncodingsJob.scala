@@ -72,6 +72,8 @@ object VideoEncodingsJob extends ExecutionContexts with Logging  {
 
      missingEncodingsData.onSuccess{ case missingEncodings =>
 
+
+
          missingEncodings.map { case missingEncoding: MissingEncoding =>
              DynamoDbStore.haveSeenMissingEncoding(missingEncoding.encodingSrc, missingEncoding.url) map {
                 case true => log.debug(s"Already seen missing encoding: ${missingEncoding.encodingSrc} for url: ${missingEncoding.url}")

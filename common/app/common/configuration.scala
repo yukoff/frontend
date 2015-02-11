@@ -384,7 +384,6 @@ class GuardianConfiguration(val application: String, val webappConfDirectory: St
     lazy val region = configuration.getMandatoryStringProperty("aws.region")
     lazy val bucket = configuration.getMandatoryStringProperty("aws.bucket")
     lazy val notificationSns: String = configuration.getMandatoryStringProperty("sns.notification.topic.arn")
-    lazy val videoEncodingsSns: String = configuration.getMandatoryStringProperty("sns.missing_video_encodings.topic.arn")
     lazy val frontPressSns: Option[String] = configuration.getStringProperty("frontpress.sns.topic")
 
 
