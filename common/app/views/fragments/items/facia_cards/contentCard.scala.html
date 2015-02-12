@@ -84,20 +84,15 @@ data-test-id="facia-card"
         @if(item.snapStuff.snapType == LatestSnap) {
             @kicker(item.header, List("fc-item__kicker--dreamsnap"))
         }
-        <div class="@RenderClasses(Map(
-            ("fc-item__header", true),
-            ("fc-item__header--inline-video", item.isVideo && item.displaySettings.isBoosted)
-        ))">
-            @title(item.header, index, containerIndex, snapType = Some(item.snapStuff.snapType))
+        @title(item.header, index, containerIndex, snapType = Some(item.snapStuff.snapType))
 
-            @item.byline.map { byline =>
-                <div class="fc-item__byline">@byline.htmlWithLinks(request)</div>
-            }
+        @item.byline.map { byline =>
+            <div class="fc-item__byline">@byline.htmlWithLinks(request)</div>
+        }
 
-            @item.starRating.map { rating =>
-                @starRating(rating)
-            }
-        </div>
+        @item.starRating.map { rating =>
+            @starRating(rating)
+        }
 
         @item.trailText.filter(const(item.showStandfirst)).map { text =>
             <div class="fc-item__standfirst">@Html(text)</div>

@@ -252,9 +252,13 @@ $fc-item-gutter: $gs-gutter / 4;
     color: colour(live-default);
 }
 
-.fc-item__header,
-.item__title,
-.flyer__header {
+.fc-item__title,
+.fc-item__byline,
+.fc-item__kicker,
+.flyer__header,
+.flyer__byline,
+.flyer__title,
+.flyer__kicker {
     @include fs-headline(3);
     font-weight: 500;
     padding-bottom: .5em;
@@ -262,16 +266,6 @@ $fc-item-gutter: $gs-gutter / 4;
     .fc-item--has-boosted-title & {
         @include fs-headline(4, true);
     }
-}
-
-.fc-item__title,
-.fc-item__byline,
-.fc-item__kicker,
-.flyer__byline,
-.flyer__title,
-.flyer__kicker {
-    font: inherit;
-    line-height: inherit;
 }
 
 .fc-item__title {
