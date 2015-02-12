@@ -261,7 +261,6 @@ $fc-item-gutter: $gs-gutter / 4;
 .flyer__kicker {
     @include fs-headline(3);
     font-weight: 500;
-    padding-bottom: .5em;
 
     .fc-item--has-boosted-title & {
         @include fs-headline(4, true);
@@ -317,6 +316,7 @@ $fc-item-gutter: $gs-gutter / 4;
 
 .fc-item__standfirst {
     @include fs-headline(1);
+    padding-top: .5em;
     padding-bottom: .5em;
     color: colour(neutral-2);
     display: none;
