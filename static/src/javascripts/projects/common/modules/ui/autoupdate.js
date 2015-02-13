@@ -179,6 +179,7 @@ define([
             mediator.on('modules:notificationbar:show', this.view.revealNewElements.bind(this));
 
             // add the component to the page, and show it
+            console.log(this.getTemplate('on'));
             $('.js-update').html(this.getTemplate('on'));
 
             bean.add(document.body, 'click', options.btnClass, function (e) {
@@ -188,9 +189,9 @@ define([
         };
 
         this.getTemplate = function (state) {
-            return bonzo.create(template(alertHtml, {
-                stateText: state,
-                state: state.charAt(0) + state.slice(1),
+            return bonzo.create(template(autoupdateTemplate, {
+                stateText: state.charAt(0).toUpperCase() + state.slice(1),
+                state: state,
                 stateNext: (state === 'on') ? 'off' : 'on'
             }));
         };
