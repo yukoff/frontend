@@ -13,7 +13,9 @@ define([
     'common/utils/detect',
     'common/utils/mediator',
     'common/modules/article/twitter',
-    'common/modules/live/notification-bar'
+    'common/modules/live/notification-bar',
+    'common/utils/template',
+    'text!common/views/ui/autoupdate.html'
 ], function (
     bean,
     bonzo,
@@ -25,7 +27,9 @@ define([
     detect,
     mediator,
     twitter,
-    NotificationBar
+    NotificationBar,
+    template,
+    autoupdateTemplate
 ) {
     /*
         @param {Object} options hash of configuration options:
@@ -49,21 +53,7 @@ define([
         this.notification = '<';
         this.updateDelay = options.delay;
 
-        this.template =
-            '  <button class="u-button-reset live-toggler live-toggler--autoupdate live-toggler--on js-auto-update js-auto-update--on"' +
-            '          data-action="off" data-link-name="autoupdate off" title="Turn auto update off">' +
-            '    <span class="live-toggler__label">Auto update:</span>' +
-            '    <span class="u-h">is</span>' +
-            '    <span class="rounded-icon live-toggle__value">On</span>' +
-            '    <span class="u-h">(turn off)</span>' +
-            '  </button>' +
-            '  <button class="u-button-reset live-toggler live-toggler--autoupdate live-toggler--off js-auto-update js-auto-update--off"' +
-            '          data-action="on" data-link-name="autoupdate on" title="Turn auto update on">' +
-            '    <span class="live-toggler__label">Auto update:</span>' +
-            '    <span class="u-h">is</span>' +
-            '    <span class="rounded-icon live-toggle__value">Off</span>' +
-            '    <span class="u-h">(turn on)</span>' +
-            '  </button>';
+
 
         this.view = {
             render: function (res) {
