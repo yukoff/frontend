@@ -53,8 +53,6 @@ define([
         this.notification = '<';
         this.updateDelay = options.delay;
 
-
-
         this.view = {
             render: function (res) {
                 var attachTo = options.attachTo,
@@ -94,15 +92,12 @@ define([
 
             toggle: function (btn) {
                 var action = btn.getAttribute('data-action');
-
-                $(options.btnClass).removeClass(options.activeClass);
-                $('.js-auto-update--' + action, btn.parentNode).addClass(options.activeClass);
-
+                $('.js-update').empty().html(this.getTemplate(action));
                 this[action]();
             },
 
             destroy: function () {
-                $('.update').remove();
+                $('.js-update').remove();
                 mediator.emit('modules:autoupdate:destroyed');
             },
 
@@ -168,8 +163,6 @@ define([
                 return;
             }
 
-            var that = this;
-
             this.notificationBar = new NotificationBar({attachTo: $('.js-update-notification')[0] });
 
             $(options.attachTo).addClass('autoupdate--has-animation');
@@ -186,18 +179,20 @@ define([
             mediator.on('modules:notificationbar:show', this.view.revealNewElements.bind(this));
 
             // add the component to the page, and show it
-            $('.update').html(this.template).removeClass('u-h');
+            $('.js-update').html(this.getTemplate('on'));
 
-            this.btns = $(options.btnClass);
+            bean.add(document.body, 'click', options.btnClass, function (e) {
+                e.preventDefault();
+                this.view.toggle(e.target);
+            }.bind(this));
+        };
 
-            this.btns.each(function (btn) {
-                bean.add(btn, 'click', function (e) {
-                    e.preventDefault();
-                    that.view.toggle.call(that, this);
-                });
-            });
-
-            this.view.toggle.call(this, this.btns[1]);
+        this.getTemplate = function (state) {
+            return bonzo.create(template(alertHtml, {
+                stateText: state,
+                state: state.charAt(0) + state.slice(1),
+                stateNext: (state === 'on') ? 'off' : 'on'
+            }));
         };
 
         this.setManipulationType = function (manipulation) {
