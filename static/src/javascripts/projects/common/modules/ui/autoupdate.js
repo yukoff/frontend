@@ -172,7 +172,7 @@ define([
             mediator.on('modules:detect:pagevisibility:visible', function () {
                 if (this.isUpdating) {
                     this.on(); // reset backoff
-                    that.view.revealNewElements();
+                    this.view.revealNewElements();
                 }
             }.bind(this));
 
