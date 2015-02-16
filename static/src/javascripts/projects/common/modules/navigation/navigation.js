@@ -23,13 +23,7 @@ define([
     };
 
     Navigation.prototype.eatMegaNav = function () {
-        var $megaNav = $('.js-transfuse');
-
-        this.megaNavHtml = $megaNav.html();
-
-        fastdom.write(function () {
-            $megaNav.remove();
-        });
+        this.megaNavHtml = document.getElementById('global-nav').innerText;
     };
 
     Navigation.prototype.replaceAllSectionsLink = function () {

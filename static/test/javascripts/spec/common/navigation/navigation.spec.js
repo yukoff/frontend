@@ -23,7 +23,7 @@ define([
                         '<a class="js-navigation-toggle" href="#footer-nav" data-target-nav="js-navigation-header"></a>' +
                         '<div class="js-mega-nav-placeholder"></div>' +
                         '</div>' +
-                        '<div class="js-transfuse" data-transfuse-target="js-mega-nav-placeholder">Nav</div>'
+                        '<div data-transfuse-target="js-mega-nav-placeholder"><noscript id="global-nav">Nav</noscript></div>'
                 ]
             })
         });
