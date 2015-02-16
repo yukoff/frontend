@@ -32,7 +32,6 @@ define([
     };
 
     Navigation.prototype.announceTheNewNavOnce = _.once(function() {
-        console.log('emitting')
         mediator.emit('modules:nav:inserted');
     })
 
