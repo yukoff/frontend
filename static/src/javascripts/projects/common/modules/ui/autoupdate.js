@@ -179,12 +179,10 @@ define([
             mediator.on('modules:notificationbar:show', this.view.revealNewElements.bind(this));
 
             // add the component to the page, and show it
-            console.log(options.btnClass);
             $('.js-update').html(this.getTemplate('on'));
 
             bean.on(document.body, 'click', options.btnClass, function (e) {
                 e.preventDefault();
-                console.log('click autoupdate');
                 this.view.toggle.call(this, e.currentTarget);
             }.bind(this));
         };
