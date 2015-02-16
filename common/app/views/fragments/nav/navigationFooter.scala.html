@@ -25,6 +25,9 @@
             </div>
             <div class="navigation__expandable" data-component="all-footer-nav" data-transfuse-target="js-mega-nav-placeholder" data-link-name="global navigation: footer : sections">
                 @fragments.nav.globalNavigation(metaData)
+                    <noscript id="mega-nav-src">
+                        @fragments.nav.globalNavigation(metaData)
+                    </noscript>
             </div>
         </div>
     </div>
