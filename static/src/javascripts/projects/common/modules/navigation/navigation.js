@@ -2,76 +2,65 @@ define([
     'bean',
     'qwery',
     'fastdom',
-    'common/utils/mediator',
-    'common/utils/$'
+    'common/utils/$',
+    'common/utils/_',
+    'common/utils/mediator'
 ], function (
     bean,
     qwery,
     fastdom,
-    mediator,
-    $
+    $,
+    _,
+    mediator
 ) {
-    function Navigation() {
-        this.isInserted = false;
-    }
+    function Navigation() {}
 
     Navigation.prototype.init = function () {
-        this.eatMegaNav();
         this.enableMegaNavToggle();
         this.replaceAllSectionsLink();
-        this.$headerNav = $('.js-navigation-header');
     };
 
-    Navigation.prototype.eatMegaNav = function () {
-        this.megaNavHtml = document.getElementById('global-nav').innerText;
+    Navigation.prototype.forageForMegaNav = function () {
+        return $('.js-navigation-placeholder', "[data-has-nav]").html() ||
+            $('#mega-nav-src')[0].innerText;
     };
+
+    Navigation.prototype.regurgitateMegaNavInto = function ($nav) {
+        $('.js-navigation-placeholder', $nav[0]).html(this.forageForMegaNav());
+        $nav.attr('data-has-nav', 'true');
+        this.announceTheNewNavOnce();
+    };
+
+    Navigation.prototype.announceTheNewNavOnce = _.once(function() {
+        console.log('emitting')
+        mediator.emit('modules:nav:inserted');
+    })
 
     Navigation.prototype.replaceAllSectionsLink = function () {
         $('.js-navigation-toggle').attr('href', '#nav-allsections');
     };
 
-    Navigation.prototype.scrollToHeaderNav = function () {
-        var that = this;
+    Navigation.prototype.toggleMegaNav = function ($toggler) {
+        var that = this,
+            $nav = $('.' + $toggler.attr('data-target-nav'));
 
-        fastdom.read(function () {
-            window.scrollTo(0, that.$headerNav.offset().top);
-        });
-    };
-
-    Navigation.prototype.setMegaNavState = function (open) {
-        var that = this;
+        if ($nav.attr('data-has-nav') !== 'true') {
+            fastdom.write(function () {
+                that.regurgitateMegaNavInto($nav);
+            })
+        }
 
         fastdom.write(function () {
-            if (open && !that.isInserted) {
-                $('.js-mega-nav-placeholder').html(that.megaNavHtml);
-                that.isInserted = true;
-                mediator.emit('modules:nav:inserted');
-            }
-
-            that.$headerNav.toggleClass('navigation--expanded', open);
-            that.$headerNav.toggleClass('navigation--collapsed', !open);
-
-            mediator.emit(open ? 'modules:nav:open' : 'modules:nav:close');
-        });
-    };
-
-    Navigation.prototype.isExpanded = function () {
-        return this.$headerNav.hasClass('navigation--expanded');
+            $nav.toggleClass('navigation--expanded navigation--collapsed');
+        })
     };
 
     Navigation.prototype.enableMegaNavToggle = function () {
         var that = this;
 
         bean.on(document, 'click', '.js-navigation-toggle', function (e) {
-            var isFooter = $(e.currentTarget).attr('data-target-nav') === 'js-navigation-footer';
-
             e.preventDefault();
-
-            if (isFooter) {
-                that.scrollToHeaderNav();
-            }
-
-            that.setMegaNavState(isFooter || !that.isExpanded());
+            that.toggleMegaNav($(e.currentTarget));
         });
     };
 

@@ -21,9 +21,9 @@ define([
                 fixtures: [
                         '<div class="js-navigation-header navigation--collapsed">' +
                         '<a class="js-navigation-toggle" href="#footer-nav" data-target-nav="js-navigation-header"></a>' +
-                        '<div class="js-mega-nav-placeholder"></div>' +
+                        '<div class="js-navigation-placeholder"></div>' +
                         '</div>' +
-                        '<div data-transfuse-target="js-mega-nav-placeholder"><noscript id="global-nav">Nav</noscript></div>'
+                        '<div><noscript id="mega-nav-src">Nav</noscript></div>'
                 ]
             })
         });
@@ -36,10 +36,10 @@ define([
             var sut = new Navigation();
 
             sut.init();
-            sut.setMegaNavState(true);
+            sut.toggleMegaNav($('.js-navigation-toggle'));
 
             fastdom.defer(5, function () {
-                expect($('.js-mega-nav-placeholder').html()).toEqual('Nav');
+                expect($('.js-navigation-placeholder').html()).toEqual('Nav');
                 done();
             });
         });
