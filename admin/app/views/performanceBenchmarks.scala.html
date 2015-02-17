@@ -1,0 +1,15 @@
+@(environment: String)
+
+@admin_main("Performance benchmarks", environment, isAuthed = true) {
+
+    <link type="text/css" rel="stylesheet" href="@routes.Assets.at("css/perf.css")">
+    <script src="@routes.Assets.at("javascripts/components/jquery/dist/jquery.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/components/lodash/lodash.js")"></script>
+    <script src="@routes.Assets.at("javascripts/components/d3/d3.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/components/rickshaw/rickshaw.min.js")"></script>
+
+    <div class="chart" data-chart=""></div>
+
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/perf.js")"></script>
+
+}

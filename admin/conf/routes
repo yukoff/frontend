@@ -128,3 +128,7 @@ GET         /css-reports                                                        
 GET         /css-reports.json                                                                  controllers.admin.CssReportController.index
 GET         /css-reports/all.json                                                              controllers.admin.CssReportController.aggregateReport
 GET         /css-reports/:date.json                                                            controllers.admin.CssReportController.report(date: LocalDate)
+
+# perf
+GET         /admin/performance                                                                 controllers.admin.PerformanceBenchmarkController.index
+GET         /admin/performance/data.json                                                       controllers.admin.PerformanceBenchmarkController.jsonData
