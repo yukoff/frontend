@@ -1,34 +1,27 @@
-define([
-    'underscore',
-    'utils/mediator'
-], function (
-    _,
-    mediator
-) {
-    // Default response, if missing the application navigates away
-    var mockResponse = {
-        fronts: {},
-        collections: {}
-    };
+import _ from 'underscore';
+import mediator from 'utils/mediator';
+import mockjax from 'test/utils/mockjax';
 
-    $.mockjax({
-        url: '/config',
-        type: 'get',
-        response: function (req) {
-            this.responseText = mockResponse;
-        },
-        onAfterComplete: function () {
-            mediator.emit('mock:config');
-        }
-    });
+var mockResponse = {
+    fronts: {},
+    collections: {}
+};
 
-    return {
-        set: function (response) {
-            mockResponse = response;
-        },
-        update: function (response) {
-            _.extend(mockResponse.fronts, response.fronts);
-            _.extend(mockResponse.collections, response.collections);
-        }
-    };
+mockjax({
+    url: '/config',
+    type: 'get',
+    response: function () {
+        this.responseText = mockResponse;
+    },
+    onAfterComplete: function () {
+        mediator.emit('mock:config');
+    }
 });
+
+export function set (response) {
+    mockResponse = response;
+}
+export function update (response) {
+    _.extend(mockResponse.fronts, response.fronts);
+    _.extend(mockResponse.collections, response.collections);
+}

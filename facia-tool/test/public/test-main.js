@@ -12,7 +12,7 @@ System.amdRequire([
 ) {
     var tests = [],
         specFileExpr = /.*\.spec\.js$/,
-        filterTests = document.location.search.match(/[\?\&]test=[a-z]+/gi) || [];
+        filterTests = document.location.search.match(/[\?\&]test=[a-z-\.]+/gi) || [];
 
     filterTests = _.map(filterTests, function (test) {
         return test.split('=')[1] + '.spec.js';
@@ -42,9 +42,11 @@ System.amdRequire([
     System.amdRequire([
         'mock/logger'
     ], function (
-        onceMock
+        mockLogger
     ) {
-        System.amdRequire(tests, function () {
+        Promise.all(_.map(tests, function (test) {
+            return System.import(test);
+        })).then(function () {
             window.__karma__.start();
         });
     });

@@ -1,120 +1,109 @@
-define([
-    'underscore',
-    'modules/vars',
-    'utils/alert',
-    'utils/mediator',
-    'utils/url-abs-path',
-    'utils/remove-by-id'
-], function(
-    _,
-    vars,
-    alert,
-    mediator,
-    urlAbsPath,
-    removeById
-) {
-    var alreadyInitialised = false,
-        listeners = mediator.scope();
+import _ from 'underscore';
+import vars from 'modules/vars';
+import alert from 'utils/alert';
+import { scope } from 'utils/mediator';
+import urlAbsPath from 'utils/url-abs-path';
+import removeById from 'utils/remove-by-id';
 
-    function alertBadContent(msg) {
-        alert(msg ? msg : 'Sorry, but you can\'t add that item');
+var alreadyInitialised = false,
+    listeners = scope();
+
+function alertBadContent(msg) {
+    alert(msg ? msg : 'Sorry, but you can\'t add that item');
+}
+
+/* opts:
+    newItemsConstructor
+    newItemsValidator
+    newItemsPersister
+
+    sourceItem
+    sourceGroup (optional)
+
+    targetItem (optional)
+    targetGroup
+
+    isAfter (optional)
+
+    mediaItem (optional)
+*/
+function listManager(opts) {
+    var position,
+        newItems,
+        insertAt;
+
+    if (opts.mediaItem) {
+        if (_.isFunction(opts.mediaHandler)) {
+            opts.mediaHandler(opts);
+        } else {
+            alertBadContent('Unhandled media item');
+        }
+        return;
     }
 
-    /* opts:
-        newItemsConstructor
-        newItemsValidator
-        newItemsPersister
+    position = opts.targetItem && _.isFunction(opts.targetItem.id) ? opts.targetItem.id() : undefined;
 
-        sourceItem
-        sourceGroup (optional)
+    removeById(opts.targetGroup.items, urlAbsPath(opts.sourceItem.id));
 
-        targetItem (optional)
-        targetGroup
+    insertAt = opts.targetGroup.items().indexOf(opts.targetItem) + (opts.isAfter || 0);
+    insertAt = insertAt === -1 ? opts.targetGroup.items().length : insertAt;
 
-        isAfter (optional)
+    newItems = opts.newItemsConstructor(opts.sourceItem.id, opts.sourceItem, opts.targetGroup);
 
-        mediaItem (optional)
-    */
-    function listManager(opts) {
-        var position,
-            newItems,
-            insertAt;
+    if (!newItems[0]) {
+        alertBadContent();
+        return;
+    }
 
-        if (opts.mediaItem) {
-            if (_.isFunction(opts.mediaHandler)) {
-                opts.mediaHandler(opts);
-            } else {
-                alertBadContent('Unhandled media item');
-            }
+    opts.targetGroup.items.splice(insertAt, 0, newItems[0]);
+
+    opts.newItemsValidator(newItems, opts.targetContext)
+    .fail(function(err) {
+        _.each(newItems, function(item) { opts.targetGroup.items.remove(item); });
+        alertBadContent(err);
+    })
+    .done(function() {
+        if (opts.targetGroup.parent) {
+            opts.newItemsPersister(newItems, opts.sourceContext, opts.sourceGroup, opts.targetContext, opts.targetGroup, position, opts.isAfter);
+        }
+    });
+}
+
+function alternateAction (opts) {
+    if (opts.targetGroup.parentType === 'Article') {
+        var id = urlAbsPath(opts.sourceItem.id);
+
+        if (id.indexOf(vars.CONST.internalContentPrefix) !== 0) {
             return;
         }
 
-        position = opts.targetItem && _.isFunction(opts.targetItem.id) ? opts.targetItem.id() : undefined;
-
-        removeById(opts.targetGroup.items, urlAbsPath(opts.sourceItem.id));
-
-        insertAt = opts.targetGroup.items().indexOf(opts.targetItem) + (opts.isAfter || 0);
-        insertAt = insertAt === -1 ? opts.targetGroup.items().length : insertAt;
-
-        newItems = opts.newItemsConstructor(opts.sourceItem.id, opts.sourceItem, opts.targetGroup);
+        var newItems = opts.newItemsConstructor(urlAbsPath(id), null, opts.targetGroup);
 
         if (!newItems[0]) {
             alertBadContent();
             return;
         }
 
-        opts.targetGroup.items.splice(insertAt, 0, newItems[0]);
-
-        opts.newItemsValidator(newItems, opts.targetContext)
-        .fail(function(err) {
-            _.each(newItems, function(item) { opts.targetGroup.items.remove(item); });
-            alertBadContent(err);
-        })
-        .done(function() {
-            if (opts.targetGroup.parent) {
-                opts.newItemsPersister(newItems, opts.sourceContext, opts.sourceGroup, opts.targetContext, opts.targetGroup, position, opts.isAfter);
-            }
-        });
+        opts.mergeItems(newItems[0], opts.targetGroup.parent, opts.targetContext);
     }
+}
 
-    function alternateAction (opts) {
-        if (opts.targetGroup.parentType === 'Article') {
-            var id = urlAbsPath(opts.sourceItem.id);
-
-            if (id.indexOf(vars.CONST.internalContentPrefix) !== 0) {
-                return;
-            }
-
-            var newItems = opts.newItemsConstructor(urlAbsPath(id), null, opts.targetGroup);
-
-            if (!newItems[0]) {
-                alertBadContent();
-                return;
-            }
-
-            opts.mergeItems(newItems[0], opts.targetGroup.parent, opts.targetContext);
-        }
+export function init (newItems) {
+    if (alreadyInitialised) {
+        return;
     }
+    alreadyInitialised = true;
 
-    return {
-        init: function(newItems) {
-            if (alreadyInitialised) {
-                return;
-            }
-            alreadyInitialised = true;
-
-            mediator.on('collection:updates', function(opts) {
-                var options = _.extend(opts, newItems);
-                if (opts.alternateAction) {
-                    alternateAction(options);
-                } else {
-                    listManager(options);
-                }
-            });
-        },
-        reset: function () {
-            listeners.dispose();
-            alreadyInitialised = false;
+    listeners.on('collection:updates', function(opts) {
+        var options = _.extend(opts, newItems);
+        if (opts.alternateAction) {
+            alternateAction(options);
+        } else {
+            listManager(options);
         }
-    };
-});
+    });
+}
+export function reset () {
+    listeners.dispose();
+    alreadyInitialised = false;
+}

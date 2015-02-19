@@ -1,46 +1,37 @@
-define([
-    'underscore',
-    'test/utils/collections-loader',
-    'test/utils/config-loader',
-    'knockout',
-    'modules/list-manager',
-    'utils/mediator'
-], function(
-    _,
-    collectionsLoader,
-    configLoader,
-    ko,
-    listManager,
-    mediator
-){
-    var loaders = {
-        'collections': collectionsLoader,
-        'config': configLoader
-    };
+import collectionsLoader from 'test/utils/collections-loader';
+import configLoader from 'test/utils/config-loader';
+import ko from 'knockout';
+import { reset as resetListManager } from 'modules/list-manager';
+import mediator from 'utils/mediator';
+import 'mock/lastmodified';
 
-    return function sandbox (what) {
-        var running;
+var loaders = {
+    'collections': collectionsLoader,
+    'config': configLoader
+};
 
-        afterAll(function () {
-            ko.cleanNode(window.document.body);
-            running.unload();
-            mediator.removeAllListeners();
-            listManager.reset();
-        });
+export function sandbox (what) {
+    var running;
 
-        return function (description, test) {
-            it(description, function (done) {
-                // Prevent pressing on fronts, it messes up with other tests
-                mediator.removeEvent('presser:detectfailures');
+    afterAll(function () {
+        ko.cleanNode(window.document.body);
+        running.unload();
+        mediator.removeAllListeners();
+        resetListManager();
+    });
 
-                if (!running) {
-                    running = loaders[what]();
-                }
+    return function (description, test) {
+        it(description, function (done) {
+            // Prevent pressing on fronts, it messes up with other tests
+            mediator.removeEvent('presser:detectfailures');
 
-                running.loader.then(function () {
-                    test(done);
-                });
+            if (!running) {
+                running = loaders[what]();
+            }
+
+            running.loader.then(function () {
+                test(done);
             });
-        };
+        });
     };
-});
+}

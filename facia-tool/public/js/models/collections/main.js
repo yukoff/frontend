@@ -1,159 +1,133 @@
-define([
-    'config',
-    'knockout',
-    'underscore',
-    'jquery',
-    'modules/vars',
-    'utils/ammended-query-str',
-    'utils/mediator',
-    'utils/fetch-settings',
-    'utils/global-listeners',
-    'utils/layout-from-url',
-    'utils/parse-query-params',
-    'utils/update-scrollables',
-    'utils/terminate',
-    'modules/list-manager',
-    'modules/droppable',
-    'modules/copied-article',
-    'modules/modal-dialog',
-    'models/common-handlers',
-    'models/collections/new-items',
-    'models/layout',
-    'models/widgets'
-], function(
-    pageConfig,
-    ko,
-    _,
-    $,
-    vars,
-    ammendedQueryStr,
-    mediator,
-    fetchSettings,
-    globalListeners,
-    layoutFromUrl,
-    parseQueryParams,
-    updateScrollables,
-    terminate,
-    listManager,
-    droppable,
-    copiedArticle,
-    modalDialog,
-    commonHandlers,
-    newItems,
-    Layout,
-    widgets
-) {
-    return function() {
+import pageConfig from 'config';
+import ko from 'knockout';
+import _ from 'underscore';
+import $ from 'jquery';
+import vars from 'modules/vars';
+import ammendedQueryStr from 'utils/ammended-query-str';
+import mediator from 'utils/mediator';
+import fetchSettings from 'utils/fetch-settings';
+import globalListeners from 'utils/global-listeners';
+import * as layoutFromUrl from 'utils/layout-from-url';
+import parseQueryParams from 'utils/parse-query-params';
+import updateScrollables from 'utils/update-scrollables';
+import terminate from 'utils/terminate';
+import * as listManager from 'modules/list-manager';
+import * as droppable from 'modules/droppable';
+import * as copiedArticle from 'modules/copied-article';
+import modalDialog from 'modules/modal-dialog';
+import * as newItems from 'models/collections/new-items';
+import Layout from 'models/layout';
+import 'models/widgets';
 
-        var model = vars.model = {
-            layout: null,
-            alert: ko.observable(),
-            modalDialog: modalDialog,
-            switches: ko.observable(),
-            fronts: ko.observableArray(),
-            loadedFronts: ko.observableArray(),
-            isPasteActive: ko.observable(false)
-        };
+export default function () {
 
-        model.chooseLayout = function () {
-            this.layout.toggleConfigVisible();
-        };
-        model.saveLayout = function () {
-            this.layout.save();
-        };
-        model.cancelLayout = function () {
-            this.layout.cancel();
-        };
+    var model = vars.model = {
+        layout: null,
+        alert: ko.observable(),
+        modalDialog: modalDialog,
+        switches: ko.observable(),
+        fronts: ko.observableArray(),
+        loadedFronts: ko.observableArray(),
+        isPasteActive: ko.observable(false)
+    };
 
-        model.pressLiveFront = function () {
-            model.clearAlerts();
-            mediator.emit('presser:live');
-        };
+    model.chooseLayout = function () {
+        this.layout.toggleConfigVisible();
+    };
+    model.saveLayout = function () {
+        this.layout.save();
+    };
+    model.cancelLayout = function () {
+        this.layout.cancel();
+    };
 
-        model.clearAlerts = function() {
-            model.alert(false);
-            mediator.emit('alert:dismiss');
-        };
+    model.pressLiveFront = function () {
+        model.clearAlerts();
+        mediator.emit('presser:live');
+    };
 
-        model.title = ko.computed(function() {
-            return pageConfig.priority + ' fronts';
-        }, this);
+    model.clearAlerts = function() {
+        model.alert(false);
+        mediator.emit('alert:dismiss');
+    };
 
-        mediator.on('presser:stale', function (message) {
-            model.alert(message);
-        });
+    model.title = ko.computed(function() {
+        return pageConfig.priority + ' fronts';
+    }, this);
 
-        mediator.on('front:loaded', function (front) {
-            var currentlyLoaded = model.loadedFronts();
-            currentlyLoaded[front.position()] = front;
-            model.loadedFronts(currentlyLoaded);
-        });
-        mediator.on('front:disposed', function (front) {
-            model.loadedFronts.remove(front);
-        });
-        mediator.on('copied-article:change', function (hasArticle) {
-            model.isPasteActive(hasArticle);
-        });
+    mediator.on('presser:stale', function (message) {
+        model.alert(message);
+    });
 
-        this.init = function() {
-            fetchSettings(function (config, switches) {
-                var fronts;
+    mediator.on('front:loaded', function (front) {
+        var currentlyLoaded = model.loadedFronts();
+        currentlyLoaded[front.position()] = front;
+        model.loadedFronts(currentlyLoaded);
+    });
+    mediator.on('front:disposed', function (front) {
+        model.loadedFronts.remove(front);
+    });
+    mediator.on('copied-article:change', function (hasArticle) {
+        model.isPasteActive(hasArticle);
+    });
 
-                if (switches['facia-tool-disable']) {
-                    terminate();
-                    return;
-                }
-                model.switches(switches);
+    this.init = function() {
+        fetchSettings(function (config, switches) {
+            var fronts;
+
+            if (switches['facia-tool-disable']) {
+                terminate();
+                return;
+            }
+            model.switches(switches);
 
 
-                vars.state.config = config;
+            vars.state.config = config;
 
-                var frontInURL = parseQueryParams(window.location.search).front;
-                fronts = frontInURL === 'testcard' ? ['testcard'] :
-                    _.chain(config.fronts)
-                    .map(function(front, path) {
-                        return front.priority === vars.priority ? path : undefined;
-                    })
-                    .without(undefined)
-                    .without('testcard')
-                    .difference(vars.CONST.askForConfirmation)
-                    .sortBy(function(path) { return path; })
-                    .value();
+            var frontInURL = parseQueryParams(window.location.search).front;
+            fronts = frontInURL === 'testcard' ? ['testcard'] :
+                _.chain(config.fronts)
+                .map(function(front, path) {
+                    return front.priority === vars.priority ? path : undefined;
+                })
+                .without(undefined)
+                .without('testcard')
+                .difference(vars.CONST.askForConfirmation)
+                .sortBy(function(path) { return path; })
+                .value();
 
-                if (!_.isEqual(model.fronts(), fronts)) {
-                   model.fronts(fronts);
-                }
-            }, vars.CONST.configSettingsPollMs, true)
-            .done(function() {
-                model.layout = new Layout();
+            if (!_.isEqual(model.fronts(), fronts)) {
+               model.fronts(fronts);
+            }
+        }, vars.CONST.configSettingsPollMs, true)
+        .done(function() {
+            model.layout = new Layout();
 
-                var wasPopstate = false;
-                window.onpopstate = function() {
-                    wasPopstate = true;
-                    model.layout.locationChange();
-                };
-                mediator.on('layout:change', function () {
-                    if (!wasPopstate) {
-                        var serializedLayout = layoutFromUrl.serialize(model.layout.serializable());
-                        if (serializedLayout !== parseQueryParams(window.location.search).layout) {
-                            history.pushState({}, '', window.location.pathname + '?' + ammendedQueryStr('layout', serializedLayout));
-                        }
+            var wasPopstate = false;
+            window.onpopstate = function() {
+                wasPopstate = true;
+                model.layout.locationChange();
+            };
+            mediator.on('layout:change', function () {
+                if (!wasPopstate) {
+                    var serializedLayout = layoutFromUrl.serialize(model.layout.serializable());
+                    if (serializedLayout !== parseQueryParams(window.location.search).layout) {
+                        history.pushState({}, '', window.location.pathname + '?' + ammendedQueryStr('layout', serializedLayout));
                     }
-                    wasPopstate = false;
-                });
-
-                widgets.register();
-                ko.applyBindings(model);
-                $('.top-button-collections').show();
-
-                updateScrollables();
-                globalListeners.on('resize', updateScrollables);
+                }
+                wasPopstate = false;
             });
 
-            listManager.init(newItems);
-            droppable.init();
-            copiedArticle.flush();
-        };
+            ko.applyBindings(model);
+            $('.top-button-collections').show();
 
+            updateScrollables();
+            globalListeners.on('resize', updateScrollables);
+        });
+
+        listManager.init(newItems);
+        droppable.init();
+        copiedArticle.flush();
     };
-});
+
+};

@@ -1,5 +1,5 @@
-define(['utils/parse-query-params'], function(parseQueryParams) {
-    return function() {
-        return parseQueryParams(window.location.search);
-    };
-});
+import parseQueryParams from 'utils/parse-query-params';
+
+export default function() {
+    return parseQueryParams(window.location.search);
+}

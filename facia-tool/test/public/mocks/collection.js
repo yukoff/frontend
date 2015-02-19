@@ -1,27 +1,21 @@
-define([
-    'underscore',
-    'utils/mediator'
-], function (
-    _,
-    mediator
-) {
-    var all = {};
+import mockjax from 'test/utils/mockjax';
+import _ from 'underscore';
+import mediator from 'utils/mediator';
 
-    $.mockjax({
-        url: /collection\/(.+)/,
-        urlParams: ['collection'],
-        type: 'get',
-        response: function (req) {
-            this.responseText = all[req.urlParams.collection];
-        },
-        onAfterComplete: function () {
-            mediator.emit('mock:collection');
-        }
-    });
+var all = {};
 
-    return {
-        set: function (collections) {
-            all = _.extend(all, collections);
-        }
-    };
+mockjax({
+    url: /collection\/(.+)/,
+    urlParams: ['collection'],
+    type: 'get',
+    response: function (req) {
+        this.responseText = all[req.urlParams.collection];
+    },
+    onAfterComplete: function () {
+        mediator.emit('mock:collection');
+    }
 });
+
+export function set (collections) {
+    all = _.extend(all, collections);
+}

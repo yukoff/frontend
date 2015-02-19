@@ -1,28 +1,13 @@
-define([
-    'underscore',
-    'models/config/main',
-    'test/fixtures/one-front-config',
-    'mock/switches',
-    'utils/mediator',
-    'views/config.scala.html!text'
-], function (
-    _,
-    ConfigEditor,
-    fixConfig,
-    mockSwitches,
-    mediator,
-    templateConfig
-) {
-    return function () {
-        var deferred = $.Deferred();
+import ConfigEditor from 'models/config/main';
+import ko from 'knockout';
+import 'test/fixtures/one-front-config';
+import 'mock/switches';
+import templateConfig from 'views/config.scala.html!text';
 
-        // The configuration tool is ready when config and switches are loaded
-        var loaded = _.after(2, _.once(function () {
-            deferred.resolve();
-        }));
-        mediator.once('mock:config', loaded);
-        mediator.once('mock:switches', loaded);
+var yeld = setTimeout;
 
+export default function () {
+    var promise = new Promise(function (resolve) {
         document.body.innerHTML += templateConfig
             .replace('@{priority}', 'test')
             .replace('@urlBase(env)', '/')
@@ -30,19 +15,22 @@ define([
 
         // Mock the time
         jasmine.clock().install();
-        new ConfigEditor().init();
+        new ConfigEditor().init(function () {
+            yeld(resolve, 10);
+        });
         // There's a network request in the init to get the config, advance time
         jasmine.clock().tick(100);
+    });
 
-        function unload () {
-            jasmine.clock().uninstall();
-            var container = document.querySelector('.toolbar').parentNode;
-            document.body.removeChild(container);
-        }
+    function unload () {
+        jasmine.clock().uninstall();
+        var container = document.querySelector('.toolbar').parentNode;
+        ko.cleanNode(container);
+        document.body.removeChild(container);
+    }
 
-        return {
-            loader: deferred.promise(),
-            unload: unload
-        };
+    return {
+        loader: promise,
+        unload: unload
     };
-});
+}

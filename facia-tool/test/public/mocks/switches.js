@@ -1,33 +1,26 @@
-define([
-    'underscore',
-    'utils/mediator'
-], function (
-    _,
-    mediator
-) {
-    // Default response, if missing the application navigates away
-    var mockResponse = {
-        'facia-tool-disable': false,
-        'facia-tool-draft-content': true,
-        'facia-tool-sparklines': false
-    };
+import _ from 'underscore';
+import mediator from 'utils/mediator';
+import mockjax from 'test/utils/mockjax';
 
-    $.mockjax({
-        url: "/switches",
-        response: function (req) {
-            this.responseText = mockResponse;
-        },
-        onAfterComplete: function () {
-            mediator.emit('mock:switches');
-        }
-    });
+var mockResponse = {
+    'facia-tool-disable': false,
+    'facia-tool-draft-content': true,
+    'facia-tool-sparklines': false
+};
 
-    return {
-        set: function (response) {
-            mockResponse = response;
-        },
-        override: function (keys) {
-            mockResponse = _.extend(mockResponse, keys);
-        }
-    };
+mockjax({
+    url: '/switches',
+    response: function () {
+        this.responseText = mockResponse;
+    },
+    onAfterComplete: function () {
+        mediator.emit('mock:switches');
+    }
 });
+
+export function set (response) {
+    mockResponse = response;
+}
+export function override (keys) {
+    mockResponse = _.extend(mockResponse, keys);
+}

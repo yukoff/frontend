@@ -1,44 +1,39 @@
-define([
-    'mock/lastmodified',
-    'utils/fetch-lastmodified'
-], function (
-    mock,
-    lastModified
-) {
-    describe('Last Modified', function () {
-        it('fetches the last time', function (done) {
-            var now = new Date();
+import { set as mockLastModified } from 'mock/lastmodified';
+import lastModified from 'utils/fetch-lastmodified';
 
-            mock.set({
-                'this/front': now.toISOString()
-            });
-            lastModified('this/front').done(function (result) {
-                expect(result).toEqual({
-                    date: now,
-                    human: 'just now',
-                    stale: false
-                });
+describe('Last Modified', function () {
+    it('fetches the last time', function (done) {
+        var now = new Date();
 
-                done();
-            });
+        mockLastModified({
+            'this/front': now.toISOString()
         });
-
-        it('fetches a stale date', function (done) {
-            var past = new Date();
-            past.setFullYear(past.getFullYear() - 1);
-
-            mock.set({
-                'this/front': past.toISOString()
+        lastModified('this/front').then(function (result) {
+            expect(result).toEqual({
+                date: now,
+                human: 'just now',
+                stale: false
             });
-            lastModified('this/front').done(function (result) {
-                expect(result).toEqual({
-                    date: past,
-                    human: '1 year ago',
-                    stale: true
-                });
 
-                done();
+            done();
+        });
+    });
+
+    it('fetches a stale date', function (done) {
+        var past = new Date();
+        past.setFullYear(past.getFullYear() - 1);
+
+        mockLastModified({
+            'this/front': past.toISOString()
+        });
+        lastModified('this/front').then(function (result) {
+            expect(result).toEqual({
+                date: past,
+                human: '1 year ago',
+                stale: true
             });
+
+            done();
         });
     });
 });

@@ -1,31 +1,18 @@
-define([
-    'underscore',
-    'models/collections/main',
-    'test/fixtures/one-front-config',
-    'mock/switches',
-    'test/fixtures/articles',
-    'test/fixtures/some-collections',
-    'utils/layout-from-url',
-    'views/collections.scala.html!text',
-    'views/templates/vertical_layout.scala.html!text',
-    'widgets/collection.html!text',
-    'utils/mediator'
-], function(
-    _,
-    CollectionsEditor,
-    fixConfig,
-    mockSwitches,
-    fixArticles,
-    fixCollections,
-    layoutFromURL,
-    templateCollections,
-    verticalLayout,
-    collectionView,
-    mediator
-){
-    return function () {
-        var deferred = $.Deferred();
+import _ from 'underscore';
+import ko from 'knockout';
+import CollectionsEditor from 'models/collections/main';
+import 'test/fixtures/one-front-config';
+import 'mock/switches';
+import fixArticles from 'test/fixtures/articles';
+import 'test/fixtures/some-collections';
+import * as layoutFromURL from 'utils/layout-from-url';
+import templateCollections from 'views/collections.scala.html!text';
+import verticalLayout from 'views/templates/vertical_layout.scala.html!text';
+import 'widgets/collection.html!text';
+import mediator from 'utils/mediator';
 
+export default function () {
+    var promise = new Promise(function (resolve) {
         document.body.innerHTML += '<div id="_test_container_collections">' +
             verticalLayout +
             templateCollections.replace(/\@[^\n]+\n/g, '') +
@@ -58,23 +45,24 @@ define([
         // Number 2 is because we wait for two search, latest and the only
         // article in the collection.
         mediator.on('mock:search', _.after(2, _.once(function () {
-            deferred.resolve();
+            resolve();
         })));
 
         // The first tick is for the configuration to be loaded
         jasmine.clock().tick(100);
         // The second tick is for the collections to be leaded
         jasmine.clock().tick(300);
+    });
 
-        function unload () {
-            jasmine.clock().uninstall();
-            var container = document.getElementById('_test_container_collections');
-            document.body.removeChild(container);
-        }
+    function unload () {
+        jasmine.clock().uninstall();
+        var container = document.getElementById('_test_container_collections');
+        ko.cleanNode(container);
+        document.body.removeChild(container);
+    }
 
-        return {
-            loader: deferred.promise(),
-            unload: unload
-        };
+    return {
+        loader: promise,
+        unload: unload
     };
-});
+}
