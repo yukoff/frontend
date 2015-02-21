@@ -1,0 +1,45 @@
+$offline-transition: .5s;
+
+.brand-bar {
+    opacity: inherit;
+    @include transition(opacity $offline-transition);
+
+    .offline & {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.l-side-margins {
+    transform: translateY(0);
+    @include transition(transform $offline-transition);
+
+    .offline & {
+        transform: translateY(-36px);
+    }
+}
+
+.l-header-main:before {
+    content: 'offline';
+    position: absolute;
+    right: $gs-gutter / 2;
+    top: $gs-baseline * 2.25;
+    @include fs-textSans(1);
+    color: #ffffff;
+    opacity: 0;
+    @include transition(opacity $offline-transition);
+
+    .offline & {
+        opacity: 1;
+    }
+}
+
+
+#header {
+    @include transition(-webkit-filter $offline-transition);
+    -webkit-filter: none;
+
+    .offline & {
+        -webkit-filter: brightness(0.9) contrast(1) grayscale(.6);
+    }
+}
