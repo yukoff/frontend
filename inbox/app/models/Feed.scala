@@ -33,7 +33,7 @@ case class FeedItem(
 )
 
 object Feed extends ExecutionContexts {
-  val client: AmazonDynamoDBAsyncClient = new AmazonDynamoDBAsyncClient().withRegion(Regions.getCurrentRegion)
+  val client: AmazonDynamoDBAsyncClient = new AmazonDynamoDBAsyncClient().withRegion(Regions.EU_WEST_1)
 
   val TableName = "inbox-feeds"
 

@@ -7,3 +7,4 @@ GET     /assets/*path               dev.DevAssetsController.at(path)
 
 GET     /_healthcheck               conf.Healthcheck.healthcheck()
 
+GET     /inbox/:userId              controllers.InboxController.getPosts(userId)
