@@ -19,5 +19,12 @@ object InboxController extends Controller with ExecutionContexts {
     }
   }
 
+  def setRead(userId: String, addedAt: Long) = Action.async {
+    Feed.setRead(userId, addedAt) map { _ =>
+      // todo something less rubbish
+      Ok("done")
+    }
+  }
+
   // todo add subscription endpoints
 }

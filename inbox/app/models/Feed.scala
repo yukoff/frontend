@@ -37,16 +37,31 @@ object Feed extends ExecutionContexts {
 
   val TableName = "inbox-feeds"
 
+  private def key(userId: String, addedAt: Long) = Map[String, AttributeValue](
+    "user_id" -> new AttributeValue().withS(userId),
+    "added_at" -> new AttributeValue().withN(addedAt.toString)
+  )
+
   def addPost(userId: String, post: InboxItem) = {
     val body = Json.stringify(Json.toJson(post))
 
     client.putItemFuture(new PutItemRequest()
       .withTableName(TableName)
-      .withItem(Map[String, AttributeValue](
-        "user_id" -> new AttributeValue().withS(userId),
-        "added_at" -> new AttributeValue().withN(System.currentTimeMillis().toString),
+      .withItem(key(userId, System.currentTimeMillis()) ++ Map[String, AttributeValue](
         "message" -> new AttributeValue().withS(body),
         "read" -> new AttributeValue().withBOOL(false)
+      ))
+    )
+  }
+
+  def setRead(userId: String, addedAt: Long) = {
+    client.updateItemFuture(new UpdateItemRequest()
+      .withTableName(TableName)
+      .withKey(key(userId, addedAt))
+      .withAttributeUpdates(Map[String, AttributeValueUpdate](
+        "read" -> new AttributeValueUpdate()
+          .withAction(AttributeAction.PUT)
+          .withValue(new AttributeValue().withBOOL(true))
       ))
     )
   }
