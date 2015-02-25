@@ -9,7 +9,7 @@ import awswrappers.dynamodb._
 
 object Subscription {
   val TableName = "inbox-subscriptions"
-  
+
   def subscribe(userId: String, topic: String) = {
     client.updateItemFuture(new UpdateItemRequest()
       .withKey(Map("topic" -> new AttributeValue().withS(topic)))
