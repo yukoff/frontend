@@ -133,6 +133,8 @@ object Frontend extends Build with Prototypes {
     )
   )
 
+  val inbox = application("inbox").dependsOn(commonWithTests).aggregate(common)
+
   val commercial = application("commercial").dependsOn(commonWithTests).aggregate(common)
 
   val onward = application("onward").dependsOn(commonWithTests).aggregate(common)
@@ -207,6 +209,7 @@ object Frontend extends Build with Prototypes {
     applications,
     sport,
     image,
+    inbox,
     pngResizer,
     discussion,
     router,
