@@ -1,7 +1,5 @@
 package models
 
-import com.amazonaws.regions.Regions
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
 import com.amazonaws.services.dynamodbv2.model._
 import common.ExecutionContexts
 import org.joda.time.DateTime
@@ -33,8 +31,6 @@ case class FeedItem(
 )
 
 object Feed extends ExecutionContexts {
-  val client: AmazonDynamoDBAsyncClient = new AmazonDynamoDBAsyncClient().withRegion(Regions.EU_WEST_1)
-
   val TableName = "inbox-feeds"
 
   private def key(userId: String, addedAt: Long) = Map[String, AttributeValue](
