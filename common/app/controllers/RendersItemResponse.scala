@@ -29,7 +29,9 @@ class ItemResponseController(val controllers: RendersItemResponse*) extends Cont
       LiveContentApi.getResponse(itemRequest).flatMap { response =>
         controllers.find(_.canRender(response))
           .map(_.renderItem(path))
-          .getOrElse(successful(NoCache(NotFound)))
+          .getOrElse {
+          successful(NoCache(NotFound))
+        }
       }
     }
   }
