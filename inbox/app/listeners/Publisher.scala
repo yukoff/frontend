@@ -4,6 +4,7 @@ import common.ExecutionContexts
 import models._
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
+import play.api.Play.current
 
 object Publisher extends ExecutionContexts {
   def sendPushNotification(endpoint: PushEndpoint) = {
