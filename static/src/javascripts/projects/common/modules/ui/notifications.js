@@ -10,7 +10,7 @@ define([
     ajax
 ) {
 
-    function Notifications(){
+    function Notifications() {
         this.$count = $('.js-site-notifications__count');
     }
 
@@ -22,7 +22,7 @@ define([
             document.documentElement.classList.toggle('notifications--open');
         });
 
-        setInterval(function(){
+        setInterval(function () {
             ajax({
                 url: '/inbox/XXX/count'
             }).then(function (resp) {
