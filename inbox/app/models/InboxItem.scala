@@ -7,6 +7,9 @@ object InboxItem {
     override def writes(o: InboxItem): JsValue = o match {
       case reply: CommentReply =>
         CommentReply.jsonWrites.writes(reply)
+
+      case newArticle: NewArticle =>
+        NewArticle.jsonWrites.writes(newArticle)
     }
   }
 }
