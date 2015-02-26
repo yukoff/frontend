@@ -4,6 +4,8 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.sns.AmazonSNSAsyncClient
 import common.{Message, JsonQueueWorker, JsonMessageQueue}
 import conf.Configuration
+import discussion.DiscussionApi
+import models.CommentReply
 import play.api.libs.json.Json
 
 import scala.concurrent.Future
@@ -26,8 +28,16 @@ object DiscussionListener extends JsonQueueWorker[DiscussionNotification] {
   override def process(message: Message[DiscussionNotification]): Future[Unit] = {
     val id = message.get.comment_id
 
-    // TODO process comment
-
-    ???
+    for {
+      comment <- DiscussionApi.getComment(id)
+      context <- DiscussionApi.getContext(id)
+      _ <- Publisher.publish(s"discussion:replies:${context.ancestorId}", CommentReply(
+        comment.userProfile.userId,
+        comment.userProfile.displayName,
+        comment.userProfile.avatar,
+        context.discussionKey,
+        comment.body
+      ))
+    } yield ()
   }
 }

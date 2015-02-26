@@ -21,7 +21,8 @@ object CommentReply {
 
 case class CommentReply(
   userId: String,
-  username: String,
-  thread: Int,
+  displayName: String,
+  avatar: String,
+  discussionKey: String,
   post: String
 ) extends InboxItem
