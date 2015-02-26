@@ -25,7 +25,7 @@ define([
             ajax({
                 url: '/inbox/XXX/count'
             }).then(function (resp) {
-                that.$count.html(resp.count);
+                that.$count.html(resp.count.toString());
             });
         }, 2000)
 

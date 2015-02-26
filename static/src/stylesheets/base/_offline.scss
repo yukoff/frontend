@@ -14,12 +14,16 @@ $offline-transition: .5s;
 }
 
 .brand-bar {
-    opacity: inherit;
-    @include transition(opacity $offline-transition);
+    [data-component="subscribe"],
+    [data-component="search"],
+    [data-component="guardian-services"] {
+        opacity: inherit;
+        @include transition(opacity $offline-transition);
 
-    .offline & {
-        opacity: 0;
-        pointer-events: none;
+        .offline & {
+            opacity: 0;
+            pointer-events: none;
+        }
     }
 }
 
