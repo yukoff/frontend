@@ -8,10 +8,10 @@ import scala.concurrent.Future
 import awswrappers.dynamodb._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Subscription {
-  val TableName = "inbox-subscriptions"
+object PushSubscription {
+  val TableName = "inbox-push-subscriptions"
 
-  def subscribe(userId: String, topic: String) = {
+  def subscribe(endpoint: String, userId: String, topic: String) = {
     client.updateItemFuture(new UpdateItemRequest()
       .withTableName(TableName)
       .withKey(Map("topic" -> new AttributeValue().withS(topic)))
@@ -23,7 +23,7 @@ object Subscription {
     )
   }
 
-  def unsubscribe(userId: String, topic: String) = {
+  def unsubscribe(endpoint: String, userId: String, topic: String) = {
     client.updateItemFuture(new UpdateItemRequest()
       .withTableName(TableName)
       .withKey(Map("topic" -> new AttributeValue().withS(topic)))
