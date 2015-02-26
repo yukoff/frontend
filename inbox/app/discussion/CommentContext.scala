@@ -20,9 +20,18 @@ object Comment {
 case class Comment(
   id: Long,
   body: String,
-  isoDateTime: DateTime,
+  isoDateTime: String,
   status: String,
   userProfile: UserProfile
+)
+
+object CommentAndStatus {
+  implicit val jsonReads = Json.reads[CommentAndStatus]
+}
+
+case class CommentAndStatus(
+  status: String,
+  comment: Comment
 )
 
 object CommentContext {
@@ -31,6 +40,8 @@ object CommentContext {
 
 case class CommentContext(
   commentId: Long,
-  ancestorId: Long,
-  discussionKey: String
+  commentAncestorId: Long,
+  discussionKey: String,
+  discussionWebUrl: String,
+  page: Int
 )

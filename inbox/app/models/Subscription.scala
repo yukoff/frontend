@@ -13,6 +13,7 @@ object Subscription {
 
   def subscribe(userId: String, topic: String) = {
     client.updateItemFuture(new UpdateItemRequest()
+      .withTableName(TableName)
       .withKey(Map("topic" -> new AttributeValue().withS(topic)))
       .withAttributeUpdates(Map[String, AttributeValueUpdate](
         "subscriptions" -> new AttributeValueUpdate()
@@ -24,6 +25,7 @@ object Subscription {
 
   def unsubscribe(userId: String, topic: String) = {
     client.updateItemFuture(new UpdateItemRequest()
+      .withTableName(TableName)
       .withKey(Map("topic" -> new AttributeValue().withS(topic)))
       .withAttributeUpdates(Map[String, AttributeValueUpdate](
         "subscriptions" -> new AttributeValueUpdate()
@@ -35,6 +37,7 @@ object Subscription {
 
   def getSubscriptions(topic: String): Future[Seq[String]] = {
     client.getItemFuture(new GetItemRequest()
+      .withTableName(TableName)
       .withKey(Map("topic" -> new AttributeValue().withS(topic)))) map { response =>
       Option(response.getItem) map { item =>
         item.asScala.get("subscriptions").get.getSS.toSeq
