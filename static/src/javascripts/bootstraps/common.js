@@ -53,6 +53,7 @@ define([
     'common/modules/ui/toggles',
     'common/modules/user-prefs',
     'common/modules/onward/breaking-news',
+    'common/modules/ui/notifications',
 
     'bootstraps/identity',
 
@@ -110,6 +111,7 @@ define([
     Toggles,
     userPrefs,
     breakingNews,
+    Notifications,
 
     identity,
 
@@ -143,14 +145,14 @@ define([
                     search = new Search(),
                     header = document.getElementById('header');
 
-                if (header) {
-                    if (config.switches.idProfileNavigation) {
-                        profile = new Profile(header, {
-                            url: config.page.idUrl
-                        });
-                        profile.init();
-                    }
-                }
+                // if (header) {
+                //     if (config.switches.idProfileNavigation) {
+                //         profile = new Profile(header, {
+                //             url: config.page.idUrl
+                //         });
+                //         profile.init();
+                //     }
+                // }
 
                 search.init(header);
             },
@@ -464,6 +466,10 @@ define([
                 window.guardian.api = {
                     logCss: logCss
                 };
+            },
+
+            initNotifications: function () {
+                new Notifications().init();
             }
 
         },
@@ -509,6 +515,7 @@ define([
             robust('c-public-api', modules.initPublicApi);
             robust('c-simple-metrics', modules.initSimpleMetrics);
             robust('c-crosswords', crosswordThumbnails.init);
+            robust('c-notifications', modules.initNotifications);
             robust('c-ready',           function () { mediator.emit('page:common:ready'); });
         };
 
