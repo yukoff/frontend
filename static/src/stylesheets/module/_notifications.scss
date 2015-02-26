@@ -1,0 +1,80 @@
+.notifications--open {
+    overflow: hidden;
+}
+
+#header {
+    z-index: 2;
+}
+
+.site-notifications__count {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    height: 1em;
+    line-height: 1;
+    @include fs-textSans(1);
+    color: colour(guardian-brand-light);
+    background: colour(guardian-brand);
+    padding: 0 0 3px 2px;
+    border-bottom-left-radius: 15px;
+    position: absolute;
+}
+
+#site-notifications__sheet {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: fade-out(#ffffff, .05);
+    z-index: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    @include transition(
+        transform 500ms,
+        top 0ms linear 500ms
+        );
+    transform: translateY(-100%);
+
+    .notifications--open & {
+        @include transition(
+            transform 500ms,
+            top 0ms linear 0ms
+        );
+        transform: translateY(0);
+        top: $gs-row-height * 2 + ($gs-baseline * .75);
+    }
+
+    .offline & {
+        top: 45px;
+    }
+}
+
+.site-notifications__list {
+    padding: $gs-baseline $gs-gutter;
+}
+
+.site-notification {
+    & + .site-notification {
+        margin-top: $gs-baseline;
+    }
+}
+
+.site-notification--story {
+    .fc-item {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+.site-notification--live-update {
+    .block-elements>* {
+        margin: 0 $gs-gutter * .5;
+    }
+}
+
+.site-notification--comment {
+    font-family: $f-sans-serif-text;
+    @include font-size(14, 20);
+
+}

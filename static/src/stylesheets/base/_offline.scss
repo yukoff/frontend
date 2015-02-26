@@ -1,0 +1,72 @@
+$offline-transition: .5s;
+
+.offline {
+    // .facia-page,
+    .site-message--footer,
+    .l-footer__primary,
+    .colophon {
+        display: none;
+    }
+
+    .l-footer__misc {
+        border: 0;
+    }
+}
+
+.brand-bar {
+    [data-component="subscribe"],
+    [data-component="search"],
+    [data-component="guardian-services"] {
+        opacity: inherit;
+        @include transition(opacity $offline-transition);
+
+        .offline & {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+}
+
+.l-side-margins{
+    transform: translateY(0);
+    @include transition(transform $offline-transition);
+
+    .offline & {
+        transform: translateY(-36px);
+    }
+}
+
+.navigation {
+    opacity: 1;
+    @include transition(opacity $offline-transition);
+
+    .offline & {
+        opacity: 0;
+    }
+}
+
+.l-header-main:before {
+    content: 'offline';
+    position: absolute;
+    right: $gs-gutter / 2;
+    top: $gs-baseline * 2.25;
+    @include fs-textSans(1);
+    color: colour(guardian-brand-light);
+    opacity: 0;
+    @include transition(opacity $offline-transition);
+
+    .offline & {
+        opacity: 1;
+    }
+}
+
+
+#header {
+    @include transition(-webkit-filter $offline-transition);
+    -webkit-filter: none;
+    height: 45px;
+
+    .offline & {
+        -webkit-filter: brightness(0.9) contrast(1) grayscale(.6);
+    }
+}
