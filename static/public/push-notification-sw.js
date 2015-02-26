@@ -13,6 +13,7 @@ self.addEventListener('push', function(e) {
             return registration.showNotification(msg.title, {
                 body: msg.body,
                 icon: msg.image,
+                tag: msg.url,
                 data: {
                     url: msg.url
                 }
@@ -25,8 +26,8 @@ self.addEventListener('push', function(e) {
 self.addEventListener('notificationclick', function(e) {
       console.log('On notification click: ', e);
 
-      if (e.notification.data) {
-          clients.openWindow(e.notification.data.url);
+      if (e.notification.tag) {
+          clients.openWindow(e.notification.tag);
       }
 
 });
