@@ -3,7 +3,7 @@ package models
 import com.amazonaws.services.dynamodbv2.model._
 import common.ExecutionContexts
 import org.joda.time.DateTime
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import awswrappers.dynamodb._
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
