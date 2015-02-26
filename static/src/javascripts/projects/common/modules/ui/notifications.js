@@ -11,11 +11,11 @@ define([
 ) {
 
     function Notifications(){
-        var that = this;
         this.$count = $('.js-site-notifications__count');
     };
 
     Notifications.prototype.init = function () {
+        var that = this;
         bean.on(document.body, 'click', '.js-notfications-toggle', function (e) {
             e.preventDefault();
             document.documentElement.classList.toggle('notifications--open');
