@@ -5,6 +5,7 @@ import common.{ExecutionContexts, Logging}
 import conf.LiveContentApi
 import com.gu.util.liveblogs.{KeyEvent, Parser}
 import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 
 object ContentApiListener {
   case class Initialise(articlesSeen: Set[String], keyEventsSeen: Map[String, Set[String]])
@@ -46,8 +47,12 @@ class ContentApiListener extends Actor with Logging with ExecutionContexts {
     context.system.scheduler.scheduleOnce(10.seconds) {
       log.info("Updating state from Content API")
 
-      getArticleIdsAndKeyEvents map { case (articlesSeen, keyEventsSeen) =>
-        self ! Update(articlesSeen, keyEventsSeen)
+      getArticleIdsAndKeyEvents onComplete {
+        case Success((articlesSeen, keyEventsSeen)) =>
+          self ! Update(articlesSeen, keyEventsSeen)
+
+        case Failure(error) =>
+          self ! UpdateError(error)
       }
     }
 

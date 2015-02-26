@@ -26,3 +26,15 @@ case class CommentReply(
   discussionKey: String,
   post: String
 ) extends InboxItem
+
+object NewArticle {
+  implicit val jsonWrites = Json.writes[NewArticle].collectTransform({
+    case obj: JsObject => obj + ("type" -> JsString("new-article"))
+  })
+}
+
+case class NewArticle(
+  id: String,
+  headline: String,
+  thumbnail: String
+) extends InboxItem
