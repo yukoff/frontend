@@ -1,7 +1,7 @@
 package controllers
 
 import common.ExecutionContexts
-import models.{FeedItem, Feed}
+import models._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
@@ -39,4 +39,21 @@ object InboxController extends Controller with ExecutionContexts {
   }
 
   // todo add subscription endpoints
+  def subscribe(userId: String, topic: String) = Action.async {
+    Subscription.subscribe(userId, topic) map { _ =>
+      Ok("Done")
+    }
+  }
+
+  def unsubscribe(userId: String, topic: String) = Action.async {
+    Subscription.unsubscribe(userId, topic) map { _ =>
+      Ok("Done")
+    }
+  }
+
+  def setPushEndpoint(userId: String) = Action.async(parse.json[PushEndpoint]) { request =>
+    PushSubscription.setEndpoint(userId, request.body) map { _ =>
+      Ok("Done")
+    }
+  }
 }

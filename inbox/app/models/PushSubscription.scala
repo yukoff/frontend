@@ -11,6 +11,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object PushEndpoint {
   implicit val jsonFormat = Json.format[PushEndpoint]
+
+  def fromAttributeValues(item: Map[String, AttributeValue]) = {
+    for {
+      endpoint <- item.get("endpoint").flatMap(x => Option(x.getS))
+      userId <- item.get("push_user_id").flatMap(x => Option(x.getS))
+    } yield PushEndpoint(endpoint, userId)
+  }
 }
 
 case class PushEndpoint(
@@ -19,41 +26,27 @@ case class PushEndpoint(
 )
 
 object PushSubscription {
-  val TableName = "inbox-push-subscriptions"
+  val TableName = "inbox-endpoints"
 
-  def subscribe(endpoint: String, userId: String, topic: String) = {
-    client.updateItemFuture(new UpdateItemRequest()
+  def setEndpoint(userId: String, pushEndpoint: PushEndpoint) = {
+    client.putItemFuture(new PutItemRequest()
       .withTableName(TableName)
-      .withKey(Map("topic" -> new AttributeValue().withS(topic)))
-      .withAttributeUpdates(Map[String, AttributeValueUpdate](
-        "subscriptions" -> new AttributeValueUpdate()
-          .withAction(AttributeAction.ADD)
-          .withValue(new AttributeValue().withS(Json.stringify(Json.toJson(PushEndpoint(endpoint, userId)))))
+      .withItem(Map[String, AttributeValue](
+        "user_id" -> new AttributeValue().withS(userId),
+        "endpoint" -> new AttributeValue().withS(pushEndpoint.endpoint),
+        "push_user_id" -> new AttributeValue().withS(pushEndpoint.userId)
       ))
     )
   }
 
-  def unsubscribe(endpoint: String, userId: String, topic: String) = {
-    client.updateItemFuture(new UpdateItemRequest()
-      .withTableName(TableName)
-      .withKey(Map("topic" -> new AttributeValue().withS(topic)))
-      .withAttributeUpdates(Map[String, AttributeValueUpdate](
-        "subscriptions" -> new AttributeValueUpdate()
-          .withAction(AttributeAction.DELETE)
-          .withValue(new AttributeValue().withS(Json.stringify(Json.toJson(PushEndpoint(endpoint, userId)))))
-      ))
-    )
-  }
-
-  def getSubscriptions(topic: String): Future[Seq[PushEndpoint]] = {
+  def getEndpoint(userId: String): Future[Option[PushEndpoint]] = {
     client.getItemFuture(new GetItemRequest()
       .withTableName(TableName)
-      .withKey(Map("topic" -> new AttributeValue().withS(topic)))) map { response =>
-      Option(response.getItem) map { item =>
-        item.asScala.get("subscriptions").get.getSS.toSeq map { s =>
-          Json.fromJson[PushEndpoint](Json.parse(s)).get
-        }
-      } getOrElse Seq.empty
+      .withKey(Map[String, AttributeValue](
+        "user_id" -> new AttributeValue().withS(userId)
+      ))
+    ) map { response =>
+      Option(response.getItem).flatMap(item => PushEndpoint.fromAttributeValues(item.asScala.toMap))
     }
   }
 }
