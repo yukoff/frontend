@@ -18,6 +18,7 @@ define([
         var that = this;
         bean.on(document.body, 'click', '.js-notfications-toggle', function (e) {
             e.preventDefault();
+            document.body.scrollTop = 0;
             document.documentElement.classList.toggle('notifications--open');
         });
 

@@ -6,6 +6,10 @@ GET     /inbox/:userId                  controllers.InboxController.getPosts(use
 GET     /inbox/:userId/count            controllers.InboxController.getPostsCount(userId)
 POST    /inbox/:userId/:addedAt/read    controllers.InboxController.setRead(userId, addedAt: Long)
 
+POST    /inbox/:userId/subscriptions/:topicId/subscribe   controllers.InboxController.subscribe(userId, topicId)
+POST    /inbox/:userId/subscriptions/:topicId/unsubscribe controllers.InboxController.unsubscribe(userId, topicId)
+POST    /inbox/:userId/set-endpoint                       controllers.InboxController.setPushEndpoint(userId)
+
 GET         /humans.txt                                                                                              dev.DevAssetsController.humans()
 GET         /manifest.json                                                                                           dev.DevAssetsController.fromPublicRoot(path="manifest.json")
 GET         /push-notification-sw.js                                                                                 dev.DevAssetsController.fromPublicRoot(path="push-notification-sw.js")

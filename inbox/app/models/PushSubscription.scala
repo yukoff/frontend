@@ -1,6 +1,7 @@
 package models
 
 import com.amazonaws.services.dynamodbv2.model._
+import play.api.libs.json.Json
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -8,40 +9,44 @@ import scala.concurrent.Future
 import awswrappers.dynamodb._
 import scala.concurrent.ExecutionContext.Implicits.global
 
+object PushEndpoint {
+  implicit val jsonFormat = Json.format[PushEndpoint]
+
+  def fromAttributeValues(item: Map[String, AttributeValue]) = {
+    for {
+      endpoint <- item.get("endpoint").flatMap(x => Option(x.getS))
+      userId <- item.get("push_user_id").flatMap(x => Option(x.getS))
+    } yield PushEndpoint(endpoint, userId)
+  }
+}
+
+case class PushEndpoint(
+  endpoint: String,
+  userId: String
+)
+
 object PushSubscription {
-  val TableName = "inbox-push-subscriptions"
+  val TableName = "inbox-endpoints"
 
-  def subscribe(endpoint: String, userId: String, topic: String) = {
-    client.updateItemFuture(new UpdateItemRequest()
+  def setEndpoint(userId: String, pushEndpoint: PushEndpoint) = {
+    client.putItemFuture(new PutItemRequest()
       .withTableName(TableName)
-      .withKey(Map("topic" -> new AttributeValue().withS(topic)))
-      .withAttributeUpdates(Map[String, AttributeValueUpdate](
-      "subscriptions" -> new AttributeValueUpdate()
-        .withAction(AttributeAction.ADD)
-        .withValue(new AttributeValue().withS(userId))
-    ))
+      .withItem(Map[String, AttributeValue](
+        "user_id" -> new AttributeValue().withS(userId),
+        "endpoint" -> new AttributeValue().withS(pushEndpoint.endpoint),
+        "push_user_id" -> new AttributeValue().withS(pushEndpoint.userId)
+      ))
     )
   }
 
-  def unsubscribe(endpoint: String, userId: String, topic: String) = {
-    client.updateItemFuture(new UpdateItemRequest()
-      .withTableName(TableName)
-      .withKey(Map("topic" -> new AttributeValue().withS(topic)))
-      .withAttributeUpdates(Map[String, AttributeValueUpdate](
-      "subscriptions" -> new AttributeValueUpdate()
-        .withAction(AttributeAction.DELETE)
-        .withValue(new AttributeValue().withS(userId))
-    ))
-    )
-  }
-
-  def getSubscriptions(topic: String): Future[Seq[String]] = {
+  def getEndpoint(userId: String): Future[Option[PushEndpoint]] = {
     client.getItemFuture(new GetItemRequest()
       .withTableName(TableName)
-      .withKey(Map("topic" -> new AttributeValue().withS(topic)))) map { response =>
-      Option(response.getItem) map { item =>
-        item.asScala.get("subscriptions").get.getSS.toSeq
-      } getOrElse Seq.empty
+      .withKey(Map[String, AttributeValue](
+        "user_id" -> new AttributeValue().withS(userId)
+      ))
+    ) map { response =>
+      Option(response.getItem).flatMap(item => PushEndpoint.fromAttributeValues(item.asScala.toMap))
     }
   }
 }

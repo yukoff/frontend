@@ -1,7 +1,7 @@
 package listeners
 
 import common.ExecutionContexts
-import models.{Feed, Subscription, InboxItem}
+import models.{PushSubscription, Feed, Subscription, InboxItem}
 
 object Publisher extends ExecutionContexts {
   def publish(topic: String, item: InboxItem) = {
@@ -10,6 +10,13 @@ object Publisher extends ExecutionContexts {
         subscription <- subscriptions
       } {
         Feed.addPost(subscription, item)
+
+        PushSubscription.getEndpoint(subscription) map { endpoint =>
+          // Send push notification!
+
+
+        }
+
       }
     }
   }
