@@ -26,6 +26,10 @@ class GuardianConfiguration(val application: String, val webappConfDirectory: St
       .getOrElse(throw new BadConfigurationException(s"$property not configured"))
   }
 
+  object inbox {
+    lazy val discussionQueue = configuration.getStringProperty("inbox.discussion_queue_url")
+  }
+
   object crosswords {
     lazy val apiKey = configuration.getStringProperty("crosswords_api.key")
   }

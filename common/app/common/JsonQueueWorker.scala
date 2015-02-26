@@ -1,9 +1,8 @@
-package frontpress
+package common
 
 import java.util.concurrent.atomic.AtomicInteger
 
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest
-import common.{ExecutionContexts, Message, Logging, JsonMessageQueue}
 import org.joda.time.DateTime
 import play.api.libs.json.Reads
 
@@ -59,7 +58,7 @@ object JsonQueueWorker {
   * @tparam A The job
   */
 abstract class JsonQueueWorker[A: Reads] extends Logging with ExecutionContexts {
-  import JsonQueueWorker._
+  import common.JsonQueueWorker._
 
   val queue: JsonMessageQueue[A]
   val deleteOnFailure: Boolean = false
