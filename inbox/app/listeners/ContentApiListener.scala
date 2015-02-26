@@ -1,10 +1,8 @@
 package listeners
 
 import akka.actor.Actor
-import akka.actor.Actor.Receive
-import common.Logging
+import common.{ExecutionContexts, Logging}
 import conf.LiveContentApi
-import listeners.ContentApiListener.Initialise
 import com.gu.util.liveblogs.{KeyEvent, Parser}
 import scala.concurrent.duration._
 
@@ -16,7 +14,7 @@ object ContentApiListener {
   case class UpdateError(error: Throwable)
 }
 
-class ContentApiListener extends Actor with Logging {
+class ContentApiListener extends Actor with Logging with ExecutionContexts {
   import ContentApiListener._
 
   /** These would actually be stored in a database or something ... */

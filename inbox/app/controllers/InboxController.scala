@@ -11,11 +11,23 @@ object GetPostsResponse {
 
 case class GetPostsResponse(messages: Seq[FeedItem])
 
+object GetPostsCountResponse {
+  implicit val jsonWrites = Json.writes[GetPostsCountResponse]
+}
+
+case class GetPostsCountResponse(count: Int)
+
 object InboxController extends Controller with ExecutionContexts {
   /** Obviously totally insecure and rubbish but this is a hack day yo */
   def getPosts(userId: String) = Action.async {
     Feed.getPosts(userId) map { posts =>
       Ok(Json.toJson(GetPostsResponse(posts)))
+    }
+  }
+
+  def getPostsCount(userId: String) = Action.async {
+    Feed.getPosts(userId) map { posts =>
+      Ok(Json.toJson(GetPostsCountResponse(posts.count(!_.read))))
     }
   }
 
