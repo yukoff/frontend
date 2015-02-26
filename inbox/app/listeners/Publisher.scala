@@ -14,7 +14,7 @@ object Publisher extends ExecutionContexts {
         PushSubscription.getEndpoint(subscription) map { endpoint =>
           // Send push notification!
 
-          
+
         }
 
       }
