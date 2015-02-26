@@ -17,7 +17,7 @@ object FeedItem {
     Try {
       FeedItem(
         new DateTime(item("added_at").getN.toLong),
-        Json.parse(item("message").getS),
+        Json.fromJson[InboxItem](Json.parse(item("message").getS)).get,
         item("read").getBOOL
       )
     }
@@ -26,7 +26,7 @@ object FeedItem {
 
 case class FeedItem(
   addedAt: DateTime,
-  message: JsValue,
+  message: InboxItem,
   read: Boolean
 )
 
