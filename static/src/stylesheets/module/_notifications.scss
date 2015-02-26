@@ -22,7 +22,7 @@
 
 #site-notifications__sheet {
     position: fixed;
-    top: $gs-row-height * 2 + ($gs-baseline * .75);
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
@@ -30,11 +30,23 @@
     z-index: 1;
     overflow-x: hidden;
     overflow-y: auto;
-    @include transition(transform 500ms);
+    @include transition(
+        transform 500ms,
+        top 0ms linear 500ms
+        );
     transform: translateY(-100%);
 
     .notifications--open & {
+        @include transition(
+            transform 500ms,
+            top 0ms linear 0ms
+        );
         transform: translateY(0);
+        top: $gs-row-height * 2 + ($gs-baseline * .75);
+    }
+
+    .offline & {
+        top: 45px;
     }
 }
 
