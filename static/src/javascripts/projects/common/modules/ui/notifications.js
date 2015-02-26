@@ -12,7 +12,7 @@ define([
 
     function Notifications(){
         this.$count = $('.js-site-notifications__count');
-    };
+    }
 
     Notifications.prototype.init = function () {
         var that = this;
@@ -28,9 +28,9 @@ define([
             }).then(function (resp) {
                 that.$count.html(resp.count.toString());
             });
-        }, 2000)
+        }, 2000);
 
     };
 
     return Notifications;
-})
+});
