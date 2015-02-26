@@ -52,13 +52,13 @@
         updateSubscription: function(subscription){
             if(this.config.endPoint) {
                 var subscribe = new XMLHttpRequest();
-                subscribe.open('POST', this.config.endPoint);
+                subscribe.open('POST', this.config.endPoint.replace(':userId', subscription.subscriptionId));
                 subscribe.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
                 subscribe.onload = function(){
                     console.log('subscribed');
                 }
                 subscribe.send(JSON.stringify({
-                    subscriptionId: subscription.subscriptionId,
+                    userId: subscription.subscriptionId,
                     endpoint: subscription.endpoint
                 }))
             }
