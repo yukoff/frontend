@@ -12,11 +12,36 @@ object InboxItem {
         NewArticle.jsonWrites.writes(newArticle)
     }
   }
+
+  implicit val jsonReads = new Reads[InboxItem] {
+    override def reads(json: JsValue): JsResult[InboxItem] = json match {
+      case jsObj: JsObject =>
+        jsObj \ "type" match {
+          case JsString(typ) => typ match {
+            case "discussion-reply" =>
+              CommentReply.jsonReads.reads(json)
+
+            case "new-article" =>
+              NewArticle.jsonReads.reads(json)
+
+            case s =>
+              JsError(s"Bad type: $s")
+          }
+
+          case _ => JsError("No type")
+        }
+
+      case _ =>
+        JsError("Not object")
+    }
+  }
 }
 
 sealed trait InboxItem
 
 object CommentReply {
+  implicit val jsonReads = Json.reads[CommentReply]
+
   implicit val jsonWrites = Json.writes[CommentReply].collectTransform({
     case obj: JsObject => obj + ("type" -> JsString("discussion-reply"))
   })
@@ -31,6 +56,8 @@ case class CommentReply(
 ) extends InboxItem
 
 object NewArticle {
+  implicit val jsonReads = Json.reads[NewArticle]
+
   implicit val jsonWrites = Json.writes[NewArticle].collectTransform({
     case obj: JsObject => obj + ("type" -> JsString("new-article"))
   })
@@ -39,5 +66,6 @@ object NewArticle {
 case class NewArticle(
   id: String,
   headline: String,
-  thumbnail: String
+  thumbnail: String,
+  trailText: String
 ) extends InboxItem

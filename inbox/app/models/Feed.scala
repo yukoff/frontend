@@ -3,7 +3,7 @@ package models
 import com.amazonaws.services.dynamodbv2.model._
 import common.ExecutionContexts
 import org.joda.time.DateTime
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import awswrappers.dynamodb._
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -17,7 +17,7 @@ object FeedItem {
     Try {
       FeedItem(
         new DateTime(item("added_at").getN.toLong),
-        Json.parse(item("message").getS),
+        Json.fromJson[InboxItem](Json.parse(item("message").getS)).get,
         item("read").getBOOL
       )
     }
@@ -26,7 +26,7 @@ object FeedItem {
 
 case class FeedItem(
   addedAt: DateTime,
-  message: JsValue,
+  message: InboxItem,
   read: Boolean
 )
 
