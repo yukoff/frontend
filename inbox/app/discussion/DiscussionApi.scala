@@ -6,6 +6,8 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WS
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.Play.current
 
 object DiscussionApi extends ExecutionContexts {
   val Endpoint = Configuration.discussion.url

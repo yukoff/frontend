@@ -13,7 +13,7 @@ object ConsecutiveErrorsRecorder {
   def apply() = new ConsecutiveErrorsRecorder
 }
 
-final private[frontpress] class ConsecutiveErrorsRecorder {
+final class ConsecutiveErrorsRecorder {
   private val errorCount = new AtomicInteger()
 
   def recordSuccess() = {
@@ -34,7 +34,7 @@ object DateTimeRecorder {
 /** Used to record when last successfully performed some operation. If we don't expect certain operations to fail
   * repeatedly over a certain time span, we can use this to implement a health check.
   */
-final private[frontpress] class DateTimeRecorder {
+final class DateTimeRecorder {
   @volatile private var lastTime: Option[DateTime] = None
 
   def refresh() {

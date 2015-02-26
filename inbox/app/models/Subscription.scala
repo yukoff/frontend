@@ -6,6 +6,7 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
 import awswrappers.dynamodb._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object Subscription {
   val TableName = "inbox-subscriptions"

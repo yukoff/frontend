@@ -33,7 +33,7 @@ class ContentApiListener extends Actor {
 */
 
   override def receive: Receive = {
-
+    case _ => ???
   }
 
 
