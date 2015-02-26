@@ -1,5 +1,18 @@
 $offline-transition: .5s;
 
+.offline {
+    // .facia-page,
+    .site-message--footer,
+    .l-footer__primary,
+    .colophon {
+        display: none;
+    }
+
+    .l-footer__misc {
+        border: 0;
+    }
+}
+
 .brand-bar {
     opacity: inherit;
     @include transition(opacity $offline-transition);
@@ -25,7 +38,7 @@ $offline-transition: .5s;
     right: $gs-gutter / 2;
     top: $gs-baseline * 2.25;
     @include fs-textSans(1);
-    color: #ffffff;
+    color: colour(guardian-brand-light);
     opacity: 0;
     @include transition(opacity $offline-transition);
 
