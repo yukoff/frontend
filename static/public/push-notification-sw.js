@@ -2,17 +2,31 @@ self.addEventListener('push', function(e) {
     console.log(self);
 
     if (!(self.Notification && self.Notification.permission === 'granted')) {
-        console.error('Failed to display notification - not supported');
+            console.error('Failed to display notification - not supported');
         return;
     }
 
-    var data = e.data ? e.data.json() : {};
-    var title = data.title || 'Why you no title?';
-    var message = data.message || 'Hello World!....I guess.';
-
-    return registration.showNotification(title, {
-        body: message,
-        icon: 'images/touch/chrome-touch-icon-192x192.png'
+    fetch('/inbox/rob_test').then(function(rawData){
+        rawData.json().then(function(data){
+            console.log(data);
+            var msg = data.messages[0].message;
+            return registration.showNotification(msg.title, {
+                body: msg.body,
+                icon: msg.image,
+                data: {
+                    url: msg.url
+                }
+            });
+        });
     });
+
+});
+
+self.addEventListener('notificationclick', function(e) {
+      console.log('On notification click: ', e);
+
+      if (e.notification.data) {
+          clients.openWindow(e.notification.data.url);
+      }
 
 });
