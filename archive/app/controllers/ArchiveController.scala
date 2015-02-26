@@ -1,10 +1,14 @@
 package controllers
 
 import common._
+import conf.LiveContentApi
 import play.api.mvc._
 import services.{Archive, DynamoDB, Googlebot404Count}
 import java.net.URLDecoder
-import model.Cached
+import model.{Content, Cached}
+import conf.LiveContentApi
+import LiveContentApi.getResponse
+import scala.concurrent.Future
 
 
 object ArchiveController extends Controller with Logging with ExecutionContexts {
@@ -37,9 +41,15 @@ object ArchiveController extends Controller with Logging with ExecutionContexts 
         case _ =>
           log404(request)
           // short cache time as we might just be waiting for the content api to index
-          Cached(10)(NotFound(views.html.notFound()))
+          Cached(10)(NotFound(views.html.notFound(suggestionsFor404(path))))
       }
     })
+  }
+
+  def suggestionsFor404(path: String): Future[Seq[Content]] = {
+    getResponse(LiveContentApi.search.q(path)) map {
+      _.results map (Content(_))
+    }
   }
 
   // Our redirects are 'normalised' Vignette URLs, Ie. path/to/0,<n>,123,<n>.html -> path/to/0,,123,.html
