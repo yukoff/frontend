@@ -2,6 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+GET     /inbox/:userId                  controllers.InboxController.getPosts(userId)
+GET     /inbox/:userId/count            controllers.InboxController.getPostsCount(userId)
+POST    /inbox/:userId/:addedAt/read    controllers.InboxController.setRead(userId, addedAt: Long)
+
 GET         /humans.txt                                                                                              dev.DevAssetsController.humans()
 GET         /surveys/*file                                                                                           dev.DevAssetsController.surveys(file)
 GET         /commercial/test-page                                                                                    controllers.commercial.CreativeTestPage.allComponents

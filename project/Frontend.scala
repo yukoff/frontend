@@ -157,7 +157,8 @@ object Frontend extends Build with Prototypes {
       admin,
       commercial,
       onward,
-      weather
+      weather,
+      inbox
     ).settings(crosswordsRouting: _*)
 
   val faciaEndToEnd = application("facia-end-to-end")
