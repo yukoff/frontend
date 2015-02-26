@@ -3,13 +3,13 @@
 }
 
 #header {
-    z-index: 2;
+    z-index: 3;
 }
 
 .site-notifications__count {
     position: absolute;
     top: 0;
-    right: 2px;
+    left: 25px;
     height: 1em;
     line-height: 1;
     @include fs-textSans(1);
@@ -27,7 +27,7 @@
     left: 0;
     right: 0;
     background-color: fade-out(#ffffff, .05);
-    z-index: 1;
+    z-index: 2;
     overflow-x: hidden;
     overflow-y: auto;
     @include transition(
