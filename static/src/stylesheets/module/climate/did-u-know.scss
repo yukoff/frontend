@@ -1,0 +1,32 @@
+.diduknow {
+    width: 300px;
+    height: 249px;
+    position: relative;
+    background: #5c9753 url('http://localhost:9000/assets/stylesheets/climate.jpg') 0 0 no-repeat;
+    text-align: center;
+    color: #fff;
+}
+
+.diduknow__title {
+    margin: 0 auto;
+    padding-top: 70px;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.diduknow__txt {
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.diduknow__link {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    text-decoration: underline;
+    font-size: 12px;
+    line-height: 1;
+    color: #fff;
+}

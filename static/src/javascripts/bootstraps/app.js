@@ -13,7 +13,9 @@ define([
     'bootstraps/profile',
     'bootstraps/section',
     'bootstraps/sport',
-    'bootstraps/tag'
+    'bootstraps/tag',
+
+    'common/modules/climate/did-u-know'
 ], function (
     qwery,
     raven,
@@ -29,7 +31,9 @@ define([
     profile,
     section,
     sport,
-    tag
+    tag,
+
+    didYouKnow
 ) {
 
     var bootstrapContext = function (featureName, boostrap) {
@@ -69,6 +73,8 @@ define([
                     bootstrapContext('article', article);
                     bootstrapContext('article : image-content', imageContent);
                 });
+
+                bootstrapContext('did you know', didYouKnow);
             }
 
             if (config.page.contentType === 'LiveBlog') {
