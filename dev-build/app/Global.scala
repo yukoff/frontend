@@ -9,6 +9,7 @@ import model.AdminLifecycle
 import ophan.SurgingContentAgentLifecycle
 import play.api.mvc.{RequestHeader, EssentialAction, EssentialFilter, WithFilters}
 import services.ConfigAgentLifecycle
+import listeners.DiscussionListenerContext
 
 // obviously this is only for devbuild and should never end up in one of our
 // prod projects
@@ -67,6 +68,7 @@ with DfpAgentLifecycle
 with ConfigAgentLifecycle
 with SurgingContentAgentLifecycle
 with SectionsLookUpLifecycle
+with DiscussionListenerContext
 with CorsErrorHandler {
   override val allowedParams: Seq[String] =
     CanonicalLink.significantParams ++ commercialParams ++ insignificantParams ++ Seq("query")

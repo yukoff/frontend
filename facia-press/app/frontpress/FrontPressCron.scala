@@ -4,7 +4,7 @@ import com.amazonaws.regions.{Region, Regions}
 import com.amazonaws.services.sqs.AmazonSQSAsyncClient
 import common.FaciaPressMetrics.{FrontPressCronFailure, FrontPressCronSuccess}
 import common.SQSQueues._
-import common.{SNSNotification, StopWatch, JsonMessageQueue, Edition}
+import common._
 import conf.Configuration
 import conf.Switches.FrontPressJobSwitch
 import metrics.AllFrontsPressLatencyMetric

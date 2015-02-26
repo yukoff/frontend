@@ -1,9 +1,8 @@
-package frontpress
+package common
 
 import java.util.concurrent.atomic.AtomicInteger
 
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest
-import common.{ExecutionContexts, Message, Logging, JsonMessageQueue}
 import org.joda.time.DateTime
 import play.api.libs.json.Reads
 
@@ -14,7 +13,7 @@ object ConsecutiveErrorsRecorder {
   def apply() = new ConsecutiveErrorsRecorder
 }
 
-final private[frontpress] class ConsecutiveErrorsRecorder {
+final class ConsecutiveErrorsRecorder {
   private val errorCount = new AtomicInteger()
 
   def recordSuccess() = {
@@ -35,7 +34,7 @@ object DateTimeRecorder {
 /** Used to record when last successfully performed some operation. If we don't expect certain operations to fail
   * repeatedly over a certain time span, we can use this to implement a health check.
   */
-final private[frontpress] class DateTimeRecorder {
+final class DateTimeRecorder {
   @volatile private var lastTime: Option[DateTime] = None
 
   def refresh() {
@@ -59,7 +58,7 @@ object JsonQueueWorker {
   * @tparam A The job
   */
 abstract class JsonQueueWorker[A: Reads] extends Logging with ExecutionContexts {
-  import JsonQueueWorker._
+  import common.JsonQueueWorker._
 
   val queue: JsonMessageQueue[A]
   val deleteOnFailure: Boolean = false
@@ -73,13 +72,13 @@ abstract class JsonQueueWorker[A: Reads] extends Logging with ExecutionContexts 
   def process(message: Message[A]): Future[Unit]
 
   final protected def getAndProcess: Future[Unit] = {
-    val getRequest = queue.receiveOne(new ReceiveMessageRequest().withWaitTimeSeconds(WaitTimeSeconds))
-
-    getRequest onComplete {
-      case Success(Some(message @ Message(id, _, receipt))) =>
+    val getRequest = queue.receiveOne(new ReceiveMessageRequest().withWaitTimeSeconds(WaitTimeSeconds)) flatMap {
+      case Some(message @ Message(id, _, receipt)) =>
         lastSuccessfulReceipt.refresh()
 
-        process(message) onComplete {
+        val ftr = process(message)
+
+        ftr onComplete {
           case Success(_) =>
             /** Ultimately, we ought to be able to recover from processing the same message twice anyway, as the nature
               * of SQS means you could get the same message delivered twice.
@@ -98,12 +97,16 @@ abstract class JsonQueueWorker[A: Reads] extends Logging with ExecutionContexts 
             consecutiveProcessingErrors.recordError()
         }
 
-      case Success(None) =>
+        ftr map { _ => () }
+
+      case None =>
         lastSuccessfulReceipt.refresh()
         log.info(s"No message after $WaitTimeSeconds seconds")
+        Future.successful(())
+    }
 
-      case Failure(error) =>
-        log.error("Encountered error receiving message from queue", error)
+    getRequest onFailure {
+      case error: Throwable => log.error("Encountered error receiving message from queue", error)
     }
 
     getRequest.map(_ => ())

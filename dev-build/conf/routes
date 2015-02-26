@@ -2,6 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+GET     /inbox/:userId                  controllers.InboxController.getPosts(userId)
+GET     /inbox/:userId/count            controllers.InboxController.getPostsCount(userId)
+POST    /inbox/:userId/:addedAt/read    controllers.InboxController.setRead(userId, addedAt: Long)
+
 GET         /humans.txt                                                                                              dev.DevAssetsController.humans()
 GET         /manifest.json                                                                                           dev.DevAssetsController.fromPublicRoot(path="manifest.json")
 GET         /push-notification-sw.js                                                                                 dev.DevAssetsController.fromPublicRoot(path="push-notification-sw.js")

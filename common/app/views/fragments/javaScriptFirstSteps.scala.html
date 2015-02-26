@@ -216,6 +216,17 @@
                 docClass += ' has-no-flex-wrap';
             }
             docClass = docClass.replace(/\bis-not-modern\b/g, 'is-modern');
+
+            if ('onLine' in navigator && !navigator.onLine) {
+                docClass += ' offline';
+            }
+
+            function toggleOffline() {
+                document.documentElement.classList.toggle('offline');
+            }
+
+            window.addEventListener("online", toggleOffline);
+            window.addEventListener("offline", toggleOffline);
         }
     })(guardian.isModernBrowser);
 
