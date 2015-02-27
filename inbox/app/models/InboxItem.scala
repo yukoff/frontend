@@ -68,5 +68,5 @@ case class NewArticle(
   id: String,
   headline: String,
   thumbnail: String,
-  trailText: String
+  pic: String
 ) extends InboxItem
