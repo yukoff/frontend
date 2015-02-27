@@ -32,9 +32,14 @@ define([
             ajax({
                 url: '/inbox/rob_test_3/count'
             }).then(function (resp) {
-                that.$count.html(resp.count.toString());
+                if(resp.count > 0) {
+                    that.$count.html(resp.count.toString());
+                } else {
+                    that.$count.html("");
+                }
+
             });
-        }, 5000);
+        }, 1000);
 
     };
 
