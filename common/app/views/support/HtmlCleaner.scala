@@ -520,6 +520,41 @@ case class DropCaps(isFeature: Boolean) extends HtmlCleaner {
   }
 }
 
+object ShowMoreCleaner extends HtmlCleaner {
+
+  override def clean(document: Document): Document = {
+
+      val children = document.body().children().toList
+      children.splitAt(2) match {
+        case (first, more) => {
+          val firstDiv = document.createElement("div")
+          firstDiv.addClass("js-first-div v7")
+          first.foreach(firstDiv.appendChild)
+
+          val uniqueId = new DateTime().getMillis
+
+          val showMore = document.createElement("a")
+          showMore.appendText("+ show rest of article")
+          showMore.attr("id", s"show-$uniqueId")
+          showMore.attr("onClick", s"document.getElementById('togglable-$uniqueId').style.display = 'block'; document.getElementById('show-$uniqueId').style.display = 'none'; return false;")
+
+          val moreDiv = document.createElement("div")
+          moreDiv.addClass("js-more")
+          moreDiv.attr("style", "display: none;")
+          moreDiv.attr("id", s"togglable-$uniqueId")
+          more.foreach(moreDiv.appendChild)
+//
+
+          document.body().appendChild(firstDiv)
+          document.body().appendChild(showMore)
+          document.body().appendChild(moreDiv)
+        }
+        case _ =>
+      }
+    document
+  }
+}
+
 object FigCaptionCleaner extends HtmlCleaner {
   override def clean(document: Document): Document = {
     document.getElementsByTag("figcaption").foreach{ _.addClass("caption caption--img")}
