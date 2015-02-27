@@ -87,12 +87,15 @@ $offline-transition: .5s;
 }
 
 #offline-message {
-    display: none;
+    // display: none;
+    opacity: 0;
+    @include transition(opacity $offline-transition);
     position: absolute;
     top: 10%;
     left: 20%;
     right:20%;
     color: colour(neutral-2);
+    z-index: 0;
 
     p:nth-of-type(1) {
     }
@@ -102,6 +105,8 @@ $offline-transition: .5s;
     }
 
     .offline & {
-        display: block;
+        // display: block;
+        opacity: 1;
+        @include transition(opacity 1s);
     }
 }
