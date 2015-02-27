@@ -21,15 +21,20 @@ define([
             document.body.scrollTop = 0;
             document.documentElement.classList.toggle('notifications--open');
             $('.js-notfications-toggle')[0].classList.toggle('is-active');
+            ajax({
+                url: '/inbox/rob_test_3.html'
+            }).then(function (resp) {
+                $('.js-site-notifications__list').html(resp)
+            });
         });
 
         setInterval(function () {
             ajax({
-                url: '/inbox/XXX/count'
+                url: '/inbox/rob_test_3/count'
             }).then(function (resp) {
                 that.$count.html(resp.count.toString());
             });
-        }, 2000);
+        }, 5000);
 
     };
 
