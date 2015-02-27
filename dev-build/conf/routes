@@ -2,6 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+GET    /inbox/send-comment   controllers.InboxController.sendComment()
+GET    /inbox/send-story     controllers.InboxController.sendStory()
+
 GET     /inbox/:userId.html             controllers.InboxController.renderPosts(userId)
 GET     /inbox/:userId                  controllers.InboxController.getPosts(userId)
 GET     /inbox/:userId/count            controllers.InboxController.getPostsCount(userId)
