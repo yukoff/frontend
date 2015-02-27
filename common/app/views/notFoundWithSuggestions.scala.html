@@ -1,4 +1,4 @@
-@(suggestions: scala.concurrent.Future[Seq[model.Content]])(implicit ec: scala.concurrent.ExecutionContext)
+@(suggestions: List[model.Content])(implicit ec: scala.concurrent.ExecutionContext)
 
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
@@ -37,6 +37,11 @@
         </style>
     </head>
     <body>
+
+        @suggestions.map { c =>
+            <p>@c.webUrl</p>
+        }
+
         <div class="fluid-wrap">
             <div class="topbar">
                 <div class="topbar-menu-container">
@@ -58,7 +63,9 @@
                         <h2 class="sub-heading">404</h2>
                     </div>
                     <p>You may have followed a broken or outdated link, or there may be an error on our site.</p>
-                    <p>Please follow one of the links below to continue exploring.</p>
+                    <p>However, we've found the following items that you may be interested in:</p>
+
+                    <p>If those are of no use to you, please follow one of the links below to continue exploring.</p>
                     <nav>
                         <ul role="navigation" class="u-unstyled global-navigation">
                             <li><a href="/">home</a></li>
