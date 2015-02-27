@@ -113,25 +113,35 @@ object InboxController extends Controller with ExecutionContexts {
 
   val Articles = Seq(
     ("Hospital representative potentially misled MP about Jimmy Savile access",
-      "/uk-news/2015/feb/27/jimmy-savile-anne-eden-buckinghamshire-healthcare-nhs-trust-stoke-mandeville"),
+      "/uk-news/2015/feb/27/jimmy-savile-anne-eden-buckinghamshire-healthcare-nhs-trust-stoke-mandeville",
+      "http://i.guim.co.uk/static/w-620/h--/q-95/sys-images/Guardian/Pix/pictures/2015/2/27/1425044134257/13012a72-6f20-48c1-a54c-2bcf193919db-1020x612.jpeg",
+      "Anne Eden of Buckinghamshire Healthcare NHS trust, responsible for Stoke Mandeville, claimed in 2012 that Savile was usually accompanied during visits"),
     ("Newcastle prepares for first UK Pegida rally against 'Islamisation'",
-      "/uk-news/2015/feb/27/newcastle-prepares-for-first-uk-pegida-rally-against-islamisation"),
+      "/uk-news/2015/feb/27/newcastle-prepares-for-first-uk-pegida-rally-against-islamisation",
+      "http://i.guim.co.uk/media/w-620/h--/q-95/58198f17ba1d2dc3ca7f95e39aceaca679ecdf84/0_51_4014_2408/1000.jpg",
+      "Opponents of far-right German group to hold counter-protest supported by MPs, Newcastle United fans, trade unions and anti-fascists"),
     ("Prince Harry to leave the army after 10 years",
-      "/uk-news/2015/feb/27/prince-harry-to-leave-the-army-after-10-years"),
+      "/uk-news/2015/feb/27/prince-harry-to-leave-the-army-after-10-years",
+      "http://i.guim.co.uk/static/w-620/h--/q-95/sys-images/Guardian/Pix/pictures/2015/2/27/1425043652287/e33de3e6-63fa-4ef6-a144-2eee88bc35b0-1020x612.jpeg",
+      "Surprise move by prince who is said to be planning ‘a significant period abroad’ on field projects in Africa and with the Australian military"),
     ("David Cameron pledges to hunt down terrorists who commit 'heinous crimes'",
-      "/world/2015/feb/27/cameron-pledge-terrorists-heinous-crimes"),
+      "/world/2015/feb/27/cameron-pledge-terrorists-heinous-crimes",
+      "http://i.guim.co.uk/static/w-620/h--/q-95/sys-images/Guardian/Pix/pictures/2015/2/27/1425043189873/15cc9050-c9e2-41a9-9c24-9979fb6e6b89-1020x612.jpeg",
+      "Prime minister condemns ‘reprehensible’ suggestion that security services may be to blame for radicalisation of Mohammed Emwazi"),
     ("The resistible rise of Nigel Farage",
-      "/commentisfree/2015/feb/27/resistible-rise-of-nigel-farage-ukip")
+      "/commentisfree/2015/feb/27/resistible-rise-of-nigel-farage-ukip",
+      "http://i.guim.co.uk/static/w-620/h--/q-95/sys-images/Guardian/Pix/pictures/2015/2/27/1425042523613/Nigel-Farage-posing-with--008.jpg",
+      "Ukip’s leader is revealed as a true Machiavellian in this US publicity shot. It shows a dangerous man: anyone who underestimates his threat to British decency is a fool")
   )
 
   def sendStory() = Action {
-    val (headline, link) = scala.util.Random.shuffle(Articles).head
+    val (headline, link, pic, trail) = scala.util.Random.shuffle(Articles).head
 
     Publisher.publish("topic", NewArticle(
       link,
       headline,
-      "",
-      ""
+      pic,
+      trail
     ))
 
     Ok("Sent")
