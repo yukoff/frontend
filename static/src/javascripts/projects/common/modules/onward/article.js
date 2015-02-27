@@ -2,6 +2,7 @@ define([
     'bonzo',
     'qwery',
     'lodash/arrays/union',
+    'common/utils/$',
     'common/utils/config',
     'common/utils/mediator',
     'common/utils/proximity-loader',
@@ -12,6 +13,7 @@ define([
     bonzo,
     qwery,
     union,
+    $,
     config,
     mediator,
     proximityLoader,
@@ -35,9 +37,9 @@ define([
     Article.prototype.ready = function (container, remaining) {
         console.log('WOO', container);
 
-
         var placeholder = qwery('.js-next-article-placeholder', container);
         console.log('another is', placeholder);
+        $('.content-footer').empty();
         if (placeholder && remaining > 0) {
             proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, --remaining));
         }

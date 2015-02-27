@@ -13,7 +13,8 @@ define([
     'bootstraps/profile',
     'bootstraps/section',
     'bootstraps/sport',
-    'bootstraps/tag'
+    'bootstraps/tag',
+    'common/modules/article/gu-firsttime'
 ], function (
     qwery,
     raven,
@@ -29,7 +30,8 @@ define([
     profile,
     section,
     sport,
-    tag
+    tag,
+    firstTime
 ) {
 
     var bootstrapContext = function (featureName, boostrap) {
@@ -69,6 +71,8 @@ define([
                     bootstrapContext('article', article);
                     bootstrapContext('article : image-content', imageContent);
                 });
+
+                bootstrapContext('article : first time', firstTime);
             }
 
             if (config.page.contentType === 'LiveBlog') {
