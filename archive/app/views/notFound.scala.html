@@ -1,5 +1,3 @@
-@(suggestions: scala.concurrent.Future[Seq[model.Content]])(implicit ec: scala.concurrent.ExecutionContext)
-
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
@@ -51,9 +49,6 @@
                     <h1>Sorry - we haven’t been able to serve the page you asked for.</h1>
                 </div>
             </div><!-- /.row -->
-            @suggestions.map { linkUrl =>
-                <span class="">@linkUrl</span>
-            }
             <div class="fluid-row margin-top">
                 <div class="col-12 start-col">
                     <div class="hd zone-border zone-border-medium">

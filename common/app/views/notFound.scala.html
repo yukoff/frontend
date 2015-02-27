@@ -1,4 +1,4 @@
-@(suggestions: scala.concurrent.Future[Seq[model.Content]])(implicit ec: scala.concurrent.ExecutionContext)
+@(suggestions: Seq[model.Content])
 
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
@@ -34,6 +34,26 @@
             .global-navigation a {
                 display: block; /* Expands touch area of links */
             }
+
+            .notfound-suggestions {
+                background: url("http://i.imgur.com/wF9Rn0K.png?1") 0px 40px no-repeat;
+                min-height: 340px;
+            }
+            .notfound-suggestions .notfound-list {
+                list-style-type: none;
+                margin: 0 0 0 140px;
+            }
+            .notfound-suggestions .notfound-droid {
+                text-decoration:line-through;
+            }
+            .notfound-list .notfound-list--item {
+                display: block;
+                width: 40%;
+                padding: 10px 2.5%;
+                margin: 0 2.5%;
+                border-bottom: 1px solid #F4F4EE;
+                font-weight: bold;
+            }
         </style>
     </head>
     <body>
@@ -48,12 +68,19 @@
             <img src="http://static.guim.co.uk/static/60ed206dbccc8b808a7792d47862f9cfb7cd3d67/common/images/logos/the-guardian/titlepiece.gif">
             <div class="fluid-row margin-top">
                 <div class="col-12 start-col margin-bottom">
-                    <h1>Sorry - we haven’t been able to serve the page you asked for.</h1>
+                    <h1>Sorry - we haven’t been able to serve the page you asked for...</h1>
                 </div>
             </div><!-- /.row -->
-            @suggestions.map { linkUrl =>
-                <span class="">@linkUrl</span>
-            }
+            <div class="notfound-suggestions">
+                <h1>But maybe here is the <span class="notfound-droid">droid</span> page you were looking for:</h1>
+                <ul role="navigation" class="notfound-list global-navigation">
+                @suggestions.map { content =>
+                    <li class="notfound-list--item">
+                        <a class="single-suggestion--link" href="@content.webUrl">@content.webTitle</a>
+                    </li>
+                }
+                </ul>
+            </div>
             <div class="fluid-row margin-top">
                 <div class="col-12 start-col">
                     <div class="hd zone-border zone-border-medium">

@@ -42,7 +42,7 @@ object ArchiveController extends Controller with Logging with ExecutionContexts 
         case _ =>
           log404(request)
           // short cache time as we might just be waiting for the content api to index
-          Cached(10)(NotFound())
+          Cached(10)(NotFound(views.html.notFound()))
       }
     })
   }

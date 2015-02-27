@@ -179,7 +179,10 @@ object RenderOtherStatus extends ExecutionContexts{
 
   def apply(result: Result)(implicit request: RequestHeader) = result.header.status match {
     case 404 => {
-      Cached(10)(NotFound(views.html.notFound(suggestionsFor404(request.path))))
+      val x = suggestionsFor404(request.path) map { contents =>
+        Cached(10)(NotFound(views.html.notFound(contents)))
+      }
+      Await.result(x, 10.seconds)
     }
     case 410 if request.isJson => Cached(60)(JsonComponent(gonePage, "status" -> "GONE"))
     case 410 => Cached(60)(Ok(views.html.expired(gonePage)))
