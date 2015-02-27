@@ -166,14 +166,14 @@ object TableEmbedComplimentaryToP extends HtmlCleaner {
   }
 }
 
-object RenderOtherStatus {
+object RenderOtherStatus extends SuggestionsFor404 {
   def gonePage(implicit request: RequestHeader) = {
     val canonicalUrl: Option[String] = Some(s"/${request.path.drop(1).split("/").head}")
     model.Page(request.path, "news", "This page has been removed", "GFE:Gone", maybeCanonicalUrl = canonicalUrl)
   }
 
   def apply(result: Result)(implicit request: RequestHeader) = result.header.status match {
-    case 404 => NoCache(NotFound)
+    case 404 => NoCache(NotFound(views.html.notFoundWithSuggestions(suggestionsFor404(request.path.drop(1).split("/").head))))
     case 410 if request.isJson => Cached(60)(JsonComponent(gonePage, "status" -> "GONE"))
     case 410 => Cached(60)(Ok(views.html.expired(gonePage)))
     case _ => result

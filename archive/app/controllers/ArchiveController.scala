@@ -10,8 +10,7 @@ import conf.LiveContentApi
 import LiveContentApi.getResponse
 import scala.concurrent.Future
 
-
-object ArchiveController extends Controller with Logging with ExecutionContexts {
+object ArchiveController extends Controller with Logging with ExecutionContexts with SuggestionsFor404 {
 
   private val R1ArtifactUrl = """www.theguardian.com/(.*)/[0|1]?,[\d]*,(-?\d+),[\d]*(.*)""".r
   private val PathPattern = s"""www.theguardian.com/([\\w\\d-]+)/(.*)""".r
@@ -48,12 +47,6 @@ object ArchiveController extends Controller with Logging with ExecutionContexts 
           Cached(10)(NotFound(views.html.notFoundWithSuggestions(suggestionsFor404(path))))
       }
     })
-  }
-
-  def suggestionsFor404(path: String): Future[Seq[Content]] = {
-    getResponse(LiveContentApi.search.q(path)) map {
-      _.results map (Content(_))
-    }
   }
 
   // Our redirects are 'normalised' Vignette URLs, Ie. path/to/0,<n>,123,<n>.html -> path/to/0,,123,.html
