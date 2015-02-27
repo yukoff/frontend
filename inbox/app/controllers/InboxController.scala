@@ -111,14 +111,6 @@ object InboxController extends Controller with ExecutionContexts {
     Ok("Sent")
   }
 
-  val Headlines = Seq(
-    "Ed Miliband promises to slash tuition fees",
-    "Madonna suffered whiplash after fall",
-    "How David Cameron could win the general election but not the keys to No 10",
-    "The homophobia in cucumber is so scary because it taps into a grim reality",
-    "Google backtracks on porn ban in blogger"
-  )
-
   val Articles = Seq(
     ("Hospital representative potentially misled MP about Jimmy Savile access",
       "/uk-news/2015/feb/27/jimmy-savile-anne-eden-buckinghamshire-healthcare-nhs-trust-stoke-mandeville"),
@@ -133,7 +125,7 @@ object InboxController extends Controller with ExecutionContexts {
   )
 
   def sendStory() = Action {
-    val (headline, link) = scala.util.Random.shuffle(Headlines).head
+    val (headline, link) = scala.util.Random.shuffle(Articles).head
 
     Publisher.publish("topic", NewArticle(
       link,
