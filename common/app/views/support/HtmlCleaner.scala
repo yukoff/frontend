@@ -528,7 +528,7 @@ object ShowMoreCleaner extends HtmlCleaner {
       children.splitAt(2) match {
         case (first, more) => {
           val firstDiv = document.createElement("div")
-          firstDiv.addClass("js-first-div v7")
+          firstDiv.addClass("js-first-div v8")
           first.foreach(firstDiv.appendChild)
 
           val uniqueId = new DateTime().getMillis
@@ -543,6 +543,20 @@ object ShowMoreCleaner extends HtmlCleaner {
           moreDiv.attr("style", "display: none;")
           moreDiv.attr("id", s"togglable-$uniqueId")
           more.foreach(moreDiv.appendChild)
+
+          val image1 = document.createElement("img")
+          image1.attr("src", "http://s15.postimg.org/elatjqw1n/banner_420x200.jpg")
+          image1.attr("height", "190")
+
+          val image2 = document.createElement("img")
+          image2.attr("src", "http://s13.postimg.org/6ado5zj53/gif.gif")
+          image2.attr("height", "190")
+
+          val images = document.createElement("div")
+          images.attr("style", "margin-top: 2em;")
+          images.appendChild(image1)
+          images.appendChild(image2)
+          moreDiv.appendChild(images)
 //
 
           document.body().appendChild(firstDiv)
