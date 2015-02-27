@@ -42,7 +42,20 @@ module.exports = function (grunt) {
     }
 
     // Default task
-    grunt.registerTask('default', ['clean', 'prepare', 'compile', 'test', 'analyse']);
+    grunt.registerTask('default', ['clean', 'validate', 'prepare', 'compile', 'test', 'analyse']);
+
+    /**
+     * Validate tasks
+     */
+    grunt.registerTask('validate:css', ['compile:images', 'sass:compile', 'sass:compileStyleguide']);
+    grunt.registerTask('validate:sass', ['scsslint']);
+    grunt.registerTask('validate:js', function(app) {
+        var target = (app) ? ':' + app : '';
+        grunt.task.run(['jshint' + target, 'jscs' + target]);
+    });
+    grunt.registerTask('validate', function() {
+        grunt.task.run(['validate:css', 'validate:sass']);
+    });
 
     /**
      * Compile tasks
