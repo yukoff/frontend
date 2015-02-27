@@ -1,27 +1,35 @@
 .diduknow {
     width: 300px;
-    height: 249px;
+    height: 340px;
     position: relative;
-    background: #5c9753 url('http://localhost:9000/assets/stylesheets/climate.jpg') 0 0 no-repeat;
+    background: transparent url('http://localhost:9000/assets/stylesheets/climate-change-background.png') 0 0 no-repeat;
     text-align: center;
     color: #fff;
 }
 
 .diduknow__title {
     margin: 0 auto;
-    padding-top: 70px;
+    padding-top: 90px;
     font-size: 24px;
-    line-height: 1;
+    font-weight: 900;
+    line-height: 1.1;
+    width: 70%;
 }
 
 .diduknow__txt {
+    width: 50%;
     margin: 0 auto;
     padding-top: 10px;
+    font-size: 12px;
+    line-height: 1.2;
 }
 
-.diduknow__link {
+.diduknow__btn {
+    width: 131px;
+    height: 37px;
+    background: transparent url('http://localhost:9000/assets/stylesheets/saveplanet.png') 0 0 no-repeat;
     position: absolute;
-    bottom: 10px;
+    bottom: 60px;
     left: 0;
     right: 0;
     margin: 0 auto;
@@ -29,4 +37,16 @@
     font-size: 12px;
     line-height: 1;
     color: #fff;
+}
+
+.diduknow__link {
+    position: absolute;
+    bottom: 45px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    text-decoration: underline;
+    font-size: 10px;
+    line-height: 1;
+    color: #abd8f2;
 }

@@ -40,7 +40,8 @@ define([
             $('.js-components-container').append('<div class="diduknow u-h">' +
                 '<p class="diduknow__title">' + item.title + '</p>' +
                 '<p class="diduknow__txt">' + item.tip + '</p>' +
-                '<a class="diduknow__link" href="" title="">Climate change is here. Learn more.</a>' +
+                '<a class="diduknow__btn" href="" title=""></a>' +
+                '<a class="diduknow__link" href="" title="">Learn more about climate change</a> ' +
                 '</div>');
             $('.diduknow').css('top', (Math.random() * 2000) + 900 + 'px').toggleClass('u-h')
 
