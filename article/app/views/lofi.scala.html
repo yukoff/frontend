@@ -1,0 +1,31 @@
+@(model: ArticlePage)(implicit request: RequestHeader)
+
+@import conf.Switches._
+@import views.BodyCleaner
+
+
+@defining(model.article) { article =>
+<html>
+
+    <head>
+        <title>@views.support.Title(article)</title>
+        <style></style>
+        <script>
+            navigator.serviceWorker.register('/lofi-sw.js', { scope: '/' });
+        </script>
+    </head>
+
+    <body>
+
+        <div class="advert">
+
+        </div>
+
+
+        <div class="article">
+            @BodyCleaner(article, article.body)
+        </div>
+
+    </body>
+</html>
+}

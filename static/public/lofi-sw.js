@@ -29,6 +29,24 @@ self.addEventListener('fetch', function(event) {
         console.log('respondWith lofi request');
         event.respondWith(lofiResp(req));
     }
+
+    if (u.pathname === '/lolist') {
+        event.respondWith(
+            caches.open(cn.lofi).then(function(cache) {
+                return cache.keys().then(function(reqs) {
+                    var urls = reqs.map(function(req) {
+                        return req.url;
+                    });
+
+                    var t = '{ "urls": '+ JSON.stringify(urls) + '}';
+
+                    return new Response(t,  {
+                        headers: {"Content-Type": "application/json"}
+                    });
+                });
+            })
+         );
+    }
 });
 
 function lofiResp(req) {

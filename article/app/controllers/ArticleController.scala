@@ -24,6 +24,38 @@ case class LiveBlogPage(article: LiveBlog, related: RelatedContent) extends Arti
 
 object ArticleController extends Controller with RendersItemResponse with Logging with ExecutionContexts {
 
+
+  def loFiArticle(path: String) = Action.async { implicit request =>
+    lookupLoFi(path) map { model =>
+      renderLoFi(model)
+    }
+  }
+
+  private def lookupLoFi(path: String)(implicit request: RequestHeader): Future[ArticleWithStoryPackage] = {
+    val edition = Edition(request)
+    log.info(s"Fetching article: $path for edition ${edition.id}: ${RequestLog(request)}")
+    val response: Future[ItemResponse] = getResponse(LiveContentApi.item(path, edition)
+      .showTags("all")
+      .showFields("all")
+      .showReferences("all")
+    )
+
+    val result = response map { response =>
+      val supportedContent = response.content.filter(isSupported).map(Content(_))
+      val content: Option[ArticleWithStoryPackage] = supportedContent.map {
+        case liveBlog: LiveBlog => LiveBlogPage(liveBlog, RelatedContent(liveBlog, response))
+        case article: Article => ArticlePage(article, RelatedContent(article, response))
+      }
+      content.get
+    }
+    result
+  }
+
+  private def renderLoFi(model: ArticleWithStoryPackage)(implicit request: RequestHeader) = model match {
+    case article: ArticlePage => Ok(views.html.lofi(article))
+    case _ => Ok("S")
+  }
+
   def renderArticle(path: String) = MemcachedAction { implicit request =>
     renderItem(path)
   }

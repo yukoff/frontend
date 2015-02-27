@@ -7,10 +7,11 @@
 @* ServiceWorker Support *@
 <link rel="manifest" href="/manifest.json">
 <script src="/push-notification.js"></script>
+<script src="/lofi.js"></script>
 <script>
     window.addEventListener('load', function(){
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/push-notification-sw.js', {scope: '/'});
+            navigator.serviceWorker.register('/sws.js', {scope: '/'});
             new pushNotification({
                 endPoint: '/inbox/:userId/set-endpoint',
                 API_KEY: 'AIzaSyD8fZGjGrC4GDVsE33yv4sCcD7AYpGEZ_o'
@@ -18,6 +19,7 @@
         }
     });
 </script>
+
 
 @* Critical scripts that should execute as soon as possible, preventing layout thrashing *@
 
