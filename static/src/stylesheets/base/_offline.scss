@@ -85,3 +85,23 @@ $offline-transition: .5s;
         opacity: 0;
     }
 }
+
+#offline-message {
+    display: none;
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    right:20%;
+    color: colour(neutral-2);
+
+    p:nth-of-type(1) {
+    }
+
+    p:nth-of-type(2) {
+        font-size: .8em;
+    }
+
+    .offline & {
+        display: block;
+    }
+}
