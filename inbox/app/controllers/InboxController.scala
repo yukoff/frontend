@@ -68,24 +68,61 @@ object InboxController extends Controller with ExecutionContexts {
     }
   }
 
+  val Comments = Seq(
+    """
+      |<p>This is serious.</p>
+      |
+      |<p>Obviously more stringent controls would only raise the price of this important party drug, and also the profits of the manufacturers.</p>
+    """.stripMargin,
+    """
+      |<p>If it did not benefit poorer people and countries they would not be interested in it, the world as we know it,
+      |the rich looking after the rich business as usual.</p>
+    """.stripMargin,
+    """
+      |<p>Apart from the obvious (price rises) exactly why would China want to do such a thing?</p>
+    """.stripMargin,
+    """
+      |<p>The spirit of punk lives on. Got something to say? Jjust pick up some instruments and have a bash.</p>
+      |
+      |<p>That made my day.</p>
+    """.stripMargin,
+    """
+      |<p>This is pretty much the plot of Ex-Drummer. Hopefully it will end better for them.</p>
+    """.stripMargin
+  )
+
   def sendComment() = Action {
 
     Publisher.publish("topic", CommentReply(
       "12996508",
-      "Nielav",
+      scala.util.Random.shuffle(Seq(
+        "Neilav",
+        "Cantlin",
+        "Andy",
+        "John",
+        "Mary"
+      )).head,
       "http://static.guim.co.uk/sys-images/Guardian/Pix/site_furniture/2010/09/01/no-user-image.gif",
       "",
-      "LOL",
+      scala.util.Random.shuffle(Comments).head,
       "214"
     ))
 
     Ok("Sent")
   }
 
+  val Headlines = Seq(
+    "Ed Miliband promises to slash tuition fees",
+    "Madonna suffered whiplash after fall",
+    "How David Cameron could win the general election but not the keys to No 10",
+    "The homophobia in cucumber is so scary because it taps into a grim reality",
+    "Google backtracks on porn ban in blogger"
+  )
+
   def sendStory() = Action {
     Publisher.publish("topic", NewArticle(
       "/politics/2015/feb/27/election-2015-tories-largest-party-but-cameron-may-not-have-the-numbers-to-stay-pm",
-      "How David Cameron could win the general election but not the keys to No 10",
+      scala.util.Random.shuffle(Headlines).head,
       "",
       ""
     ))

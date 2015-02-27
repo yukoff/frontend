@@ -17,7 +17,7 @@ object Publisher extends ExecutionContexts {
   def publish(topic: String, item: InboxItem) = {
     Subscription.getSubscriptions(topic) map { subscriptions =>
       for {
-        subscription <- subscriptions ++ Seq("rob_test_3")
+        subscription <- subscriptions ++ Seq("rob_new_test")
       } {
         Feed.addPost(subscription, item)
 
