@@ -119,10 +119,25 @@ object InboxController extends Controller with ExecutionContexts {
     "Google backtracks on porn ban in blogger"
   )
 
+  val Articles = Seq(
+    ("Hospital representative potentially misled MP about Jimmy Savile access",
+      "/uk-news/2015/feb/27/jimmy-savile-anne-eden-buckinghamshire-healthcare-nhs-trust-stoke-mandeville"),
+    ("Newcastle prepares for first UK Pegida rally against 'Islamisation'",
+      "/uk-news/2015/feb/27/newcastle-prepares-for-first-uk-pegida-rally-against-islamisation"),
+    ("Prince Harry to leave the army after 10 years",
+      "/uk-news/2015/feb/27/prince-harry-to-leave-the-army-after-10-years"),
+    ("David Cameron pledges to hunt down terrorists who commit 'heinous crimes'",
+      "/world/2015/feb/27/cameron-pledge-terrorists-heinous-crimes"),
+    ("The resistible rise of Nigel Farage",
+      "/commentisfree/2015/feb/27/resistible-rise-of-nigel-farage-ukip")
+  )
+
   def sendStory() = Action {
+    val (headline, link) = scala.util.Random.shuffle(Headlines).head
+
     Publisher.publish("topic", NewArticle(
-      "/politics/2015/feb/27/election-2015-tories-largest-party-but-cameron-may-not-have-the-numbers-to-stay-pm",
-      scala.util.Random.shuffle(Headlines).head,
+      link,
+      headline,
       "",
       ""
     ))
