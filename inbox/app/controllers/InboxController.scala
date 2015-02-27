@@ -28,6 +28,10 @@ object InboxController extends Controller with ExecutionContexts {
 
   def renderPosts(userId: String) = Action.async {
     Feed.getPosts(userId) map { posts =>
+      posts.filter(!_.read) foreach { post =>
+        Feed.setRead(userId, post.addedAt.getMillis)
+      }
+
       Ok(views.html.feedBody(posts.filter(!_.read)))
     }
   }
