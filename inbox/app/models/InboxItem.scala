@@ -52,7 +52,8 @@ case class CommentReply(
   displayName: String,
   avatar: String,
   discussionKey: String,
-  post: String
+  post: String,
+  commentId: String
 ) extends InboxItem
 
 object NewArticle {

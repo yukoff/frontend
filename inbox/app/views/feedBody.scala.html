@@ -2,7 +2,7 @@
 
 @for(item <- items) {
     @item.message match {
-        case CommentReply(userId, displayName, avatar, discussionKey, post) => {
+        case CommentReply(userId, displayName, avatar, discussionKey, post, commentId) => {
             <li class="site-notification site-notification__comment d-comment--top-level">
                 <div class="d-comment__inner d-comment__inner--top-level">
                     <div class="d-comment__meta">
@@ -10,43 +10,23 @@
                             <img src="@avatar" alt="" class="d-comment__avatar">
                         </span>
                         <div class="d-comment__meta-text">
-                            <span itemscope="" itemprop="author" itemtype="http://schema.org/Person" title="Medlicott" class="d-comment__author">
+                            <span itemscope="" itemprop="author" itemtype="http://schema.org/Person" class="d-comment__author">
                                 <a href="https://profile.theguardian.com/user/id/@userId" itemprop="url">
                                     <span itemprop="givenName">@displayName</span>
                                 </a>
                             </span>
                             <div class="d-comment__timestamp">
                                 <a href="http://discussion.theguardian.com/comment-permalink/48105205" class="d-comment__timestamp block-time">
-                                    <time class="js-timestamp" itemprop="dateCreated" datetime="2015-02-26T13:10:36Z" data-timestamp="1424956236000" data-relativeformat="med" title="Permalink to this comment (26 Feb 2015 13:10)">21h ago</time>
+                                    <time class="js-timestamp" itemprop="dateCreated" datetime="2015-02-26T13:10:36Z" data-timestamp="1424956236000">21h ago</time>
                                     <i class="i i-comment-anchor"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="d-comment__content">
-                        <div class="d-comment__recommend js-recommend-comment" data-comment-id="48105205" data-user-id="3012291" data-recommend-count="1" title="1 recommendations">
-                            <button class="u-button-reset d-comment__recommend-button">
-                                <span class="d-comment__recommend-pulse"></span>
-                                <i></i>
-                            </button>
-                            <span class="d-comment__recommend-count js-recommend-count">
-                                <span class="d-comment__recommend-count--old">1</span>
-                                <span class="d-comment__recommend-count--new">2</span>
-                            </span>
-                        </div>
                         <div class="d-comment__main ">
                             <div class="d-comment__body" itemprop="text">
                             @Html(post)
-                            </div>
-                            <div class="d-comment__actions d-comment__actions--left">
-                                <a class="d-comment__action d-comment__action--reply" href="https://profile.theguardian.com/signin?returnUrl=http://discussion.theguardian.com/comment-permalink/48105205" data-link-name="reply to comment" data-comment-id="48105205" role="button">
-                                    <i class="i i-reply-blue"></i>Reply
-                                </a>
-                                <span class="d-comment__action-separator d-staff-required">|</span>
-                                <button class="u-button-reset d-comment__action d-comment__action--pick d-staff-required" role="button" data-comment-id="48105205" data-comment-highlighted="false">Pick</button>
-                            </div>
-                            <div class="report-comment-container js-report-comment-container d-comment__action d-comment__action--report">
-                                <a href="http://discussion.theguardian.com/components/report-abuse/48105205" class="js-report-comment" data-comment-id="48105205" target="_blank">Report</a>
                             </div>
                         </div>
                     </div>
@@ -60,10 +40,10 @@
                     <div class="fc-item__container">
                         <div class="fc-item__content">
                             <div class="fc-item__header">
-                                <a href="http://www.theguardian.com/@id" class="fc-item__link" data-link-name="article"><span class="u-faux-block-link__cta fc-item__headline">@headline</span></a></h2>
+                                <h2><a href="http://www.theguardian.com/@id" class="fc-item__link" data-link-name="article"><span class="u-faux-block-link__cta fc-item__headline">@headline</span></a></h2>
                             </div>
                         </div>
-                        <a href="http://www.theguardian.com/@id" class="u-faux-block-link__overlay" data-link-name="article" tabindex="-1">US regulator to vote on rules governing future of broadband</a>
+                        <a href="http://www.theguardian.com/@id" class="u-faux-block-link__overlay" data-link-name="article" tabindex="-1">@headline</a>
                     </div>
                 </div>
             </li>
