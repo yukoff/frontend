@@ -20,6 +20,11 @@ GET         /push-notification-sw.js                                            
 GET         /push-notification.js                                                                                    dev.DevAssetsController.fromPublicRoot(path="push-notification.js")
 GET         /surveys/*file                                                                                           dev.DevAssetsController.surveys(file)
 GET         /commercial/test-page                                                                                    controllers.commercial.CreativeTestPage.allComponents
+GET            /lofi.js                                                                                                       dev.DevAssetsController.fromPublicRoot(path="lofi.js")
+GET            /lofi-sw.js                                                                                                    dev.DevAssetsController.fromPublicRoot(path="lofi-sw.js")
+GET            /lofi/*path                                                                                                    controllers.ArticleController.loFiArticle(path)
+GET            /sws.js                                                                                                        dev.DevAssetsController.fromPublicRoot(path="sws.js")
+
 
 # For dev machines
 GET         /assets/internal/*file                                                                                   controllers.Assets.at(path="/public", file)
