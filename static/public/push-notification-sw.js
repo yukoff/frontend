@@ -2,7 +2,7 @@ self.addEventListener('push', function(e) {
     console.log(self);
 
     if (!(self.Notification && self.Notification.permission === 'granted')) {
-            console.error('Failed to display notification - not supported');
+        console.error('Failed to display notification - not supported');
         return;
     }
 
