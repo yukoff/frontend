@@ -11,8 +11,8 @@ object PushPost {
     case CommentReply(_, displayName, avatar, url, post, _) =>
       PushPost(Some(avatar), url, displayName, HTML.noHtml(post))
 
-    case NewArticle(id, headline, thumbnail, pic) =>
-      PushPost(Some(pic), id, headline, "")
+    case NewArticle(id, headline, thumbnail, trail) =>
+      PushPost(Some(thumbnail), id, headline, trail)
   }
 }
 
