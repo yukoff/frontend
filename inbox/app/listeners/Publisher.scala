@@ -1,17 +1,22 @@
 package listeners
 
-import common.ExecutionContexts
+import common.{Logging, ExecutionContexts}
 import models._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, Json}
 import play.api.libs.ws.WS
 import play.api.Play.current
 
-object Publisher extends ExecutionContexts {
+import scala.util.{Failure, Success}
+
+object Publisher extends ExecutionContexts with Logging {
   def sendPushNotification(endpoint: PushEndpoint) = {
-    WS.url(endpoint.endpoint).post(Json.obj(
-      "registration_id" -> endpoint.userId,
-      "data.data" -> "{}"
-    ))
+    log.info(endpoint.toString)
+    WS.url(endpoint.endpoint).withHeaders(("Authorization", "key=AIzaSyD8fZGjGrC4GDVsE33yv4sCcD7AYpGEZ_o")).post(Json.obj(
+      "registration_ids" -> Json.arr(JsString(endpoint.userId))
+    )) onComplete {
+      case Success(x) => log.info(x.status + " " + x.statusText + "\n" + x.body)
+      case Failure(error) => log.error("ERRORZ", error)
+    }
   }
 
   def publish(topic: String, item: InboxItem) = {
