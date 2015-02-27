@@ -1,0 +1,58 @@
+@(items: Seq[models.FeedItem])
+
+@for(item <- items) {
+    @item.message match {
+        case CommentReply(userId, displayName, avatar, discussionKey, post, commentId) => {
+            <li class="site-notification site-notification--comment d-comment--top-level">
+                <div class="d-comment__inner d-comment__inner--top-level">
+                    <div class="d-comment__meta">
+                        <span class="d-comment__avatar-wrapper">
+                            <img src="@avatar" alt="" class="d-comment__avatar">
+                        </span>
+                        <div class="d-comment__meta-text">
+                            <span itemscope="" itemprop="author" itemtype="http://schema.org/Person" class="d-comment__author">
+                                <a href="https://profile.theguardian.com/user/id/@userId" itemprop="url">
+                                    <span itemprop="givenName">@displayName</span>
+                                </a>
+                            </span>
+                            <div class="d-comment__timestamp">
+                                <a href="http://discussion.theguardian.com/comment-permalink/48105205" class="d-comment__timestamp block-time">
+                                    <time class="js-timestamp" itemprop="dateCreated" datetime="2015-02-26T13:10:36Z" data-timestamp="1424956236000">21h ago</time>
+                                    <i class="i i-comment-anchor"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-comment__content">
+                        <div class="d-comment__main ">
+                            <div class="d-comment__body" itemprop="text">
+                            @Html(post)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        }
+
+        case NewArticle(id, headline, thumbnail, trailText) => {
+            <li class="site-notification site-notification--story u-faux-block-link">
+                <div class="fc-item fc-item--force-image-upgrade fc-item--has-image fc-item--has-metadata js-fc-item tone-news--item fc-item--list-mobile fc-item--list-tablet">
+                    <div class="fc-item__container">
+                        <div class="fc-item__content">
+                            <div class="fc-item__header">
+                                <h2><a href="http://www.theguardian.com/@id" class="fc-item__link" data-link-name="article"><span class="u-faux-block-link__cta fc-item__headline">@headline</span></a></h2>
+                            </div>
+                        </div>
+                        <a href="http://www.theguardian.com/@id" class="u-faux-block-link__overlay" data-link-name="article" tabindex="-1">@headline</a>
+                    </div>
+                </div>
+            </li>
+        }
+
+        case _ => {
+            <p>placeholder</p>
+        }
+
+    }
+}
+

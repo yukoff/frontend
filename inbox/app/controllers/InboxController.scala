@@ -25,6 +25,12 @@ object InboxController extends Controller with ExecutionContexts {
     }
   }
 
+  def renderPosts(userId: String) = Action.async {
+    Feed.getPosts(userId) map { posts =>
+      Ok(views.html.feedBody(posts.filter(!_.read)))
+    }
+  }
+
   def getPostsCount(userId: String) = Action.async {
     Feed.getPosts(userId) map { posts =>
       Ok(Json.toJson(GetPostsCountResponse(posts.count(!_.read))))

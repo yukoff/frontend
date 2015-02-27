@@ -57,7 +57,8 @@ object DiscussionListener extends JsonQueueWorker[DiscussionNotificationWrapper]
         comment.userProfile.displayName,
         comment.userProfile.avatar,
         context.discussionKey,
-        comment.body
+        comment.body,
+        comment.id.toString
       ))
       _ <- Futures.waitFor(2.seconds)
     } yield {
