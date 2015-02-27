@@ -74,7 +74,7 @@ object Feed extends ExecutionContexts {
     ) map { queryResult =>
       queryResult.getItems.toIndexedSeq.toSeq flatMap { item =>
         FeedItem.fromAttributeValues(item.asScala.toMap).toOption
-      }
+      } sortBy (-_.addedAt.getMillis)
     }
   }
 }

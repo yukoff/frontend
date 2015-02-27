@@ -1,6 +1,7 @@
 package controllers
 
 import common.ExecutionContexts
+import listeners.Publisher
 import models._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
@@ -27,6 +28,10 @@ object InboxController extends Controller with ExecutionContexts {
 
   def renderPosts(userId: String) = Action.async {
     Feed.getPosts(userId) map { posts =>
+      posts.filter(!_.read) foreach { post =>
+        Feed.setRead(userId, post.addedAt.getMillis)
+      }
+
       Ok(views.html.feedBody(posts.filter(!_.read)))
     }
   }
@@ -61,5 +66,30 @@ object InboxController extends Controller with ExecutionContexts {
     PushSubscription.setEndpoint(userId, request.body) map { _ =>
       Ok("Done")
     }
+  }
+
+  def sendComment() = Action {
+
+    Publisher.publish("topic", CommentReply(
+      "12996508",
+      "Nielav",
+      "http://static.guim.co.uk/sys-images/Guardian/Pix/site_furniture/2010/09/01/no-user-image.gif",
+      "",
+      "LOL",
+      "214"
+    ))
+
+    Ok("Sent")
+  }
+
+  def sendStory() = Action {
+    Publisher.publish("topic", NewArticle(
+      "/politics/2015/feb/27/election-2015-tories-largest-party-but-cameron-may-not-have-the-numbers-to-stay-pm",
+      "How David Cameron could win the general election but not the keys to No 10",
+      "",
+      ""
+    ))
+
+    Ok("Sent")
   }
 }
