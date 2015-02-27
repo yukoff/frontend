@@ -69,6 +69,7 @@ object ArticleController extends Controller with RendersItemResponse with Loggin
       .showTags("all")
       .showFields("all")
       .showReferences("all")
+      .showRelated()
     )
 
     val result = response map { response =>

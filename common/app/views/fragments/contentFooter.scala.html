@@ -1,5 +1,9 @@
 @(content: model.Content, related: model.RelatedContent, cssClass: String = "")(implicit request: RequestHeader)
 
+@related.followingLink.map { followingLink =>
+<div class="js-next-article-placeholder" data-related-link="@followingLink"></div>
+    }
+
 <div class="content-footer @if(cssClass){content-footer--@cssClass}">
 
     @fragments.discussionFooter(content.isCommentable, content.isClosedForComments, content.shortUrlId)

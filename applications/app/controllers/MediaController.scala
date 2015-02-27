@@ -25,6 +25,7 @@ object MediaController extends Controller with RendersItemResponse with Logging 
     val response: Future[ItemResponse] = getResponse(
       LiveContentApi.item(path, edition)
         .showFields("all")
+        .showRelated()
     )
 
     val result = response map { response =>

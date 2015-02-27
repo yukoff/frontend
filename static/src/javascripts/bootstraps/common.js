@@ -38,6 +38,7 @@ define([
     'common/modules/onward/history',
     'common/modules/onward/more-tags',
     'common/modules/onward/onward-content',
+    'common/modules/onward/article',
     'common/modules/onward/popular',
     'common/modules/onward/related',
     'common/modules/onward/tonal',
@@ -95,6 +96,7 @@ define([
     history,
     MoreTags,
     Onward,
+    article,
     Popular,
     Related,
     TonalComponent,
@@ -181,7 +183,7 @@ define([
                 } else {
                     var relatedEl = qwery('.js-related')[0];
                     if (relatedEl) {
-                        proximityLoader.add(relatedEl, 1500, modules.transcludeRelated);
+                        //proximityLoader.add(relatedEl, 1500, modules.transcludeRelated);
                     }
                 }
             },
@@ -197,7 +199,7 @@ define([
                     } else {
                         var onwardEl = qwery('.js-popular-trails')[0];
                         if (onwardEl) {
-                            proximityLoader.add(onwardEl, 1500, modules.transcludePopular);
+                            //proximityLoader.add(onwardEl, 1500, modules.transcludePopular);
                         }
                     }
                 }
@@ -213,13 +215,17 @@ define([
                 }
             },
 
+            initNextArticle: function () {
+                article();
+            },
+
             initOnwardContent: function () {
                 if (window.location.hash) {
                     modules.transcludeOnwardContent();
                 } else {
                     var onwardEl = qwery('.js-onward')[0];
                     if (onwardEl) {
-                        proximityLoader.add(onwardEl, 1500, modules.transcludeOnwardContent);
+                        //proximityLoader.add(onwardEl, 1500, modules.transcludeOnwardContent);
                     }
                 }
             },
@@ -504,6 +510,7 @@ define([
             robust('c-popular', modules.initPopular);
             robust('c-related', modules.initRelated);
             robust('c-onward', modules.initOnwardContent);
+            robust('c-next-article', modules.initNextArticle);
             robust('c-overlay', modules.initOpenOverlayOnClick);
             robust('c-css-logging', modules.runCssLogging);
             robust('c-public-api', modules.initPublicApi);
