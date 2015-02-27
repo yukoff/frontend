@@ -67,11 +67,21 @@ $offline-transition: .5s;
 }
 
 
-#header, .l-side-margins {
+#header {
     @include transition(-webkit-filter $offline-transition);
     -webkit-filter: none;
 
     .offline & {
         -webkit-filter: brightness(0.9) contrast(1) grayscale(.6);
+    }
+}
+
+.l-side-margins {
+    opacity: 1;
+    @include transition(opacity $offline-transition);
+
+    .offline & {
+        pointer-events: none;
+        opacity: 0;
     }
 }

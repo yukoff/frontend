@@ -3,7 +3,7 @@
 @for(item <- items) {
     @item.message match {
         case CommentReply(userId, displayName, avatar, discussionKey, post, commentId) => {
-            <li class="site-notification site-notification__comment d-comment--top-level">
+            <li class="site-notification site-notification--comment d-comment--top-level">
                 <div class="d-comment__inner d-comment__inner--top-level">
                     <div class="d-comment__meta">
                         <span class="d-comment__avatar-wrapper">

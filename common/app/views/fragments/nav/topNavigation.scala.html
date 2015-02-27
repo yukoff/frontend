@@ -17,17 +17,6 @@
             <span class="u-h">home</span>
         </a>
     </li>
-    <li class="top-navigation__item top-navigation__item--inbox">
-        <a href=""
-           class="top-navigation__action top-navigation__action--has-icon"
-           data-link-name="nav : inbox"
-           title="Inbox">
-            <span class="top-navigation__icon-wrapper top-navigation__icon-wrapper--inbox">
-                @inlineSvg("notifications-none", "icon", Nil)
-            </span>
-            <span class="u-h">inbox</span>
-        </a>
-    </li>
     @defining(Navigation.topLevelItem(navigation, metaData)){ topSection =>
         @defining(Edition(request).briefNav) { briefNav =>
             @briefNav.filterNot(Navigation.isEditionFront(_)).map{ nav =>
