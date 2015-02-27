@@ -37,11 +37,13 @@ define([
         init: function () {
             var item = list[Math.floor(Math.random() * list.length)];
 
-            $('.js-components-container').append('<div class="diduknow">' +
+            $('.js-components-container').append('<div class="diduknow u-h">' +
                 '<p class="diduknow__title">' + item.title + '</p>' +
                 '<p class="diduknow__txt">' + item.tip + '</p>' +
                 '<a class="diduknow__link" href="" title="">Climate change is here. Learn more.</a>' +
                 '</div>');
+            $('.diduknow').css('top', (Math.random() * 2000) + 900 + 'px').toggleClass('u-h')
+
         }
     }
 });
