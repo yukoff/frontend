@@ -1,6 +1,6 @@
 window.addEventListener('online',  online);
 window.addEventListener('offline', offline);
-offline();
+//offline();
 function online() {
     document.querySelector('html').classList.remove('offline');
 }
@@ -9,14 +9,29 @@ function offline() {
     document.querySelector('html').classList.add('offline');
     window.fetch('/lolist').then(function(resp) {
         resp.json().then(function(json) {
-            var links = json.urls.map(function(url) {
+            var urls = json.urls.map(function(url) {
                 var a = url.split('/');
-                var headline = capitalizeFirstLetter(a[a.length-1].replace('-', ' '));
+                var headline = capitalizeFirstLetter(a[a.length-1].replace(/-/g, ' '));
 
                 return { headline: headline, url: url };
             });
 
+            var links = urls.map(function(link) {
+                var a = document.createElement('a');
+                a.href = link.url;
+                a.innerHTML = link.headline;
 
+                return a;
+            });
+
+            window.addEventListener('DOMContentLoaded', function() {
+                console.log('=load');
+                var lofilist = document.getElementById('lofi-list');
+                links.forEach(function(link) {
+                    console.log(link)
+                    lofilist.appendChild(link);
+                });
+            });
         });
     }).catch(function() {});
 }

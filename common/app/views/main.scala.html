@@ -76,6 +76,32 @@
         <div id="site-notifications__sheet">
             <ul class="site-notifications__list u-unstyled js-site-notifications__list"></ul>
         </div>
+        <style>
+            #lofi-list {
+                display: none;
+                position: fixed;
+                top: 48px;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 20px;
+                height: 100%;
+            }
+            .offline #lofi-list {
+                display: block;
+            }
+            #lofi-list a {
+                display: block;
+                padding: 10px 0;
+                border-bottom: 1px solid #ccc;
+            }
+
+            #lofi-list h1 {
+
+            }
+        </style>
+        <div id="lofi-list">
+            <h1>You've gone offline</h1>
+            <h2>Here's a list of articles available offline</h2>
+        </div>
     </body>
     </html>
 }
