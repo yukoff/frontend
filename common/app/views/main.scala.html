@@ -73,35 +73,50 @@
         @if(!hideUi) {
             @fragments.commercial.pageSkin()
         }
-        <div id="site-notifications__sheet">
-            <ul class="site-notifications__list u-unstyled js-site-notifications__list"></ul>
-        </div>
+
 
         <style>
-            #lofi-list {
+            .offline .site-notifications__list {
                 display: none;
-                position: fixed;
-                top: 48px;
-                background: rgba(255, 255, 255, 0.9);
-                padding: 20px;
-                height: 100%;
-            }
-            .offline #lofi-list {
-                display: block;
-            }
-            #lofi-list a {
-                display: block;
-                padding: 10px 0;
-                border-bottom: 1px solid #ccc;
             }
 
-            #lofi-list h1 {
-
+            #lofi {
+                display: none;
+                margin: 0;
             }
+
+            .offline #lofi { display: block; }
+            #lofi-list > li {
+                display: block;
+                list-style: none;
+                padding: 10px 10px;
+                font-size: 14px;
+                font-weight: bold;
+                margin: 0;
+                border-bottom: 1px dotted #ccc;
+            }
+
+            #lofi a {
+                display: block;
+            }
+
+            #lofi h2 {
+                padding: 0 10px;
+                font-size: 18px;
+                margin: 20px 0 10px 0;
+            }
+
+            #lofi-list { margin: 0; }
+
         </style>
-        <div id="lofi-list">
-            <h1>You've gone offline</h1>
-            <h2>Here's a list of articles available offline</h2>
+
+        <div id="site-notifications__sheet">
+            <ul class="site-notifications__list u-unstyled js-site-notifications__list"></ul>
+
+            <div id="lofi">
+                <h2>Available offline</h2>
+                <ul id="lofi-list"></ul>
+            </div>
         </div>
 
     </body>

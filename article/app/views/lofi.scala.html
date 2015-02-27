@@ -5,28 +5,18 @@
 
 
 @defining(model.article) { article =>
-<html>
-
-    <head>
-        <title>@views.support.Title(article)</title>
-        <style></style>
-        <script>
-            navigator.serviceWorker.register('/sws.js', {scope: '/'});
-        </script>
-    </head>
-
-    <body>
-
-        <div class="advert">
-
-        </div>
-
-
-        <h1>@Html(article.headline)</h1>
-        <div class="article">
+        <style>
+            .article-lofi { pointer-events: none; }
+            .article-lofi aside,
+            .article-lofi video,
+            .article-lofi audio,
+            .article-lofi img,
+            .article-lofi figcaption,
+            .article-lofi figure { display: none; }
+            .article-lofi a { color: initial; text-decoration: none; }
+            .article-lofi * { font-weight: normal; }
+        </style>
+        <div class="article-lofi">
             @BodyCleaner(article, article.body)
         </div>
-
-    </body>
-</html>
 }
