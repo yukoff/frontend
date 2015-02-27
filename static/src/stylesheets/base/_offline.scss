@@ -67,7 +67,7 @@ $offline-transition: .5s;
 }
 
 
-#header {
+#header, .l-side-margins {
     @include transition(-webkit-filter $offline-transition);
     -webkit-filter: none;
 
