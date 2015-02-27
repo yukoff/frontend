@@ -180,11 +180,6 @@ define([
             initRelated: function () {
                 if (window.location.hash) {
                     modules.transcludeRelated();
-                } else {
-                    var relatedEl = qwery('.js-related')[0];
-                    if (relatedEl) {
-                        //proximityLoader.add(relatedEl, 1500, modules.transcludeRelated);
-                    }
                 }
             },
 
@@ -196,11 +191,6 @@ define([
                 if (!config.page.isFront) {
                     if (window.location.hash) {
                         modules.transcludePopular();
-                    } else {
-                        var onwardEl = qwery('.js-popular-trails')[0];
-                        if (onwardEl) {
-                            //proximityLoader.add(onwardEl, 1500, modules.transcludePopular);
-                        }
                     }
                 }
             },
@@ -222,11 +212,6 @@ define([
             initOnwardContent: function () {
                 if (window.location.hash) {
                     modules.transcludeOnwardContent();
-                } else {
-                    var onwardEl = qwery('.js-onward')[0];
-                    if (onwardEl) {
-                        //proximityLoader.add(onwardEl, 1500, modules.transcludeOnwardContent);
-                    }
                 }
             },
 
