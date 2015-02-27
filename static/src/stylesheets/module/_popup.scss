@@ -179,6 +179,9 @@ $control-offset: 36 + $gs-gutter/2;
 /* Profile Menu
    ========================================================================== */
 .brand-bar__item--profile {
+    .popup__toggle:before {
+        border-bottom-color: #eee;
+    }
     // stupid having to reset this, but :not was :not available to all in 2009
     @if ($old-ie == true) {
         .popup__toggle:before,
@@ -189,12 +192,13 @@ $control-offset: 36 + $gs-gutter/2;
             display: inline-block;
         }
     } @else {
-        &:not(.is-signed-in) .popup__toggle {
-            &:before,
-            &:after {
-                display: none;
-            }
-        }
+
+        // &:not(.is-signed-in) .popup__toggle {
+        //     &:before,
+        //     &:after {
+        //         display: none;
+        //     }
+        // }
     }
 
     .popup {

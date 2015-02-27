@@ -20,6 +20,7 @@ define([
             e.preventDefault();
             document.body.scrollTop = 0;
             document.documentElement.classList.toggle('notifications--open');
+            $('.js-notfications-toggle')[0].classList.toggle('is-active');
         });
 
         setInterval(function () {
