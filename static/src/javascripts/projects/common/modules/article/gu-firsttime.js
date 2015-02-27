@@ -14,5 +14,5 @@ define([
             $('.l-footer').empty();
             $('#header').detach().appendTo('.l-footer');
         }
-    }
+    };
 });

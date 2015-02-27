@@ -54,7 +54,7 @@ module.exports = function (grunt) {
         grunt.task.run(['jshint' + target, 'jscs' + target]);
     });
     grunt.registerTask('validate', function(app) {
-        grunt.task.run(['validate:css', 'validate:sass', 'validate:js:' + (app || '')]);
+        grunt.task.run(['validate:css', 'validate:sass']);
     });
 
     /**

@@ -27,7 +27,7 @@ define([
         this.context = context;
         //this.endpoint = '/series/' + getTag() + '.json?shortUrl=' + encodeURIComponent(config.page.shortUrl);
         //this.endpoint = 'http://localhost:9000/commentisfree/2015/feb/26/turn-out-young-voters-get-david-cameron-out.json';
-        console.log('link', bonzo(context).attr('data-related-link'));
+
         this.endpoint = bonzo(context).attr('data-related-link');
         this.fetch(this.context, 'html');
     }
@@ -35,10 +35,10 @@ define([
     Component.define(Article);
 
     Article.prototype.ready = function (container, remaining) {
-        console.log('WOO', container);
+
 
         var placeholder = qwery('.js-next-article-placeholder', container);
-        console.log('another is', placeholder);
+
         $('.content-footer').empty();
         if (placeholder && remaining > 0) {
             proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, --remaining));
@@ -50,17 +50,17 @@ define([
         //mediator.emit('ui:images:upgradePicture', this.context);
     };
 
-    Article.prototype.error = function (xhr) {
+    Article.prototype.error = function () {
         //register.error('series-content');
-        console.log('EEEEK', xhr);
+
     };
 
     function insertNextArticle(placeholder, remaining) {
         return function () {
             remaining = remaining || 3;
-            console.log('curried in', placeholder);
+
             new Article(placeholder, remaining);
-        }
+        };
     }
 
     return function () {
