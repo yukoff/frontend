@@ -1,5 +1,9 @@
 @(items: Seq[models.FeedItem])
-
+@if(items.isEmpty) {
+    <li class="site-notification--none">
+    GCHQ is listening…
+    </li>
+}
 @for(item <- items) {
     @item.message match {
         case CommentReply(userId, displayName, avatar, discussionKey, post, commentId) => {

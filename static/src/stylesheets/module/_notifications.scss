@@ -62,6 +62,13 @@
     }
 }
 
+.site-notification--none {
+    @include fs-textSans(1);
+    text-align: center;
+    color: #999;
+    padding: 10px;
+}
+
 .site-notification--live-update {
     .block-elements>* {
         margin: 0 $gs-gutter * .5;
