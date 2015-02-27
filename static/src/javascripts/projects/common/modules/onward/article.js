@@ -32,14 +32,14 @@ define([
 
     Component.define(Article);
 
-    Article.prototype.ready = function (container) {
+    Article.prototype.ready = function (container, remaining) {
         console.log('WOO', container);
 
 
         var placeholder = qwery('.js-next-article-placeholder', container);
         console.log('another is', placeholder);
-        if (placeholder) {
-            proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder));
+        if (placeholder && remaining > 0) {
+            proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, --remaining));
         }
 
         //badges.add(container);
@@ -53,10 +53,11 @@ define([
         console.log('EEEEK', xhr);
     };
 
-    function insertNextArticle(placeholder) {
+    function insertNextArticle(placeholder, remaining) {
         return function () {
+            remaining = remaining || 3;
             console.log('curried in', placeholder);
-            new Article(placeholder);
+            new Article(placeholder, remaining);
         }
     }
 
