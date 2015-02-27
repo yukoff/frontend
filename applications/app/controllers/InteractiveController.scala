@@ -24,6 +24,7 @@ object InteractiveController extends Controller with RendersItemResponse with Lo
     val response: Future[ItemResponse] = getResponse(
       LiveContentApi.item(path, edition)
        .showFields("all")
+        .showRelated()
     )
 
     val result = response map { response =>
