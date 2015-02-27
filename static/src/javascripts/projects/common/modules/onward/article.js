@@ -35,8 +35,6 @@ define([
     Component.define(Article);
 
     Article.prototype.ready = function (container, remaining) {
-
-
         var placeholder = qwery('.js-next-article-placeholder', container);
 
         $('.content-footer').empty();
@@ -50,11 +48,6 @@ define([
         //mediator.emit('ui:images:upgradePicture', this.context);
     };
 
-    Article.prototype.error = function () {
-        //register.error('series-content');
-
-    };
-
     function insertNextArticle(placeholder, remaining) {
         return function () {
             remaining = remaining || 3;
@@ -64,7 +57,6 @@ define([
     }
 
     return function () {
-
         var placeholder = qwery('.js-next-article-placeholder');
         if (placeholder) {
             proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder));

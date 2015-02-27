@@ -9,7 +9,7 @@ define([
     ) {
 
     return {
-        init: function() {
+        init: function () {
             $('.content-footer').empty();
             $('.l-footer').empty();
             $('#header').detach().appendTo('.l-footer');
