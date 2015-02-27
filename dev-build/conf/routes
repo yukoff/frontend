@@ -11,6 +11,9 @@ POST    /inbox/:userId/subscriptions/:topicId/unsubscribe controllers.InboxContr
 POST    /inbox/:userId/set-endpoint                       controllers.InboxController.setPushEndpoint(userId)
 
 GET         /humans.txt                                                                                              dev.DevAssetsController.humans()
+GET         /manifest.json                                                                                           dev.DevAssetsController.fromPublicRoot(path="manifest.json")
+GET         /push-notification-sw.js                                                                                 dev.DevAssetsController.fromPublicRoot(path="push-notification-sw.js")
+GET         /push-notification.js                                                                                    dev.DevAssetsController.fromPublicRoot(path="push-notification.js")
 GET         /surveys/*file                                                                                           dev.DevAssetsController.surveys(file)
 GET         /commercial/test-page                                                                                    controllers.commercial.CreativeTestPage.allComponents
 

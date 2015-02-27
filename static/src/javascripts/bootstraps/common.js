@@ -141,8 +141,7 @@ define([
             },
 
             initialiseTopNavItems: function () {
-                var profile,
-                    search = new Search(),
+                var search = new Search(),
                     header = document.getElementById('header');
 
                 // if (header) {
