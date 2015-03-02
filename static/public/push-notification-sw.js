@@ -6,7 +6,7 @@ self.addEventListener('push', function(e) {
         return;
     }
 
-    fetch('/inbox/rob_test').then(function(rawData){
+    fetch('/inbox/rob_test_3').then(function(rawData){
         rawData.json().then(function(data){
             console.log(data);
             var msg = data.messages[0].message;
