@@ -22,9 +22,10 @@ define([
     Component
 ) {
 
-    function Article(context) {
+    function Article(context, remaining) {
         //register.begin('series-content');
         this.context = context;
+        this.remaining = remaining - 1;
         //this.endpoint = '/series/' + getTag() + '.json?shortUrl=' + encodeURIComponent(config.page.shortUrl);
         //this.endpoint = 'http://localhost:9000/commentisfree/2015/feb/26/turn-out-young-voters-get-david-cameron-out.json';
 
@@ -34,12 +35,13 @@ define([
 
     Component.define(Article);
 
-    Article.prototype.ready = function (container, remaining) {
+    Article.prototype.ready = function (container) {
         var placeholder = qwery('.js-next-article-placeholder', container);
 
         $('.content-footer').empty();
-        if (placeholder && remaining > 0) {
-            proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, --remaining));
+        console.log("about to check:", this.remaining);
+        if (placeholder && this.remaining > 0) {
+            proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, this.remaining));
         }
 
         //badges.add(container);
@@ -49,9 +51,9 @@ define([
     };
 
     function insertNextArticle(placeholder, remaining) {
+        console.log("remaining is:", remaining);
         return function () {
-            remaining = remaining || 3;
-
+            console.log("remaining is still:", remaining);
             new Article(placeholder, remaining);
         };
     }
@@ -59,7 +61,7 @@ define([
     return function () {
         var placeholder = qwery('.js-next-article-placeholder');
         if (placeholder) {
-            proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder));
+            proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, 2));
         }
 
     };
