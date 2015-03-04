@@ -28,7 +28,8 @@ $c-primary-footer-background-side-bar: mix($c-primary-footer-background, #ffffff
         border-top: 0;
     }
 
-    .js-off & {
+    .js-off &,
+    .is-not-modern & {
         .navigation--collapsed {
             height: auto;
         }
@@ -41,6 +42,7 @@ $c-primary-footer-background-side-bar: mix($c-primary-footer-background, #ffffff
             display: none;
         }
     }
+
     .control__info {
         display: inline-block;
     }
