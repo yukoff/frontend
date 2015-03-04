@@ -15,7 +15,6 @@ define([
     'common/modules/video/tech-order',
     'common/modules/video/events',
     'common/modules/video/fullscreener',
-    'common/views/svgs',
     'text!common/views/ui/loading.html',
     'text!common/views/media/titlebar.html'
 ], function (
@@ -34,7 +33,6 @@ define([
     techOrder,
     events,
     fullscreener,
-    svgs,
     loadingTmpl,
     titlebarTmpl
     ) {
@@ -63,8 +61,7 @@ define([
     function addTitleBar() {
         var data = {
             webTitle: config.page.webTitle,
-            pageId: config.page.pageId,
-            icon: svgs('marque36icon')
+            pageId: config.page.pageId
         };
         $('.vjs-control-bar').after(template(titlebarTmpl, data));
         bean.on($('.vjs-title-bar')[0], 'click', function (e) {
