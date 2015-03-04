@@ -1,7 +1,6 @@
 define([
     'common/utils/$',
     'common/utils/template',
-    'common/views/svgs',
 
     // require templates, so they're bundled up as part of the build
     'text!common/views/commercial/creatives/ad-feature-mpu.html',
@@ -13,8 +12,7 @@ define([
     'text!common/views/commercial/creatives/manual-single.html'
 ], function (
     $,
-    template,
-    svgs
+    template
 ) {
 
     /**
@@ -26,11 +24,6 @@ define([
     var Template = function ($adSlot, params) {
         this.$adSlot = $adSlot;
         this.params  = params;
-
-        this.params.marque36icon = svgs('marque36icon');
-        this.params.marque54icon = svgs('marque54icon');
-        this.params.logoguardian = svgs('logoguardian');
-        this.params.marque36iconCreativeMarque = svgs('marque36icon', ['creative__marque']);
     };
 
     Template.prototype.create = function () {
