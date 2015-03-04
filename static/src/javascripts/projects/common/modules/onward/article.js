@@ -39,7 +39,6 @@ define([
         var placeholder = qwery('.js-next-article-placeholder', container);
 
         $('.content-footer').empty();
-        console.log("about to check:", this.remaining);
         if (placeholder && this.remaining > 0) {
             proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, this.remaining));
         }
@@ -51,9 +50,7 @@ define([
     };
 
     function insertNextArticle(placeholder, remaining) {
-        console.log("remaining is:", remaining);
         return function () {
-            console.log("remaining is still:", remaining);
             new Article(placeholder, remaining);
         };
     }
