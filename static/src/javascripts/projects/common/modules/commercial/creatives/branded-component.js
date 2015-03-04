@@ -3,7 +3,6 @@ define([
     'common/utils/$',
     'common/utils/config',
     'common/utils/template',
-    'common/views/svgs',
     'text!common/views/commercial/creatives/branded-component-jobs.html',
     'text!common/views/commercial/creatives/branded-component-membership.html',
     'text!common/views/commercial/creatives/branded-component-soulmates.html',
@@ -13,7 +12,6 @@ define([
     $,
     config,
     template,
-    svgs,
     brandedComponentJobsTpl,
     brandedComponentMembershipTpl,
     brandedComponentSoulmatesTpl,
@@ -24,20 +22,16 @@ define([
             jobs: {
                 template: brandedComponentJobsTpl,
                 config:   {
-                    imgUrl: config.images.commercial.brandedComponentJobs,
-                    marque36icon: svgs('marque36icon', ['creative__marque'])
+                    imgUrl: config.images.commercial.brandedComponentJobs
                 }
             },
             membership: {
                 template: brandedComponentMembershipTpl,
-                config:   {
-                    marque36icon: svgs('marque36icon', ['creative__marque'])
-                }
+                config:   {}
             },
             soulmates: {
                 template: brandedComponentSoulmatesTpl,
                 config:   {
-                    logosoulmates: svgs('logosoulmates'),
                     profileImgM: config.images.commercial.brandedComponentSoulmatesM,
                     profileImgF: config.images.commercial.brandedComponentSoulmatesF
                 }
