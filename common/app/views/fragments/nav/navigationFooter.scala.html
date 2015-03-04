@@ -24,9 +24,32 @@
                 </a>
             </div>
             <div class="navigation__expandable js-navigation-placeholder" data-component="all-footer-nav" data-link-name="global navigation: footer : sections">
+                <!--[if (gt IE 9)|(IEMobile)]><!-->
                     <noscript id="mega-nav-src">
+                <!--<![endif]-->
+                <!--[if (lte IE 9)|(IEMobile)]>
+                    <div id="mega-nav-src">
+                <![endif]-->
                         @fragments.nav.globalNavigation(metaData)
+                <!--[if (lte IE 9)|(IEMobile)]>
+                    </div>
+                <![endif]-->
+                <!--[if (gt IE 9)|(IEMobile)]><!-->
                     </noscript>
+                <!--<![endif]-->
+                <script>
+                    (function (isNotModern) {
+                        if (isNotModern) {
+                            var megaNavSrc = document.getElementById("mega-nav-src"),
+                                footer = document.querySelector('.js-navigation-footer'),
+                                classes = footer.className;
+                            classes += ' ' + "navigation--expanded";
+                            classes = classes.replace("navigation--collapsed", '');
+                            footer.className = classes;
+                            megaNavSrc.parentNode.innerHTML = megaNavSrc.textContent;
+                        }
+                    })(!guardian.isModernBrowser);
+                </script>
             </div>
         </div>
     </div>
