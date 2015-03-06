@@ -23,6 +23,7 @@ define([
     'common/utils/user-timing',
     'common/modules/commercial/ads/sticky-mpu',
     'common/modules/commercial/build-page-targeting',
+    'common/modules/commercial/dfp-events',
     'common/modules/onward/geo-most-popular'
 ], function (
     bean,
@@ -48,6 +49,7 @@ define([
     userTiming,
     StickyMpu,
     buildPageTargeting,
+    dfpEvents,
     geoMostPopular
 ) {
 
@@ -194,6 +196,8 @@ define([
             window.googletag.cmd.push(displayAds);
             // anything we want to happen after displaying ads
             window.googletag.cmd.push(postDisplay);
+
+            dfpEvents.init();
 
             return dfp;
 
