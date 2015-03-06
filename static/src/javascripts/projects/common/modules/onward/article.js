@@ -6,9 +6,11 @@ define([
     'common/utils/config',
     'common/utils/mediator',
     'common/utils/proximity-loader',
+    'common/utils/template',
     'common/modules/analytics/register',
     'common/modules/commercial/badges',
-    'common/modules/component'
+    'common/modules/component',
+    'text!common/views/homepage.html'
 ], function (
     bonzo,
     qwery,
@@ -17,9 +19,11 @@ define([
     config,
     mediator,
     proximityLoader,
+    template,
     register,
     badges,
-    Component
+    Component,
+    homepageTmpl
 ) {
 
     function Article(context, remaining) {
@@ -31,16 +35,22 @@ define([
 
         this.endpoint = bonzo(context).attr('data-related-link');
         this.fetch(this.context, 'html');
+        this.contentFooter = null;
     }
 
     Component.define(Article);
 
     Article.prototype.ready = function (container) {
-        var placeholder = qwery('.js-next-article-placeholder', container);
+        var placeholder = qwery('.js-next-article-placeholder', container),
+            el;
 
         $('.content-footer').empty();
         if (placeholder && this.remaining > 0) {
             proximityLoader.add(placeholder, 1500, insertNextArticle(placeholder, this.remaining));
+        } else {
+            el = bonzo.create(template(homepageTmpl));
+            $('.l-footer').append(el);
+            $('.l-footer').css({'background-color': 'white'});
         }
 
         //badges.add(container);
