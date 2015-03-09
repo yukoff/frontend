@@ -15,6 +15,7 @@ GET         /ab.gif                                                             
 GET         /js.gif                                                                                                  controllers.DiagnosticsController.js
 GET         /count/$prefix<.+>.gif                                                                                   controllers.DiagnosticsController.analytics(prefix)
 GET         /counts.gif                                                                                              controllers.DiagnosticsController.analyticsCounts()
+POST        /tech-feedback                                                                                           controllers.DiagnosticsController.techFeedback()
 POST        /css                                                                                                     controllers.DiagnosticsController.css
 OPTIONS     /css                                                                                                     controllers.DiagnosticsController.cssOptions
 POST        /accept-beacon                                                                                           controllers.DiagnosticsController.acceptBeacon
@@ -43,6 +44,7 @@ GET         /analytics/confidence                                               
 GET         /analytics/google-referrers                                                                              controllers.admin.GoogleReferrerController.renderGoogleReferrerDashboard()
 GET         /analytics/content/gallery                                                                               controllers.admin.ContentPerformanceController.renderGalleryDashboard()
 GET         /analytics/content/liveblog                                                                              controllers.admin.ContentPerformanceController.renderLiveBlogDashboard()
+GET         /analytics/content/video                                                                                 controllers.admin.ContentPerformanceController.renderVideoEncodingsDashboard()
 GET         /analytics/omniture/segments/:rsid                                                                       controllers.admin.OmnitureReportController.getSegments(rsid)
 GET         /analytics/omniture/*reportName                                                                          controllers.admin.OmnitureReportController.getReport(reportName)
 GET         /analytics/commercial                                                                                    controllers.admin.CommercialController.renderCommercial()
@@ -193,6 +195,7 @@ GET         /metrics/errors/4xx                                                 
 GET         /metrics/errors/5xx                                                                                      controllers.admin.MetricsController.render5XX()
 GET         /metrics/memory                                                                                          controllers.admin.MetricsController.renderMemory()
 GET         /metrics/assets                                                                                          controllers.admin.MetricsController.renderAssets()
+GET         /metrics/afg                                                                                             controllers.admin.MetricsController.renderAfg()
 GET         /radiator                                                                                                controllers.admin.RadiatorController.renderRadiator()
 GET         /radiator/pingdom                                                                                        controllers.admin.RadiatorController.pingdom()
 GET         /radiator/commit/*hash                                                                                   controllers.admin.RadiatorController.commitDetail(hash)
@@ -249,7 +252,12 @@ GET         /commercial/jobs.json                                               
 
 GET         /commercial/masterclasses.json                                                                           controllers.commercial.MasterClasses.renderMasterclasses
 
-GET         /commercial/soulmates/mixed.json                                                                         controllers.commercial.SoulmateAds.renderSoulmates
+GET         /commercial/soulmates/mixed.json                                                                         controllers.commercial.SoulmateAds.renderMixedSoulmates
+GET         /commercial/soulmates/brighton.json                                                                      controllers.commercial.SoulmateAds.renderBrightonSoulmates
+GET         /commercial/soulmates/northwest.json                                                                     controllers.commercial.SoulmateAds.renderNorthwestSoulmates
+GET         /commercial/soulmates/scotland.json                                                                      controllers.commercial.SoulmateAds.renderScotlandSoulmates
+GET         /commercial/soulmates/young.json                                                                         controllers.commercial.SoulmateAds.renderYoungSoulmates
+GET         /commercial/soulmates/mature.json                                                                        controllers.commercial.SoulmateAds.renderMatureSoulmates
 
 GET         /commercial/books/book.json                                                                              controllers.commercial.BookOffersController.renderBook
 GET         /commercial/books/books.json                                                                             controllers.commercial.BookOffersController.renderBooks

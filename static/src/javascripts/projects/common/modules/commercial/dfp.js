@@ -289,14 +289,22 @@ define([
             } else {
                 // remove any placeholder ad content
                 $('.ad-slot__content--placeholder', $slot).remove();
+                $('#' + slotId + ' div').addClass('ad-slot__content');
                 checkForBreakout($slot);
                 addLabel($slot);
                 size = event.size.join(',');
                 // is there a callback for this size
                 callbacks[size] && callbacks[size](event, $slot);
 
-                if (!($slot.hasClass('ad-slot--top-above-nav') && size === '1,1')) {
+                if ($slot.hasClass('ad-slot--container-inline') && $slot.hasClass('ad-slot--not-mobile')) {
+                    $slot.parent().css('display', 'flex');
+                } else if (!($slot.hasClass('ad-slot--top-above-nav') && size === '1,1')) {
                     $slot.parent().css('display', 'block');
+                }
+
+                if (($slot.hasClass('ad-slot--top-banner-ad') && size === '88,70')
+                || ($slot.hasClass('ad-slot--commercial-component') && size === '88,88')) {
+                    $slot.addClass('ad-slot__fluid250');
                 }
             }
         },
@@ -349,6 +357,7 @@ define([
 
                         } else {
                             $iFrameParent.append(breakoutContent);
+                            $breakoutEl.remove();
 
                             $('.ad--responsive', $iFrameParent[0]).each(function (responsiveAd) {
                                 window.setTimeout(function () {
@@ -361,7 +370,7 @@ define([
                 });
             }
             if (shouldRemoveIFrame) {
-                $iFrame.remove();
+                $iFrame.hide();
             }
         },
         /**

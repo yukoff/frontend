@@ -135,6 +135,7 @@
     margin-left: $gs-gutter / 2;
     margin-top: $gs-baseline / 2;
     cursor: pointer;
+    clear: both;
 }
 
 .share-modal {
@@ -296,8 +297,7 @@
         margin-top: ($gs-baseline/3)*2;
     }
 
-    .element--thumbnail,
-    .img--base {
+    .element--thumbnail {
         .block-share--article {
             display: none !important;
         }

@@ -75,6 +75,12 @@ object Switches {
   private lazy val never = new LocalDate(2100, 1, 1)
 
   // Performance
+  val LazyLoadContainersSwitch = Switch("Performance", "lazy-load-containers",
+    "If this switch is on, containers past the 8th will be lazily loaded on mobile and tablet",
+    safeState = Off,
+    sellByDate = new LocalDate(2015, 4, 1)
+  )
+
   val TagPageSizeSwitch = Switch("Performance", "tag-page-size",
     "If this switch is on then we will request more items for larger tag pages",
     safeState = Off,
@@ -108,7 +114,7 @@ object Switches {
   val EnableOauthOnPreview = Switch("Performance", "enable-oauth-on-preview",
     "If this switch is switched on then the preview server requires login",
     safeState = On,
-    sellByDate = new LocalDate(2015, 2, 26)
+    sellByDate = new LocalDate(2015, 3, 31)
   )
 
   val AutoRefreshSwitch = Switch("Performance", "auto-refresh",
@@ -159,11 +165,6 @@ object Switches {
   val DiscussionPageSizeSwitch = Switch("Performance", "discussion-page-size",
     "If this is switched on then users will have the option to change their discussion page size",
     safeState = Off, sellByDate = never
-  )
-
-  val DiscussionTimeoutSwitch = Switch("Performance", "discussion-timeout",
-    "An experimental switch to investigate whether discussion calls should be timed out within 5000ms",
-    safeState = Off, sellByDate = new LocalDate(2015, 2, 28)
   )
 
   val OpenCtaSwitch = Switch("Performance", "open-cta",
@@ -291,11 +292,11 @@ object Switches {
 
   val AppleAdNetworkFrontSwitch = Switch("Commercial", "apple-ads-on-network-front",
     "If this switch is on, Apple ads will appear on the network front during active periods.",
-    safeState = Off, sellByDate = new LocalDate(2015, 3, 1))
+    safeState = Off, sellByDate = new LocalDate(2015, 4, 1))
 
   val AppleAdCultureFrontSwitch = Switch("Commercial", "apple-ads-on-culture-front",
     "If this switch is on, Apple ads will appear on the culture front during active periods.",
-    safeState = Off, sellByDate = new LocalDate(2015, 3, 1))
+    safeState = Off, sellByDate = new LocalDate(2015, 4, 1))
 
   // Monitoring
 
@@ -321,7 +322,7 @@ object Switches {
 
   val CssLogging = Switch("Monitoring", "css-logging",
     "If this is on, then a subset of clients will post css selector information for diagnostics.",
-    safeState = On, new LocalDate(2015, 2, 28)
+    safeState = Off, never
   )
 
   val ThirdPartyEmbedTracking = Switch("Monitoring", "third-party-embed-tracking",
@@ -329,15 +330,12 @@ object Switches {
     safeState = Off, never
   )
 
-  // Features
-  val CPScottSwitch = Switch(
-    "Feature",
-    "cp-scott-header",
-    "CP Scott header on Comment is Free container",
-    safeState = Off,
-    sellByDate = new LocalDate(2015, 3, 1)
+  val FeedbackLink = Switch("Monitoring", "tech-feedback",
+    "decide by now if it's worth keeping the link in the footer soliciting clicks for technical problems",
+    safeState = Off, new LocalDate(2015, 3, 24)
   )
 
+  // Features
   val FixturesAndResultsContainerSwitch = Switch(
     "Feature",
     "fixtures-and-results-container",
@@ -348,7 +346,7 @@ object Switches {
 
   val HideInteractiveUi = Switch("Feature", "hide-interactive-ui",
     "If this is switched on interactives can be rendered without page furniture.",
-    safeState = On, sellByDate = new LocalDate(2015, 2, 28)
+    safeState = On, sellByDate = new LocalDate(2015, 3, 31)
   )
 
   val Hmtl5MediaCompatibilityCheck = Switch("Feature", "html-5-media-compatibility-check",
@@ -362,11 +360,6 @@ object Switches {
   val ForeseeSwitch = Switch("Feature", "foresee",
     "Enable Foresee surveys for a sample of our audience",
     safeState = Off, sellByDate = never)
-
-  val ReleaseMessageSwitch = Switch("Feature", "release-message",
-    "If this is switched on users will be messaged that they are inside the beta release",
-    safeState = Off, sellByDate = new LocalDate(2015, 2, 28)
-  )
 
   val GeoMostPopular = Switch("Feature", "geo-most-popular",
     "If this is switched on users then 'most popular' will be upgraded to geo targeted",
@@ -386,6 +379,11 @@ object Switches {
   val IdentityProfileNavigationSwitch = Switch("Feature", "id-profile-navigation",
     "If this switch is on you will see the link in the topbar taking you through to the users profile or sign in..",
     safeState = On, sellByDate = never
+  )
+
+  val IdentitySocialOAuthSwitch = Switch("Feature", "id-social-oauth",
+    "If this switch is on then social sign-in attempts will be directed to Identity OAuth app, rather than the Webapp.",
+    safeState = Off, sellByDate = never
   )
 
   val FacebookAutoSigninSwitch = Switch("Feature", "facebook-autosignin",
@@ -447,9 +445,19 @@ object Switches {
     "If switched on, any user registrations from a known tor esit node will be logged",
     safeState = On, sellByDate = never)
 
+  val ABIdentityBenefits = Switch("A/B Tests", "ab-identity-benefits",
+    "Switch for the Identity benefits A/B test.",
+    safeState = Off, sellByDate = new LocalDate(2015, 3, 31)
+  )
+
   val ABHighCommercialComponent = Switch("A/B Tests", "ab-high-commercial-component",
     "Switch for the High Commercial Component A/B test.",
     safeState = Off, sellByDate = never
+  )
+
+  val ABKruxAudienceScience = Switch("A/B Tests", "ab-krux-audience-science",
+    "Switch for the Krux/Audience Science A/B test.",
+    safeState = Off, sellByDate = new LocalDate(2015, 5, 1)
   )
 
   val FootballFeedRecorderSwitch = Switch("Feature", "football-feed-recorder",
@@ -473,12 +481,7 @@ object Switches {
 
   val StocksWidgetSwitch = Switch("Feature", "stocks-widget",
     "If switched on, a stocks widget will be displayed on the business front",
-    safeState = On, sellByDate = new LocalDate(2015, 2, 16)
-  )
-
-  val DefaultOriginSwitch = Switch("Feature", "default-origin",
-    "If switched on, an experimental default header to allow origins will be added to Json endpoints",
-    safeState = On, sellByDate = new LocalDate(2015, 2, 28)
+    safeState = On, sellByDate = never
   )
 
   val DiscussionAllPageSizeSwitch = Switch("Feature", "discussion-all-page-size",
@@ -491,9 +494,9 @@ object Switches {
      safeState = Off, sellByDate = never
   )
 
-  val LazyLoadOnwards = Switch("Feature", "lazy-load-onwards",
-    "If this is switched on then lazy load the related and series containers on content pages",
-    safeState = Off, sellByDate = new LocalDate(2015, 2, 17)
+  val StaticSocialIconSwitch = Switch("Feature", "static-social-icon-mobile",
+    "If this switch is switched on then there will be a floating social icon on the bottom of pages on mobile",
+    safeState = Off, sellByDate = new LocalDate(2015, 3, 14)
   )
 
   // Facia
@@ -540,17 +543,12 @@ object Switches {
 
   val IphoneConfidence = Switch("Performance", "iphone-confidence",
     "If this switch is on then some beacons will be dropped to gauge iPhone confidence",
-    safeState = Off, sellByDate = new LocalDate(2015, 2, 28)
-  )
-
-  val DoNotTrack = Switch("Analytics", "do-not-track",
-    "If this switch is on then we will count the number of people with do not track headers (yes, yes, I know)",
-    safeState = Off, sellByDate = new LocalDate(2015, 2, 28)
+    safeState = Off, sellByDate = new LocalDate(2015, 3, 31)
   )
 
   val FaciaDynamoArchive = Switch("Facia", "facia-tool-dynamo-archive",
-    "If this switch is on, facia-tool will directly archive to DynamoDB",
-    safeState = Off, sellByDate = new LocalDate(2015, 2, 28)
+    "If this switch is on, facia-tool will directly archive to DynamoDB. When this is about to expire, please check the DB size.",
+    safeState = Off, sellByDate = new LocalDate(2015, 8, 31)
   )
 
   def all: Seq[SwitchTrait] = Switch.allSwitches

@@ -3,6 +3,7 @@ package model.diagnostics.analytics
 import java.util.concurrent.atomic.AtomicLong
 
 import common.Logging
+import conf.Switches
 
 object Metric extends Logging {
 
@@ -28,23 +29,26 @@ object Metric extends Logging {
     ("video-tech-flash", CountMetric("video-tech-flash")),
     ("video-tech-html5", CountMetric("video-tech-html5")),
 
-    ("dnt", CountMetric("do-not-track")),
-
     ("sm-page-view", CountMetric("sm-page-view")),
     ("sm-interaction-on-same-page", CountMetric("sm-interaction-on-same-page")),
     ("sm-another-guardian-page", CountMetric("sm-another-guardian-page")),
     ("sm-clicked-related-content", CountMetric("sm-clicked-related-content")),
     ("sm-clicked-series-component", CountMetric("sm-clicked-series-component")),
-    ("sm-clicked-most-popular-component", CountMetric("sm-clicked-most-popular-component"))
+    ("sm-clicked-most-popular-component", CountMetric("sm-clicked-most-popular-component")),
+
+    ("ipad-old-start", CountMetric(s"ipad-old-start")),
+    ("ipad-old-after-5", CountMetric(s"ipad-old-after-5")),
+
+    ("tech-feedback", CountMetric("tech-feedback"))
   ) ++ iPhoneMetrics
 
-  private val iPhoneMetrics: Seq[(String, CountMetric)] = (4 to 6).flatMap( model =>
-    (6 to 8).flatMap( ios =>
-      Seq(
-        s"iphone-$model-ios$ios-start" -> CountMetric(s"iphone-$model-ios$ios-start"),
-        s"iphone-$model-ios$ios-after-5" -> CountMetric(s"iphone-$model-ios$ios-after-5"),
-        s"iphone-$model-ios$ios-after-10" -> CountMetric(s"iphone-$model-ios$ios-after-10")
-      )
+  lazy val techFeedback = Switches.FeedbackLink // remove tech-feedback metric when this switch is removed.
+
+
+  private val iPhoneMetrics: Seq[(String, CountMetric)] = Seq(4, 6).flatMap( model =>
+    Seq(
+      s"iphone-$model-start" -> CountMetric(s"iphone-$model-start"),
+      s"iphone-$model-after-5" -> CountMetric(s"iphone-$model-after-5")
     )
   )
 

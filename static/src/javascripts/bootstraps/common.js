@@ -25,6 +25,7 @@ define([
     'common/modules/analytics/scrollDepth',
     'common/modules/analytics/css-logging',
     'common/modules/analytics/simple-metrics',
+    'common/modules/analytics/tech-feedback',
     'common/modules/commercial/user-ad-targeting',
     'common/modules/crosswords/thumbnails',
     'common/modules/discussion/comment-count',
@@ -45,6 +46,7 @@ define([
     'common/modules/ui/dropdowns',
     'common/modules/ui/faux-block-link',
     'common/modules/ui/fonts',
+    'common/modules/ui/last-modified',
     'common/modules/ui/message',
     'common/modules/ui/relativedates',
     'common/modules/ui/smartAppBanner',
@@ -52,10 +54,7 @@ define([
     'common/modules/ui/toggles',
     'common/modules/user-prefs',
     'common/modules/onward/breaking-news',
-
-    'bootstraps/identity',
-
-    'text!common/views/release-message-compulsory.html'
+    'bootstraps/identity'
 ], function (
     bean,
     bonzo,
@@ -81,6 +80,7 @@ define([
     ScrollDepth,
     logCss,
     simpleMetrics,
+    techFeedback,
     userAdTargeting,
     crosswordThumbnails,
     CommentCount,
@@ -101,6 +101,7 @@ define([
     Dropdowns,
     fauxBlockLink,
     fonts,
+    LastModified,
     Message,
     RelativeDates,
     smartAppBanner,
@@ -108,10 +109,7 @@ define([
     Toggles,
     userPrefs,
     breakingNews,
-
-    identity,
-
-    releaseMessageCompulsoryTpl
+    identity
 ) {
 
     var modules = {
@@ -143,7 +141,7 @@ define([
 
                 if (header) {
                     if (config.switches.idProfileNavigation) {
-                        profile = new Profile(header, {
+                        profile = new Profile({
                             url: config.page.idUrl
                         });
                         profile.init();
@@ -174,7 +172,7 @@ define([
             },
 
             initRelated: function () {
-                if (!config.switches.lazyLoadOnwards || window.location.hash) {
+                if (window.location.hash) {
                     modules.transcludeRelated();
                 } else {
                     var relatedEl = qwery('.js-related')[0];
@@ -190,7 +188,7 @@ define([
 
             initPopular: function () {
                 if (!config.page.isFront) {
-                    if (!config.switches.lazyLoadOnwards || window.location.hash) {
+                    if (window.location.hash) {
                         modules.transcludePopular();
                     } else {
                         var onwardEl = qwery('.js-popular-trails')[0];
@@ -212,7 +210,7 @@ define([
             },
 
             initOnwardContent: function () {
-                if (!config.switches.lazyLoadOnwards || window.location.hash) {
+                if (window.location.hash) {
                     modules.transcludeOnwardContent();
                 } else {
                     var onwardEl = qwery('.js-onward')[0];
@@ -232,17 +230,13 @@ define([
             showToggles: function () {
                 var toggles = new Toggles();
                 toggles.init(document);
-                mediator.on('page:common:ready', function () {
-                    toggles.reset();
-                    Dropdowns.init();
-                });
+                toggles.reset();
+                Dropdowns.init();
             },
 
             showRelativeDates: function () {
                 var dates = RelativeDates;
-                mediator.on('page:common:ready', function () {
-                    dates.init();
-                });
+                dates.init();
                 mediator.on('fragment:ready:dates', function (el) {
                     dates.init(el);
                 });
@@ -278,30 +272,14 @@ define([
                 cookies.cleanUp(['mmcore.pd', 'mmcore.srv', 'mmid', 'GU_ABFACIA', 'GU_FACIA', 'GU_ALPHA', 'GU_ME', 'at']);
             },
 
-            // display a flash message to devices over 600px who don't have the mobile cookie
-            displayReleaseMessage: function () {
-                var releaseMessage = new Message('alpha', {pinOnHide: true}),
-                    feedbackLink = 'https://www.surveymonkey.com/s/theguardian-beta-feedback';
-
-                if (config.switches.releaseMessage && (detect.getBreakpoint() !== 'mobile')) {
-                    releaseMessage.show(template(
-                        releaseMessageCompulsoryTpl, {
-                            feedbackLink: feedbackLink
-                        }
-                    ));
-                }
-            },
-
             updateHistory: function () {
-                mediator.on('page:common:ready', function () {
-                    if (config.page.contentType !== 'Network Front') {
-                        history.logSummary(config.page);
-                    }
+                if (config.page.contentType !== 'Network Front') {
+                    history.logSummary(config.page);
+                }
 
-                    if (config.page.contentType === 'Video') {
-                        history.logHistory(config.page);
-                    }
-                });
+                if (config.page.contentType === 'Video') {
+                    history.logHistory(config.page);
+                }
             },
 
             showHistoryInMegaNav: function () {
@@ -314,9 +292,7 @@ define([
 
             initAutoSignin: function () {
                 if (config.switches.facebookAutosignin && detect.getBreakpoint() !== 'mobile') {
-                    mediator.on('page:common:ready', function () {
-                        new AutoSignin().init();
-                    });
+                    new AutoSignin().init();
                 }
             },
 
@@ -345,13 +321,11 @@ define([
             },
 
             augmentInteractive: function () {
-                mediator.on('page:common:ready', function () {
-                    if (/Article|Interactive|LiveBlog/.test(config.page.contentType)) {
-                        $('figure.interactive').each(function (el) {
-                            enhancer.render(el, document, config, mediator);
-                        });
-                    }
-                });
+                if (/Article|Interactive|LiveBlog/.test(config.page.contentType)) {
+                    $('figure.interactive').each(function (el) {
+                        enhancer.render(el, document, config, mediator);
+                    });
+                }
             },
 
             startRegister: function () {
@@ -361,11 +335,9 @@ define([
             },
 
             repositionComments: function () {
-                mediator.on('page:common:ready', function () {
-                    if (!id.isUserLoggedIn()) {
-                        $('.js-comments').appendTo(qwery('.js-repositioned-comments'));
-                    }
-                });
+                if (!id.isUserLoggedIn()) {
+                    $('.js-comments').appendTo(qwery('.js-repositioned-comments'));
+                }
             },
 
             showMoreTagsLink: function () {
@@ -378,15 +350,13 @@ define([
 
             initDiscussion: function () {
                 if (config.switches.discussion) {
-                    mediator.on('page:common:ready', function () {
-                        CommentCount.init();
-                        if (config.page.commentable) {
-                            var el = qwery('.discussion')[0];
-                            if (el) {
-                                new DiscussionLoader().attachTo(el);
-                            }
+                    CommentCount.init();
+                    if (config.page.commentable) {
+                        var el = qwery('.discussion')[0];
+                        if (el) {
+                            new DiscussionLoader().attachTo(el);
                         }
-                    });
+                    }
                 }
             },
 
@@ -435,22 +405,28 @@ define([
                 shareCount.init();
             },
 
+            initLastModified: function () {
+                LastModified.init();
+            },
+
             loadBreakingNews: function () {
                 if (config.switches.breakingNews) {
-                    mediator.on('page:common:ready', breakingNews);
+                    breakingNews();
                 }
             },
 
             runCssLogging: function () {
                 if (config.switches.cssLogging) {
-                    mediator.on('page:common:ready', logCss);
+                    logCss();
                 }
             },
 
             initSimpleMetrics: function () {
-                mediator.on('page:common:ready', function () {
-                    simpleMetrics.init();
-                });
+                simpleMetrics.init();
+            },
+
+            initTechFeedback: function () {
+                techFeedback.init();
             },
 
             initPublicApi: function () {
@@ -473,6 +449,7 @@ define([
             robust('c-event-listeners', modules.windowEventListeners);
             robust('c-breaking-news',   modules.loadBreakingNews);
             robust('c-shares',          modules.initShareCounts);
+            robust('c-last-modified',   modules.initLastModified);
             robust('c-block-link',      modules.initialiseFauxBlockLink);
             robust('c-iframe',          modules.checkIframe);
             robust('c-tabs',            modules.showTabs);
@@ -481,28 +458,27 @@ define([
             robust('c-toggles',         modules.showToggles);
             robust('c-dates',           modules.showRelativeDates);
             robust('c-clickstream',     modules.initClickstream);
-            robust('c-release-message', modules.displayReleaseMessage);
             robust('c-history',         modules.updateHistory);
-            robust('c-sign-in', modules.initAutoSignin);
-            robust('c-interactive', modules.augmentInteractive);
-            robust('c-history-nav', modules.showHistoryInMegaNav);
-            robust('c-forsee', modules.runForseeSurvey);
-            robust('c-start-register', modules.startRegister);
-            robust('c-comments', modules.repositionComments);
-            robust('c-tag-links', modules.showMoreTagsLink);
-            robust('c-smart-banner', modules.showSmartBanner);
-            robust('c-log-stats', modules.logLiveStats);
+            robust('c-sign-in',         modules.initAutoSignin);
+            robust('c-interactive',     modules.augmentInteractive);
+            robust('c-history-nav',     modules.showHistoryInMegaNav);
+            robust('c-forsee',          modules.runForseeSurvey);
+            robust('c-start-register',  modules.startRegister);
+            robust('c-comments',        modules.repositionComments);
+            robust('c-tag-links',       modules.showMoreTagsLink);
+            robust('c-smart-banner',    modules.showSmartBanner);
+            robust('c-log-stats',       modules.logLiveStats);
             robust('c-analytics',       modules.loadAnalytics);
-            robust('c-cookies', modules.cleanupCookies);
-            robust('c-popular', modules.initPopular);
-            robust('c-related', modules.initRelated);
-            robust('c-onward', modules.initOnwardContent);
-            robust('c-overlay', modules.initOpenOverlayOnClick);
-            robust('c-css-logging', modules.runCssLogging);
-            robust('c-public-api', modules.initPublicApi);
-            robust('c-simple-metrics', modules.initSimpleMetrics);
-            robust('c-crosswords', crosswordThumbnails.init);
-            robust('c-ready',           function () { mediator.emit('page:common:ready'); });
+            robust('c-cookies',         modules.cleanupCookies);
+            robust('c-popular',         modules.initPopular);
+            robust('c-related',         modules.initRelated);
+            robust('c-onward',          modules.initOnwardContent);
+            robust('c-overlay',         modules.initOpenOverlayOnClick);
+            robust('c-css-logging',     modules.runCssLogging);
+            robust('c-public-api',      modules.initPublicApi);
+            robust('c-simple-metrics',  modules.initSimpleMetrics);
+            robust('c-crosswords',      crosswordThumbnails.init);
+            robust('c-tech-feedback',   modules.initTechFeedback);
         };
 
     return {

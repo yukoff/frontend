@@ -27,7 +27,7 @@ case class ContainerLayoutContext(
   private def dedupCutOut(cardAndContext: CardAndContext): CardAndContext = {
     val (content, context) = cardAndContext
 
-    if (content.snapStuff.snapType == LatestSnap) {
+    if (content.snapStuff.map(_.snapType) == Some(LatestSnap)) {
       (content, context)
     } else {
       val newCard = if (content.cutOut.exists(cutOutsSeen.contains)) {
@@ -262,9 +262,11 @@ case class FaciaContainer(
     * Then if we end up adding more of these over time, there's an in-built mechanism for doing so. Will also mean apps
     * can consume this data if they want to.
     */
-  def showCPScottHeader = Switches.CPScottSwitch.isSwitchedOn && dataId == "uk/commentisfree/regular-stories"
+  def showCPScottHeader = dataId == "uk/commentisfree/regular-stories"
 
   def addShowMoreClasses = useShowMore && containerLayout.exists(_.hasShowMore)
+
+  def shouldLazyLoad = Switches.LazyLoadContainersSwitch.isSwitchedOn && index > 8
 }
 
 object Front extends implicits.Collections {
