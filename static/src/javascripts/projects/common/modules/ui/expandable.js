@@ -4,10 +4,12 @@
 */
 define([
     'common/utils/$',
+    'common/utils/user-timing',
     'bean',
     'bonzo'
 ], function (
     $,
+    userTiming,
     bean,
     bonzo
 ) {
@@ -89,7 +91,9 @@ define([
 
         return {
             init: function () {
-
+                /* dev-code-start */
+                userTiming.mark('Expandable : start');
+                /* dev-code-end */
                 if (dom.hasClass('expandable-initialised') || !dom.html() || model.getCount() < 3) {
                     return false;
                 }
@@ -97,6 +101,9 @@ define([
 
                 view.renderCallToAction();
                 view.renderState();
+                /* dev-code-start */
+                userTiming.mark('Expandable : end');
+                /* dev-code-end */
             },
             toggle: model.toggleExpanded
         };

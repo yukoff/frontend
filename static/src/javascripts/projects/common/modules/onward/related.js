@@ -6,6 +6,7 @@ define([
     'common/utils/$',
     'common/utils/config',
     'common/utils/mediator',
+    'common/utils/user-timing',
     'common/modules/analytics/register',
     'common/modules/lazyload',
     'common/modules/ui/expandable'
@@ -17,6 +18,7 @@ define([
     $,
     config,
     mediator,
+    userTiming,
     register,
     LazyLoad,
     Expandable
@@ -55,6 +57,9 @@ define([
     };
 
     Related.prototype.renderRelatedComponent = function () {
+        /* dev-code-start */
+        userTiming.mark('Related : render');
+        /* dev-code-end */
         var relatedUrl, popularInTag, componentName, container,
             fetchRelated = config.switches.relatedContent && config.page.showRelatedContent;
 

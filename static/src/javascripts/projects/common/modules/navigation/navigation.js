@@ -4,17 +4,22 @@ define([
     'fastdom',
     'common/utils/mediator',
     'common/utils/detect',
-    'common/utils/$'
+    'common/utils/$',
+    'common/utils/user-timing',
 ], function (
     bean,
     qwery,
     fastdom,
     mediator,
     detect,
-    $
+    $,
+    userTiming
 ) {
     var Navigation = {
         init: function () {
+            /* dev-code-start */
+            userTiming.mark('Navigation : start');
+            /* dev-code-end */
             this.copyMegaNavMenu();
             this.enableMegaNavToggle();
             this.replaceAllSectionsLink();
@@ -25,6 +30,10 @@ define([
                     $('.navigation__scroll').css({'-webkit-overflow-scrolling': 'touch'});
                 });
             }
+
+            /* dev-code-start */
+            userTiming.mark('Navigation : end');
+            /* dev-code-end */
         },
 
         copyMegaNavMenu: function () {

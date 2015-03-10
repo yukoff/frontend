@@ -5,6 +5,7 @@ define([
     'lodash/objects/assign',
     'common/utils/ajax',
     'common/utils/mediator',
+    'common/utils/user-timing',
     'common/modules/identity/api'
 ], function (
     bean,
@@ -13,6 +14,7 @@ define([
     assign,
     ajax,
     mediator,
+    userTiming,
     id
 ) {
 
@@ -47,6 +49,9 @@ define([
 
     /** */
     Profile.prototype.init = function () {
+        /* dev-code-start */
+        userTiming.mark('Profile : start');
+        /* dev-code-end */
         this.setFragmentFromCookie();
     };
 
