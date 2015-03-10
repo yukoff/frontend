@@ -16,6 +16,7 @@ define([
     'common/utils/template',
     'common/utils/url',
     'common/utils/robust',
+    'common/utils/user-timing',
 
     'common/modules/analytics/clickstream',
     'common/modules/analytics/foresee-survey',
@@ -71,6 +72,7 @@ define([
     template,
     url,
     robust,
+    userTiming,
 
     Clickstream,
     Foresee,
@@ -439,6 +441,9 @@ define([
         },
 
         ready = function () {
+            /* dev-code-start */
+            userTiming.mark('Common : start');
+            /* dev-code-end */
             robust('c-fonts',           modules.loadFonts);
             robust('c-identity',        modules.initId);
             robust('c-adverts',         modules.initUserAdTargeting);
@@ -479,6 +484,9 @@ define([
             robust('c-simple-metrics',  modules.initSimpleMetrics);
             robust('c-crosswords',      crosswordThumbnails.init);
             robust('c-tech-feedback',   modules.initTechFeedback);
+            /* dev-code-start */
+            userTiming.mark('Common : end');
+            /* dev-code-end */
         };
 
     return {

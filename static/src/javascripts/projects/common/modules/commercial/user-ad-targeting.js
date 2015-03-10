@@ -1,10 +1,12 @@
 define([
     'common/utils/storage',
     'common/utils/time',
+    'common/utils/user-timing',
     'common/modules/identity/api'
 ], function (
     storage,
     time,
+    userTiming,
     id
 ) {
 
@@ -30,6 +32,9 @@ define([
     }
 
     function requestUserSegmentsFromId() {
+        /* dev-code-start */
+        userTiming.mark('User ad targeting : requestUserSegmentsFromId');
+        /* dev-code-end */
         if (storage.local.isAvailable() && (storage.local.get(userSegmentsKey) === null) && id.getUserFromCookie()) {
             id.getUserFromApi(
                 function (user) {

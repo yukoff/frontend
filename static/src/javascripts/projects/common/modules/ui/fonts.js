@@ -12,7 +12,8 @@ define([
     'common/utils/cookies',
     'common/utils/detect',
     'common/utils/mediator',
-    'common/utils/storage'
+    'common/utils/storage',
+    'common/utils/user-timing'
 ], function (
     bonzo,
     qwery,
@@ -23,7 +24,8 @@ define([
     cookies,
     detect,
     mediator,
-    storage
+    storage,
+    userTiming
 ) {
 
     var storagePrefix = 'gu.fonts.',
@@ -34,6 +36,9 @@ define([
             return (cookies.get('GU_fonts') === 'off');
         },
         load: function () {
+            /* dev-code-start */
+            userTiming.mark('Fonts : load');
+            /* dev-code-end */
             // If any of the following conditions are met, we just leave it and
             // `return false`:
             // - fonts switch is off

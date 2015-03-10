@@ -8,6 +8,7 @@ define([
     'common/utils/ajax-promise',
     'common/utils/config',
     'common/utils/mediator',
+    'common/utils/user-timing',
     'common/modules/user-prefs'
 ], function (
     bonzo,
@@ -19,6 +20,7 @@ define([
     ajax,
     config,
     mediator,
+    userTiming,
     userPrefs
 ) {
     var HIDDEN_CLASS_NAME = 'fc-show-more--hidden',
@@ -211,6 +213,9 @@ define([
         itemsByArticleId: itemsByArticleId,
         dedupShowMore: dedupShowMore,
         init: function () {
+            /* dev-code-start */
+            userTiming.mark('Show more : start');
+            /* dev-code-end */
             fastdom.read(function () {
                 var containers = qwery('.js-container--fc-show-more').map(bonzo),
                     buttons = _.filter(_.map(containers, makeButton));

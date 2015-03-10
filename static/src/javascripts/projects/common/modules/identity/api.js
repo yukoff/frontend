@@ -5,6 +5,7 @@ define([
     'common/utils/config',
     'common/utils/cookies',
     'common/utils/storage',
+    'common/utils/user-timing',
     'common/modules/asyncCallMerger'
 ], function (
     ajax,
@@ -12,6 +13,7 @@ define([
     config,
     cookies,
     storage,
+    userTiming,
     asyncCallMerger
 ) {
 
@@ -30,6 +32,9 @@ define([
     Id.idUrl = null;
 
     Id.init = function () {
+        /* dev-code-start */
+        userTiming.mark('Identity : Api : start');
+        /* dev-code-end */
         Id.idApiRoot = config.page.idApiUrl;
         Id.idUrl = config.page.idUrl;
     };
