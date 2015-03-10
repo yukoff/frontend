@@ -127,6 +127,9 @@ define([
          * attributes on the element.
          */
         defineSlots = function () {
+            /* dev-code-start */
+            userTiming.mark('DFP : defineSlots');
+            /* dev-code-end */
             slots = _(qwery(adSlotSelector))
                 .map(function (adSlot) {
                     return bonzo(adSlot);
@@ -150,6 +153,9 @@ define([
                 .valueOf();
         },
         displayAds = function () {
+            /* dev-code-start */
+            userTiming.mark('DFP : displayAds');
+            /* dev-code-end */
             googletag.pubads().enableSingleRequest();
             googletag.pubads().collapseEmptyDivs();
             googletag.enableServices();
@@ -172,6 +178,9 @@ define([
          * Public functions
          */
         init = function (options) {
+            /* dev-code-start */
+            userTiming.mark('DFP : start');
+            /* dev-code-end */
 
             var opts = defaults(options || {}, {
                 resizeTimeout: 2000
@@ -314,7 +323,9 @@ define([
             }
 
             if (_.every(slots, 'isRendered')) {
-                userTiming.mark('All ads are rendered');
+                /* dev-code-start */
+                userTiming.mark('DFP : All ads are rendered');
+                /* dev-code-end */
             }
         },
         addLabel = function ($slot) {

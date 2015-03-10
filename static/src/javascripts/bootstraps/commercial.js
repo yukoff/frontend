@@ -2,6 +2,7 @@ define([
     'common/utils/config',
     'common/utils/mediator',
     'common/utils/robust',
+    'common/utils/user-timing',
     'common/modules/commercial/article-aside-adverts',
     'common/modules/commercial/article-body-adverts',
     'common/modules/commercial/badges',
@@ -14,6 +15,7 @@ define([
     config,
     mediator,
     robust,
+    userTiming,
     articleAsideAdverts,
     articleBodyAdverts,
     badges,
@@ -26,6 +28,9 @@ define([
 
     return {
         init: function () {
+            /* dev-code-start */
+            userTiming.mark('Commercial : start');
+            /* dev-code-end */
             if (
                 !userPrefs.isOff('adverts') &&
                 !config.page.shouldHideAdverts &&

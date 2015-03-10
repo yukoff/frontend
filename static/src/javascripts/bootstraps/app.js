@@ -37,7 +37,9 @@ define([
         },
 
         routes = function () {
-            userTiming.mark('App Begin');
+            /* dev-code-start */
+            userTiming.mark('App : start');
+            /* dev-code-end */
 
             bootstrapContext('common', common);
 
@@ -118,8 +120,9 @@ define([
                 });
             }
 
-            // Mark the end of synchronous execution.
-            userTiming.mark('App End');
+            /* dev-code-start */
+            userTiming.mark('App : end');
+            /* dev-code-end */
         };
 
     return {

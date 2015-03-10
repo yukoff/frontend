@@ -23,6 +23,7 @@ define([
     'common/utils/detect',
     'common/utils/mediator',
     'common/utils/template',
+    'common/utils/user-timing',
     'common/modules/user-prefs',
     'facia/modules/onwards/search-tool'
 ], function (
@@ -36,6 +37,7 @@ define([
     detect,
     mediator,
     template,
+    userTiming,
     userPrefs,
     SearchTool
     ) {
@@ -49,6 +51,10 @@ define([
             if (!config.switches || !config.switches.weather || !this.isNetworkFront()) {
                 return false;
             }
+
+            /* dev-code-start */
+            userTiming.mark('Weather : start');
+            /* dev-code-end */
 
             this.getDefaultLocation();
         },
@@ -189,6 +195,10 @@ define([
 
             this.bindEvents();
             this.addSearch();
+
+            /* dev-code-start */
+            userTiming.mark('Weather : rendered');
+            /* dev-code-end */
 
             this.render = function (weatherData, city) {
                 this.attachToDOM(weatherData.html, city);

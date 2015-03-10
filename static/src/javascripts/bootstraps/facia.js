@@ -9,6 +9,7 @@ define([
     'common/utils/mediator',
     'common/utils/storage',
     'common/utils/to-array',
+    'common/utils/user-timing',
     // Modules
     'common/modules/business/stocks',
     'facia/modules/onwards/geo-most-popular-front',
@@ -27,6 +28,7 @@ define([
     mediator,
     storage,
     toArray,
+    userTiming,
     stocks,
     GeoMostPopularFront,
     ContainerToggle,
@@ -77,6 +79,9 @@ define([
         },
 
         ready = function () {
+            /* dev-code-start */
+            userTiming.mark('Facia : start');
+            /* dev-code-end */
             if (!this.initialised) {
                 this.initialised = true;
                 modules.showSnaps();
