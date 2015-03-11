@@ -227,6 +227,10 @@ define([
                     });
                 }
             }
+
+            /* dev-code-start */
+            userTiming.mark('DFP : add Slot : ' + slotId);
+            /* dev-code-end */
         },
         refreshSlot = function ($adSlot) {
             var slot = slots[$adSlot.attr('id')].slot;
@@ -284,6 +288,10 @@ define([
                 });
             }
 
+            /* dev-code-start */
+            userTiming.mark('DFP : defineSlot : ' + id);
+            /* dev-code-end */
+
             return slot;
         },
         parseAd = function (event) {
@@ -316,6 +324,10 @@ define([
                     $slot.addClass('ad-slot__fluid250');
                 }
             }
+
+            /* dev-code-start */
+            userTiming.mark('DFP : parseAd : ' + slotId);
+            /* dev-code-end */
         },
         allAdsRendered = function (slotId) {
             if (slots[slotId] && !slots[slotId].isRendered) {
