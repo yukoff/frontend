@@ -143,6 +143,11 @@ trait Navigation {
   val marketforceslive = SectionLink("business", "market forces live", "Market Forces live", "/business/marketforceslive")
   val businessblog = SectionLink("business", "business blog", "Business blog", "/business/blog")
 
+  //Careers
+  val careers = SectionLink("careers", "careers", "Careers", "/careers")
+  val cv = SectionLink("careers", "cv", "CVs", "/careers/cv")
+  val graduate = SectionLink("careers", "graduate", "Graduate", "/careers/graduate-jobs")
+
   //Money
   val money = SectionLink("money", "money", "Money", "/money")
   val property = SectionLink("money", "property", "Property", "/money/property")

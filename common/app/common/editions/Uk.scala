@@ -59,7 +59,8 @@ object Uk extends Edition(
       NavItem(observer),
       NavItem(todaysPaper, Seq(editorialsandletters, obituaries, g2, weekend, theguide, saturdayreview)),
       NavItem(crosswords),
-      NavItem(video)
+      NavItem(video),
+      NavItem(careers, Seq(cv, graduate))
     )
   }
 
