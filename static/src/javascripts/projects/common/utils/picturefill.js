@@ -48,11 +48,9 @@ window.matchMedia || (window.matchMedia = (function () {
     };
 }()));
 define([
-    'fastdom',
-    'common/utils/user-timing'
+    'fastdom'
 ], function (
-    fastdom,
-    userTiming
+    fastdom
 ) {
 
     /*! Picturefill - Responsive Images that work today.
@@ -404,10 +402,6 @@ define([
 
             elements = options.elements || pf.getAllElements;
 
-            /* dev-code-start */
-            userTiming.mark('Picturefill : start');
-            /* dev-code-end */
-
             // w._browserWidth = pf.getBrowserWidth();
 
             fastdom.read(function () {
@@ -457,10 +451,6 @@ define([
                     element[ pf.ns ].evaluated = true;
                 }
             });
-
-            /* dev-code-start */
-            userTiming.mark('Picturefill : end');
-            /* dev-code-end */
         }
 
         /* expose methods for testing */
