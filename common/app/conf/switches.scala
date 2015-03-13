@@ -287,8 +287,9 @@ object Switches {
     "If this switch is on, commercial components will be fed by the Guardian Bookshop feed.",
     safeState = Off, sellByDate = never)
 
-  private def dateInFebruary(day: Int): Interval =
-    new Interval(new DateTime(2015, 2, day, 0, 0, DateTimeZone.UTC), Days.ONE)
+  val BookLookupSwitch = Switch("Commercial", "book-lookup",
+    "If this switch is on, book data will be looked up using a third-party service.",
+    safeState = Off, sellByDate = never)
 
   val AppleAdNetworkFrontSwitch = Switch("Commercial", "apple-ads-on-network-front",
     "If this switch is on, Apple ads will appear on the network front during active periods.",
@@ -333,6 +334,11 @@ object Switches {
   val FeedbackLink = Switch("Monitoring", "tech-feedback",
     "decide by now if it's worth keeping the link in the footer soliciting clicks for technical problems",
     safeState = Off, new LocalDate(2015, 3, 24)
+  )
+
+  val Print = Switch("Print analytics", "print",
+    "decide by now whether enough people are printing stuff to care whether they get a good experience",
+    safeState = Off, new LocalDate(2015, 3, 27)
   )
 
   // Features
@@ -460,9 +466,19 @@ object Switches {
     safeState = Off, sellByDate = new LocalDate(2015, 5, 1)
   )
 
-  val ABChimney = Switch("A/B Tests", "ab-chimney", 
+  val ABChimney = Switch("A/B Tests", "ab-chimney",
     "Switch for the home icon chimney test.",
     safeState = Off, sellByDate = new LocalDate(2015, 3, 16)
+  )
+
+  val ABMtMaster = Switch("A/B Tests", "ab-mt-master",
+    "Switch for the Sticky mpu test.",
+    safeState = Off, sellByDate = new LocalDate(2015, 5, 11)
+  )
+
+  val ABSignedOut = Switch("A/B Tests", "ab-signed-out",
+    "Switch for the Signed Out messaging test.",
+    safeState = Off, sellByDate = new LocalDate(2015, 3, 31)
   )
 
   val FootballFeedRecorderSwitch = Switch("Feature", "football-feed-recorder",

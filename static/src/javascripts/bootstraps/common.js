@@ -21,6 +21,7 @@ define([
     'common/modules/analytics/clickstream',
     'common/modules/analytics/foresee-survey',
     'common/modules/analytics/livestats',
+    'common/modules/analytics/media-listener',
     'common/modules/analytics/omniture',
     'common/modules/analytics/register',
     'common/modules/analytics/scrollDepth',
@@ -77,6 +78,7 @@ define([
     Clickstream,
     Foresee,
     liveStats,
+    mediaListener,
     Omniture,
     register,
     ScrollDepth,
@@ -310,6 +312,10 @@ define([
                 }
             },
 
+            mediaEventListeners: function () {
+                mediaListener.init();
+            },
+
             checkIframe: function () {
                 if (window.self !== window.top) {
                     $('html').addClass('iframed');
@@ -484,6 +490,7 @@ define([
             robust('c-simple-metrics',  modules.initSimpleMetrics);
             robust('c-crosswords',      crosswordThumbnails.init);
             robust('c-tech-feedback',   modules.initTechFeedback);
+            robust('c-media-listeners', modules.mediaEventListeners);
             /* dev-code-start */
             userTiming.mark('Common : end');
             /* dev-code-end */
