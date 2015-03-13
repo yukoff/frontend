@@ -9,6 +9,7 @@ define([
     'common/utils/formatters',
     'common/utils/mediator',
     'common/utils/template',
+    'common/utils/user-timing',
     'text!common/views/discussion/comment-count.html',
     'text!common/views/discussion/comment-count--content.html'
 ], function (
@@ -22,6 +23,7 @@ define([
     formatters,
     mediator,
     template,
+    userTiming, 
     commentCountTemplate,
     commentCountContentTemplate
 ) {
