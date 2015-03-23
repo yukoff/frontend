@@ -5,11 +5,10 @@ import java.text.SimpleDateFormat
 import common.ExecutionContexts
 import conf.Configuration
 import org.json4s.native.JsonMethods._
-import play.api.Logger
-import shade.memcached.{Configuration => MemcachedConf, Codec, Memcached}
 import org.json4s.{DefaultFormats, Extraction}
+import play.api.Logger
+import shade.memcached.{Memcached, Configuration => MemcachedConf}
 
-import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
 trait JsonImplicits {
@@ -22,58 +21,76 @@ object Quizzes extends ExecutionContexts with JsonImplicits {
   lazy val host = Configuration.memcached.host.head
   lazy val memcached = Memcached(MemcachedConf(host), memcachedExecutionContext)
 
-  def update(json: String) = {
-    val quizUpdate = parse(json).extract[QuizUpdate]
-    val oldStats = aggregatedResults(quizUpdate.quizId)
+  def updateMultiChoiceQuiz(json: String) = {
+    val quizUpdate = parse(json).extract[MultiChoiceQuizUpdate]
+    val newStats = aggregateMultiChoiceResults(quizUpdate)
 
     for {
-      stat <- oldStats
+      stat <- newStats
     } yield {
-      val newResults = quizUpdate.questions.flatMap{ question =>
-        if (stat.results.nonEmpty) {
-          stat.results.collect{
-            case oldResult if oldResult.questionNum == question.number && oldResult.answerNum == question.response =>
-              AggregatedResponse(oldResult.questionNum, oldResult.answerNum, oldResult.answerCount + 1)
-            case oldResult => oldResult
-          }
-        } else {
-          // if this is the first time we've ever seen results for this quiz, we need to know the full picture
-          // of the possible responses so we can compile the aggregate properly. Currently the only way to find that
-          // out is if the json in the update from the browser supplies it all the time.
-          List(AggregatedResponse(question.number, question.response, 1L))  // this is insufficient!
-        }
-      }
-      val newAggregate = stat.copy(results = newResults)
-      // todo: Duration.Undefined??
-      memcached.set[QuizAggregate](quizUpdate.quizId, newAggregate, Duration.Undefined)
+      memcached.set[MultiChoiceQuizAggregate](quizUpdate.quizId, stat, Duration.Undefined)
     }
   }
 
-  def aggregatedResults(quizId: String): Future[QuizAggregate] = {
-    memcached.get[QuizAggregate](quizId).recover {
+  private def aggregateMultiChoiceResults(quizUpdate: MultiChoiceQuizUpdate) = {
+    val loadedResults = memcached.get[MultiChoiceQuizAggregate](quizUpdate.quizId).recover {
       case e: Exception =>
         Logger.error(e.getMessage)
         None
     }
-  }.map(_.getOrElse(QuizAggregate(quizId, Nil, 0)))
+    loadedResults.map{ loaded =>
+      val (newAggregatedResponses, newTime) = loaded match {
+        case Some(loadedResult) =>
+          (incrementMultiChoiceAggregatedCounts(quizUpdate.questions, loadedResult), loadedResult.timeSeconds + quizUpdate.timeSeconds)
+        case None =>
+          (initialMultiChoiceAggregatedCounts(quizUpdate.questions), quizUpdate.timeSeconds)
+      }
+      MultiChoiceQuizAggregate(quizUpdate.quizId, newAggregatedResponses, newTime)
+    }
+  }
+
+  private def initialMultiChoiceAggregatedCounts(questions: List[MultiChoiceQuizResponse]) = {
+    questions.map{ question =>
+      if (question.isCorrect) {
+        MultiChoiceAggregatedResponse(question.questionNum, 1L, 0L)
+      } else {
+        MultiChoiceAggregatedResponse(question.questionNum, 0L, 1L)
+      }
+    }
+  }
+  
+  private def incrementMultiChoiceAggregatedCounts(newResponses: List[MultiChoiceQuizResponse], loadedResult: MultiChoiceQuizAggregate) = {
+    newResponses.flatMap { newResponse =>
+      loadedResult.responses.collect {
+        case oldResponse if oldResponse.questionNum == newResponse.questionNum =>
+          if (newResponse.isCorrect) {
+            MultiChoiceAggregatedResponse(oldResponse.questionNum, oldResponse.correctCount + 1, oldResponse.incorrectCount)
+          } else {
+            MultiChoiceAggregatedResponse(oldResponse.questionNum, oldResponse.correctCount, oldResponse.incorrectCount + 1)
+          }
+        case oldResult => oldResult
+      }
+    }
+  }
+
 }
 
-case class QuizUpdate (
+case class MultiChoiceQuizUpdate (
   quizId: String,
-  questions: List[QuizQuestion],
+  questions: List[MultiChoiceQuizResponse],
   timeSeconds: Long) extends JsonImplicits
 {
   def toJson = Extraction.decompose(this)
 }
 
-case class QuizQuestion(number: Int, response: Int)
+case class MultiChoiceQuizResponse(questionNum: Int, isCorrect: Boolean)
 
-case class QuizAggregate (
+case class MultiChoiceQuizAggregate (
   quizId: String,
-  results: List[AggregatedResponse],
+  responses: List[MultiChoiceAggregatedResponse],
   timeSeconds: Long) extends JsonImplicits
 {
   def toJson = Extraction.decompose(this)
 }
 
-case class AggregatedResponse(questionNum: Int, answerNum: Int, answerCount: Long)
+case class MultiChoiceAggregatedResponse(questionNum: Int, correctCount: Long, incorrectCount: Long)
