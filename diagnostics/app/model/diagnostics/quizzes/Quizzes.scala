@@ -5,9 +5,10 @@ import java.text.SimpleDateFormat
 import common.ExecutionContexts
 import conf.Configuration
 import org.json4s.native.JsonMethods._
+import org.json4s.native.Serialization
 import org.json4s.{DefaultFormats, Extraction}
 import play.api.Logger
-import shade.memcached.{Memcached, Configuration => MemcachedConf}
+import shade.memcached.{Configuration => MemcachedConf, Codec, Memcached}
 
 import scala.concurrent.duration.Duration
 
@@ -21,10 +22,14 @@ object Quizzes extends ExecutionContexts with JsonImplicits {
   lazy val host = Configuration.memcached.host.head
   lazy val memcached = Memcached(MemcachedConf(host), memcachedExecutionContext)
 
+  implicit val memcacheDCodec: Codec[MultiChoiceQuizAggregate] = new Codec[MultiChoiceQuizAggregate] {
+    override def serialize(value: MultiChoiceQuizAggregate): Array[Byte] = Serialization.write(value).getBytes("UTF-8")
+    override def deserialize(data: Array[Byte]): MultiChoiceQuizAggregate = parse(new String(data, "UTF-8")).extract[MultiChoiceQuizAggregate]
+  }
+
   def updateMultiChoiceQuiz(json: String) = {
     val quizUpdate = parse(json).extract[MultiChoiceQuizUpdate]
     val newStats = aggregateMultiChoiceResults(quizUpdate)
-
     for {
       stat <- newStats
     } yield {
