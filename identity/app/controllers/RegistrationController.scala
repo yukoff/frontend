@@ -41,6 +41,14 @@ class RegistrationController @Inject()( returnUrlVerifier : ReturnUrlVerifier,
     )
   )
 
+  val guestRegistrationForm = Form(
+    Forms.tuple(
+      "user.firstName" -> idFirstName,
+      "user.secondName" -> idSecondName,
+      emailKey -> idRegEmail
+    )
+  )
+
   def renderForm(returnUrl: Option[String], skipConfirmation: Option[Boolean]) = Action { implicit request =>
     logger.trace("Rendering registration form")
 
@@ -114,6 +122,15 @@ class RegistrationController @Inject()( returnUrlVerifier : ReturnUrlVerifier,
     }
 
     boundForm.fold[Future[Result]](onError, onSuccess)
+  }
+
+  def renderGuestForm(returnUrl: Option[String], skipConfirmation: Option[Boolean]) = Action { implicit request =>
+    logger.trace("Rendering guest registration form")
+
+    val idRequest = idRequestParser(request)
+    val boundForm = guestRegistrationForm.bindFromRequest
+
+    NoCache(Ok(views.html.guestRegistration(page.registrationStart(idRequest), idRequest, idUrlBuilder, boundForm)))
   }
 
   private def redirectToRegistrationPage(formWithErrors: Form[(String, String, String, String, String, Boolean, Boolean)],

@@ -23,6 +23,7 @@ GET         /requestnewtoken                        @controllers.ResetPasswordCo
 GET         /register                               @controllers.RegistrationController.renderForm(returnUrl : Option[String], skipConfirmation : Option[Boolean])
 POST        /register                               @controllers.RegistrationController.processForm
 GET         /register/confirm                       @controllers.RegistrationController.renderRegistrationConfirmation(returnUrl)
+POST        /register/guest                         @controllers.RegistrationController.renderGuestForm(returnUrl : Option[String], skipConfirmation : Option[Boolean])
 GET         /email-prefs                            @controllers.EmailController.preferences
 POST        /email-prefs                            @controllers.EmailController.savePreferences
 GET         /user/id/:id                            @controllers.PublicProfileController.renderProfileFromId(id: String, activityType = "discussions")
