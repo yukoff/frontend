@@ -24,6 +24,7 @@
             <div class="title">
                 Fronts
                 <span data-bind="click: createFront" class="linky">+</span>
+                <input type="text" placeholder="filter" class="pull-right" data-bind="textInput: filterFront">
             </div>
             <div class="cnf-fronts" data-bind="
                 template: {name: 'template_front', foreach: fronts}"></div>

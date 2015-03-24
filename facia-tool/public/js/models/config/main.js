@@ -48,13 +48,17 @@ define([
 
         model.navSections = [].concat(pageConfig.navSections);
 
+        model.allCollections = null;
         model.collections = ko.observableArray();
 
+        model.allFronts = null;
         model.fronts = ko.observableArray();
 
         model.pinnedFront = ko.observable();
 
         model.pending = ko.observable();
+
+        model.filterFront = ko.observable().extend({ rateLimit: 100 });
 
         model.types =  _.pluck(vars.CONST.types, 'name');
 
@@ -89,6 +93,23 @@ define([
             model.collections.unshift(collection);
         };
 
+        model.filterFront.subscribe(function (newValue) {
+            model.fronts(newValue ?
+                _.filter(model.allFronts, function(front) {
+                    return front.id().indexOf(newValue) > -1;
+                }) :
+                model.allFronts
+            );
+            model.collections(newValue ?
+                _.filter(model.allCollections, function (collection) {
+                    return _.find(collection.parents(), function (front) {
+                        return front.id().indexOf(newValue) > -1;
+                    });
+                }) :
+                model.allCollections
+            );
+        });
+
         function containerUsage() {
             return _.reduce(model.collections(), function(m, col) {
                 var type = col.meta.type();
@@ -115,6 +136,7 @@ define([
                         .sortBy(function(collection) { return collection.meta.displayName(); })
                         .value()
                     );
+                    model.allCollections = model.collections();
 
                     model.fronts(
                        _.chain(_.keys(config.fronts))
@@ -135,6 +157,7 @@ define([
                         })
                        .value()
                     );
+                    model.allFronts = model.fronts();
 
                     logger.log('CONTAINER USAGE\n');
                     _.each(containerUsage(), function(fronts, type) {
