@@ -1,11 +1,11 @@
 package config
 
-import com.gu.facia.client.models.{CollectionConfig, Config, Front}
+import com.gu.facia.client.models.{CollectionConfigJson => CollectionConfig, ConfigJson, FrontJson => Front}
 import controllers.CreateFront
 
 object Transformations {
   /** The Config ought never to contain empty fronts or collections that do not belong to any fronts */
-  def prune(config: Config): Config = {
+  def prune(config: ConfigJson): ConfigJson = {
     val emptyFronts = config.fronts.filter(_._2.collections.isEmpty).map(_._1)
     val collectionIdsReferencedInFronts = config.fronts.values.flatMap(_.collections).toSet
     val orphanedCollections = config.collections.keySet -- collectionIdsReferencedInFronts
@@ -16,7 +16,7 @@ object Transformations {
     )
   }
 
-  def createFront(createCommand: CreateFront, newCollectionId: String)(config: Config): Config = {
+  def createFront(createCommand: CreateFront, newCollectionId: String)(config: ConfigJson): ConfigJson = {
     val newFront = Front(
       collections =       List(newCollectionId),
       navSection =        createCommand.navSection,
@@ -29,7 +29,8 @@ object Transformations {
       imageHeight =       createCommand.imageHeight,
       isImageDisplayed =  createCommand.isImageDisplayed,
       isHidden =          createCommand.isHidden,
-      priority =          createCommand.priority
+      priority =          createCommand.priority,
+      canonical =         Some(newCollectionId)
     )
 
     config.copy(
@@ -38,7 +39,7 @@ object Transformations {
     )
   }
 
-  def updateFront(frontId: String, front: Front)(config: Config): Config = {
+  def updateFront(frontId: String, front: Front)(config: ConfigJson): ConfigJson = {
     config.copy(fronts = config.fronts + (frontId -> front))
   }
 
@@ -46,7 +47,7 @@ object Transformations {
       frontIds: List[String],
       collectionId: String,
       collection: CollectionConfig
-  )(config: Config): Config = {
+  )(config: ConfigJson): ConfigJson = {
     val updatedFronts = frontIds flatMap { frontId =>
       config.fronts.get(frontId) map { front =>
         frontId -> front.copy(collections = (front.collections ++ List(collectionId)).distinct)

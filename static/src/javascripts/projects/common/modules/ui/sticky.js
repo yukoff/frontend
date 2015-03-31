@@ -1,10 +1,10 @@
 define([
     'bonzo',
-    'lodash/functions/throttle',
+    'common/utils/_',
     'common/utils/mediator'
 ], function (
     bonzo,
-    throttle,
+    _,
     mediator
 ) {
 
@@ -12,28 +12,26 @@ define([
      * @todo: check if browser natively supports "position: sticky"
      */
     var Sticky = function (element, options) {
-        this.element = element;
-        this.top     = options.top || 0;
+        this.$element = bonzo(element);
+        this.$parent  = this.$element.parent();
+        this.opts     = _.defaults(options || {}, {
+            top: 0
+        });
     };
 
     Sticky.prototype.init = function () {
-        // position of element from document top
-        this.elementDocOffset = this.element.getBoundingClientRect().top + window.scrollY;
-
-        mediator.on('window:scroll', throttle(this.updatePosition.bind(this), 10));
+        mediator.on('window:scroll', _.throttle(this.updatePosition.bind(this), 10));
         // kick off an initial position update
         this.updatePosition();
     };
 
     Sticky.prototype.updatePosition = function () {
-        var parent, fixedTop, css,
-            $element = bonzo(this.element);
+        var fixedTop, css;
 
         // have we scrolled past the element
-        if (window.scrollY >= this.elementDocOffset - this.top) {
-            parent = $element.parent()[0];
+        if (window.scrollY >= this.$parent.offset().top - this.opts.top) {
             // make sure the element stays within its parent
-            fixedTop = Math.min(this.top, parent.getBoundingClientRect().bottom - $element.dim().height);
+            fixedTop = Math.min(this.opts.top, this.$parent[0].getBoundingClientRect().bottom - this.$element.dim().height);
 
             css = {
                 position: 'fixed',
@@ -46,7 +44,7 @@ define([
             };
         }
 
-        return $element.css(css);
+        return this.$element.css(css);
     };
 
     return Sticky;

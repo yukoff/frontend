@@ -3,22 +3,20 @@
  Description: replaces general most popular trails with geo based most popular on fronts.
  */
 define([
-    'common/utils/$',
     'qwery',
-    'lodash/objects/assign',
-    'common/modules/component',
-    'common/modules/analytics/register',
+    'common/utils/$',
+    'common/utils/config',
     'common/utils/mediator',
-    'common/utils/config'
+    'common/modules/analytics/register',
+    'common/modules/component'
 ], function (
-    $,
     qwery,
-    extend,
-    Component,
-    register,
+    $,
+    config,
     mediator,
-    config
-    ) {
+    register,
+    Component
+) {
 
     function GeoMostPopularFront() {
         register.begin('most-popular');
@@ -26,8 +24,7 @@ define([
 
     Component.define(GeoMostPopularFront);
 
-    // Geo is only available via the CDN, hence hardcoded url
-    GeoMostPopularFront.prototype.endpoint = 'http://api.nextgen.guardianapps.co.uk/most-read-geo.json';
+    GeoMostPopularFront.prototype.endpoint = '/most-read-geo.json';
     GeoMostPopularFront.prototype.isNetworkFront = config.page.contentType === 'Network Front';
     GeoMostPopularFront.prototype.manipulationType = 'html';
 

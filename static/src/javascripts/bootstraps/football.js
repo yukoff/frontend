@@ -1,7 +1,7 @@
 define([
     'bean',
     'bonzo',
-    'lodash/functions/debounce',
+    'common/utils/_',
     'common/utils/$',
     'common/utils/ajax',
     'common/utils/config',
@@ -13,11 +13,12 @@ define([
     'common/modules/sport/football/match-info',
     'common/modules/sport/football/match-list-live',
     'common/modules/sport/football/score-board',
+    'common/modules/sport/football/tag-page-stats',
     'common/modules/ui/rhc'
 ], function (
     bean,
     bonzo,
-    debounce,
+    _,
     $,
     ajax,
     config,
@@ -29,6 +30,7 @@ define([
     MatchInfo,
     MatchListLive,
     ScoreBoard,
+    tagPageStats,
     rhc
 ) {
 
@@ -224,7 +226,10 @@ define([
         });
 
         page.isCompetition(function (competition) {
-            renderTable(competition, extras, dropdownTemplate);
+            var $rightHandCol = $('.js-secondary-column').dim().height;
+            if ($rightHandCol === 0 || $rightHandCol > 1800) {
+                renderTable(competition, extras, dropdownTemplate);
+            }
         });
 
         page.isLiveClockwatch(function () {
@@ -317,14 +322,15 @@ define([
                     }
                     return r;
                 })();
-                mediator.on('window:resize', debounce(resize, 200));
+                mediator.on('window:resize', _.debounce(resize, 200));
                 bean.on(document, 'click', '.dropdown__button', resize);
             })();
         }
+
+        tagPageStats();
     }
 
     return {
         init: init
     };
-
 });

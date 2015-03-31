@@ -1,6 +1,6 @@
 package util
 
-import com.gu.facia.client.models.{Front, Config}
+import com.gu.facia.client.models.{FrontJson => Front, ConfigJson => Config}
 import org.scalatest.{DoNotDiscover, FlatSpec, Matchers}
 import test.ConfiguredTestSuite
 
@@ -11,7 +11,7 @@ import test.ConfiguredTestSuite
                                     webTitle: Option[String] = None,
                                     description: Option[String] = None,
                                     onPageDescription: Option[String] = None) = Config(
-    Map("uk" -> Front(Nil, section, webTitle, title, description, onPageDescription, None, None, None, None, None, None)),
+    Map("uk" -> Front(Nil, section, webTitle, title, description, onPageDescription, None, None, None, None, None, None, None)),
     Map.empty)
 
   "StripTags" should "strip tag from title" in {

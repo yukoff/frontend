@@ -1,12 +1,14 @@
 package model
 
-import com.gu.openplatform.contentapi.model.{ Section => ApiSection }
+import com.gu.contentapi.client.model.{ Section => ApiSection }
 import common.{Edition, Pagination}
 import dfp.DfpAgent
 import play.api.libs.json.{JsString, JsValue}
 
 case class Section(private val delegate: ApiSection, override val pagination: Option[Pagination] = None)
-  extends MetaData with AdSuffixHandlingForFronts {
+  extends MetaData with AdSuffixHandlingForFronts with KeywordSponsorshipHandling {
+
+  def isEditionalised = delegate.editions.length > 1
 
   lazy val section: String = id
 
@@ -14,7 +16,7 @@ case class Section(private val delegate: ApiSection, override val pagination: Op
   lazy val webUrl: String = delegate.webUrl
   lazy val webTitle: String = delegate.webTitle
 
-  lazy val keywordId: String = FrontKeywordId(id)
+  lazy val keywordIds: Seq[String] = frontKeywordIds(id)
 
   override lazy val isFront = true
 
@@ -26,15 +28,7 @@ case class Section(private val delegate: ApiSection, override val pagination: Op
 
   override lazy val metaData: Map[String, JsValue] = super.metaData ++ Map(
     "keywords" -> JsString(webTitle),
-    "keywordIds" -> JsString(keywordId),
-    "content-type" -> JsString("Section")
+    "keywordIds" -> JsString(keywordIds.mkString(",")),
+    "contentType" -> JsString("Section")
   )
-
-  override lazy val isSponsored: Boolean = DfpAgent.isSponsored(keywordId, Some(id))
-  override lazy val hasMultipleSponsors: Boolean = DfpAgent.hasMultipleSponsors(keywordId)
-  override lazy val isAdvertisementFeature: Boolean = DfpAgent.isAdvertisementFeature(keywordId, Some(id))
-  override lazy val hasMultipleFeatureAdvertisers: Boolean = DfpAgent.hasMultipleFeatureAdvertisers(keywordId)
-  override lazy val isFoundationSupported: Boolean = DfpAgent.isFoundationSupported(keywordId, Some(id))
-  override lazy val sponsor: Option[String] = DfpAgent.getSponsor(keywordId)
-  override def hasPageSkin(edition: Edition): Boolean = DfpAgent.isPageSkinned(adUnitSuffix, edition)
 }

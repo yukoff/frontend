@@ -9,7 +9,7 @@ $avatarPadding: $gs-gutter / 2;
 
 .discussion {
     margin-bottom: $gs-baseline * 2;
-    min-height: $gs-baseline * 2;
+    min-height: $gs-baseline * 16;
 
     .pagination_legend {
         display: none !important; // overriding .hide-on-mobile-inline
@@ -35,31 +35,37 @@ $avatarPadding: $gs-gutter / 2;
         margin-right: 0;
         max-width: gs-span(8);
         .discussion__heading,
-        .d-comment-box__meta {
+        .d-comment-box--top-level .d-comment-box__meta {
             margin-left: -1 * (gs-span(2)  + $gs-gutter);
             width: $left-column;
             position: absolute;
         }
-        .d-comment-box__meta {
-            top: $gs-baseline * 4;
-        }
         .d-comment-box--top-level {
             padding-top: $gs-baseline * 2;
+            .d-comment-box__meta {
+                top: $gs-baseline * 4;
+            }
         }
     }
     @include mq(leftCol) {
         margin-left: gs-span(4) + $gs-gutter;
         margin-right: 0;
         .discussion__heading,
-        .d-comment-box__meta {
+        .d-comment-box--top-level .d-comment-box__meta {
             margin-left: -1 * (gs-span(4) + $gs-gutter);
         }
     }
 }
 
+.id--signed-out .discussion--empty {
+    min-height: gs-height(2);
+}
+
 .discussion__top-border {
-    border-top: 1px solid colour(neutral-4);
-    margin-top: -1px;
+    @include mq(tablet) {
+        border-top: 1px solid colour(news-accent);
+        margin-top: -1px;
+    }
 }
 
 .discussion--lowered {
@@ -79,6 +85,15 @@ $avatarPadding: $gs-gutter / 2;
     }
 }
 
+.discussion--disabled {
+    min-height: $gs-baseline * 4;
+}
+.discussion__disabled-msg {
+    @include fs-headline(3);
+    padding-top: $gs-baseline / 1.5;
+    color: colour(neutral-2);
+}
+
 .d-discussion {
     font-size: 14px;
 }
@@ -88,13 +103,35 @@ $avatarPadding: $gs-gutter / 2;
     margin: 0;
 }
 
+.d-discussion__size-message {
+    display: none;
+}
+
+.discussion--pagesize-msg-show {
+
+    .d-discussion__size-message {
+        @include fs-textSans(2);
+        margin-bottom: $gs-baseline * 2 / 3;
+        border-top: 1px solid colour(neutral-4);
+        padding-top: $gs-baseline;
+        color: colour(neutral-2);
+        display: block;
+
+        & + .d-comment {
+            border-top: 0;
+        }
+    }
+}
+
 .discussion__heading {
     margin-bottom: 0;
-    padding-top: $gs-baseline / 3;
+    padding-top: 0;
+    border-top: 1px solid colour(news-accent);
 
     @include mq(tablet) {
-        padding-top: $gs-baseline / 2;
+        border-top: 0;
     }
+
     @include mq(leftCol) {
         position: absolute;
         margin-left: -1 * ($left-column + $gs-gutter);
@@ -111,7 +148,7 @@ $avatarPadding: $gs-gutter / 2;
     color: colour(neutral-2);
 }
 
-.d-discussion--not-staff .d-staff-required {
+.discussion--not-staff .d-staff-required {
     display: none !important;
 }
 
@@ -125,8 +162,6 @@ $avatarPadding: $gs-gutter / 2;
         display: block;
     }
 }
-
-
 
 .discussion__show-button {
     display: none;
@@ -152,12 +187,10 @@ $avatarPadding: $gs-gutter / 2;
         }
     }
 
-    .d-comment:nth-child(n+3) {
-        // all except first 2 children
-        display: none;
-    }
+    .d-comment:nth-child(n+3), // all except first 2 children
+    .discussion__comment-box.discussion__comment-box--bottom,
     .discussion__pagination--bottom {
-        display: none;
+        display: none !important;
     }
 }
 
@@ -170,13 +203,19 @@ $avatarPadding: $gs-gutter / 2;
     }
 }
 
+.discussion__pagination--bottom {
+    .pagination {
+        border-top: 1px solid colour(neutral-4);
+    }
+}
+
 .d-discussion__meta {
     @include fs-textSans(3);
     float: left;
 }
 
 .content__repositioned-comments .content__main-column {
-    @include mq(rightCol) {
+    @include mq(desktop) {
         max-width: none;
         margin-right: 25%;
     }
@@ -198,6 +237,10 @@ $avatarPadding: $gs-gutter / 2;
     .id--signed-in .discussion--open &,
     .discussion--has-top-comments & {
         border-top: 1px solid colour(neutral-4);
+    }
+
+    .pagination {
+        text-align: center;
     }
 }
 
@@ -233,36 +276,13 @@ $avatarPadding: $gs-gutter / 2;
     span {
         font-weight: bold;
         text-transform: capitalize;
-        margin: 0 $gs-gutter / 4 0 $gs-gutter / 2;
+        margin: 0 $gs-gutter / 6 0 $gs-gutter / 4;
     }
 
-    &:first-child {
-        padding-right: $gs-gutter;
-        margin-right: $gs-gutter;
-        border-right: 1px solid colour(neutral-4);
-    }
-}
-
-.discussion__pagination .pagination {
-    width: auto;
-    line-height: $gs-baseline * 3;
-    margin: $gs-baseline 0;
-    padding: 0;
-    border: 0;
-    height: $gs-baseline * 2;
-    @include mq($until: tablet) {
-        float: none;
-        display: block;
-        clear: both;
-        border-top: 1px solid colour(neutral-4);
-    }
-    @include mq(tablet) {
-        line-height: $gs-baseline * 2;
-    }
-    .pagination__links {
-        @include mq(desktop) {
-            width: gs-span(4) - $gs-gutter;
-        }
+    &:not(:first-child) {
+        padding-left: $gs-gutter / 2;
+        margin-left: $gs-gutter / 2;
+        border-left: 1px solid colour(neutral-4);
     }
 }
 
@@ -310,6 +330,19 @@ $avatarPadding: $gs-gutter / 2;
     &:after {
         right: -.5 * $gs-gutter;
     }
+    &.d-comment--response {
+        &:before,
+        &:after {
+            border-color: colour(neutral-6);
+        }
+    }
+
+    .d-comment-box__parent-comment-spout {
+        border-bottom-color: colour(neutral-5);
+    }
+    .d-comment-box__parent-comment {
+        background-color: colour(neutral-5);
+    }
 }
 
 .d-comment-box--top-level .d-comment-box__meta {
@@ -345,9 +378,18 @@ $avatarPadding: $gs-gutter / 2;
 
 .d-comment__avatar-wrapper,
 .d-comment-box__avatar-wrapper {
-    float: left;
     margin-right: ($gs-gutter / 5) * 2;
     margin-top: $gs-baseline / 6;
+}
+
+.d-comment-box__avatar-wrapper {
+    @include mq($until: leftCol) {
+        float: left;
+    }
+}
+
+.d-comment__avatar-wrapper {
+    float: left;
 }
 
 .d-comment-box__avatar-wrapper .user-avatar__image {
@@ -362,7 +404,6 @@ $avatarPadding: $gs-gutter / 2;
 
 .d-comment__meta-text,
 .d-comment-box__meta-text {
-    padding-right: $gs-gutter * 2.5;
     @include box-sizing(border-box);
 }
 
@@ -387,30 +428,56 @@ $avatarPadding: $gs-gutter / 2;
     @include fs-textSans(4);
     color: colour(neutral-2);
 }
+
 .d-comment__author-label {
     display: block;
     @include fs-textSans(1);
-    text-transform: uppercase;
+    color: colour(news-default);
+    font-weight: bold;
+
+    .d-comment__gu-icon svg {
+        fill: colour(news-default);
+    }
+
 }
 
-.d-comment__author-label--staff {
-    display: none;
+.d-comment__pick {
+    margin-bottom: $gs-baseline / 6;
+    white-space: nowrap;
+    @include fs-textSans(1);
+    font-weight: bold;
+
+    .d-comment__gu-icon svg {
+        fill: colour(neutral-1);
+    }
 }
 
-.d-comment--staff .d-comment__author-label--staff {
-    display: block;
+.d-comment__gu-icon {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 1px;
+    svg {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .d-comment__timestamp {
     margin-bottom: $gs-baseline;
     @include fs-textSans(1);
 
+    @include mq($until: tablet) {
+        padding: 0;
+    }
+
     @include mq(tablet) {
         display: inline;
     }
 
     a {
-        color: $c-neutral2;
+        color: colour(neutral-2);
     }
     .i-comment-anchor {
         display: none;
@@ -461,18 +528,6 @@ $avatarPadding: $gs-gutter / 2;
     }
 }
 
-.d-comment__pick {
-    margin-bottom: $gs-baseline / 6;
-    white-space: nowrap;
-    @include fs-textSans(4);
-    font-weight: bold;
-
-    .i-gupickasterisk {
-        margin-bottom: -4px;
-        margin-right: $gs-gutter / 4;
-    }
-}
-
 .d-comment__body,
 .d-top-comment__body,
 .d-comment-box__parent-comment-body {
@@ -486,10 +541,6 @@ $avatarPadding: $gs-gutter / 2;
     font-family: $f-sans-serif-text;
     @include font-size(14, 20);
     margin-bottom: $gs-baseline * 2 / 3;
-
-    br {
-        display: none;
-    }
 
     p {
         margin-top: $gs-baseline * 2 / 3;
@@ -534,6 +585,12 @@ $avatarPadding: $gs-gutter / 2;
 }
 
 .d-comment__inner--top-level {
+    @include mq(tablet) {
+        .d-comment__avatar-wrapper {
+            margin-left: -1 * ($avatarSize-big + $avatarPadding);
+        }
+    }
+
     .d-comment__avatar,
     .user-avatar__image {
         overflow: hidden;
@@ -545,9 +602,7 @@ $avatarPadding: $gs-gutter / 2;
         }
     }
     @include mq(tablet) {
-        .d-comment__content {
-            margin-left: $avatarSize-big + $avatarPadding;
-        }
+        margin-left: $avatarSize-big + $avatarPadding;
     }
 }
 
@@ -565,11 +620,12 @@ $avatarPadding: $gs-gutter / 2;
         }
     }
     @include mq(tablet) {
+        .d-comment__avatar-wrapper {
+            margin-left: -1 * ($avatarSize-small + $avatarPadding);
+        }
         .d-comment__avatar {
             width: $avatarSize-small;
-        }
-        .d-comment__content {
-            margin-left: $avatarSize-small + $avatarPadding;
+            height: $avatarSize-small;
         }
     }
 }
@@ -582,10 +638,18 @@ $avatarPadding: $gs-gutter / 2;
     @include mq(tablet) {
         margin-left: $avatarSize-big + $avatarPadding;
     }
+
+}
+
+
+.d-comment__inner--response {
+    @include mq(tablet) {
+        margin-left: $avatarSize-small + $avatarPadding;
+    }
 }
 
 .d-show-more-replies {
-    border-top: 1px dotted $c-neutral5;
+    border-top: 1px dotted colour(neutral-5);
     padding: $gs-baseline 0;
     @include fs-textSans(2);
 
@@ -608,11 +672,11 @@ $avatarPadding: $gs-gutter / 2;
 
 .d-comment__comment-removed {
     @include fs-textSans(1);
-    color: $c-neutral2;
+    color: colour(neutral-2);
     margin-top: $gs-baseline / 1.5;
 
     a {
-        color: $c-brandLightBlue;
+        color: colour(guardian-brand-light);
     }
 }
 
@@ -629,14 +693,14 @@ $comment-recommend-button-size: 19px;
     height: $comment-recommend-button-size;
     z-index: 1;
 
-    @include mq(rightCol) {
+    @include mq(desktop) {
         min-width: 28px;
         text-align: center;
     }
 }
 
 .d-comment__recommend-button {
-    @include icon-button(up-arrow-grey, $comment-recommend-button-size);
+    @include icon-button(arrow-up-grey, $comment-recommend-button-size);
     display: inline-block;
     background-color: colour(neutral-7);
     cursor: default;
@@ -646,6 +710,7 @@ $comment-recommend-button-size: 19px;
     i {
         width: 13px !important;
         height: 13px !important;
+        left: 2px;
     }
 
     .id--signed-in .d-discussion--recommendations-open & {
@@ -724,7 +789,7 @@ $comment-recommend-button-size: 19px;
         @include animation(pulse .5s ease-in-out 1);
     }
     .d-comment__recommend-button i {
-        @include icon(up-arrow-white);
+        @include icon(arrow-up-white);
     }
 }
 
@@ -756,7 +821,7 @@ $comment-recommend-button-size: 19px;
 .d-comment__action {
     @include fs-textSans(1);
     display: inline-block;
-    color: $c-newsDefault;
+    color: colour(news-default);
     font-weight: bold;
     line-height: 20px;
     width: auto;
@@ -780,7 +845,7 @@ $comment-recommend-button-size: 19px;
     @include icon-button(reply-white, 18px);
     margin-right: 1px;
     display: inline-block;
-    background-color: $c-newsDefault;
+    background-color: colour(news-default);
     vertical-align: top;
 }
 
@@ -810,7 +875,7 @@ $comment-recommend-button-size: 19px;
     bottom: 1px;
     margin: 0 ($gs-gutter / 5) * 2;
     @include fs-textSans(1);
-    color: $c-neutral2;
+    color: colour(neutral-2);
     vertical-align: bottom;
 }
 
@@ -832,7 +897,7 @@ $comment-recommend-button-size: 19px;
     width: gs-span(4);
     color: colour(neutral-1);
     padding: $gs-baseline / 2 $gs-gutter / 2;
-    border: 2px solid $c-neutral6;
+    border: 2px solid colour(neutral-6);
     background: #ffffff;
 }
 .d-report-comment__label,
@@ -898,6 +963,10 @@ $comment-recommend-button-size: 19px;
         width: $avatarSize-big;
         height: $avatarSize-big;
     }
+
+    .d-comment__author-label {
+        margin-top: 5px;
+    }
 }
 
 .d-top-comment__pick {
@@ -943,6 +1012,7 @@ $comment-recommend-button-size: 19px;
     .d-comment__timestamp {
         display: block;
         margin-bottom: 0;
+        padding: 0;
     }
 }
 
@@ -965,7 +1035,7 @@ $comment-recommend-button-size: 19px;
 
     .comment__inner {
         @include box-sizing(border-box);
-        background-color: $c-neutral7;
+        background-color: colour(neutral-7);
         display: inline-block;
         padding: ($gs-baseline / 3) * 2 $gs-gutter / 2 $gs-baseline;
         max-width: $right-column;
@@ -984,8 +1054,8 @@ $comment-recommend-button-size: 19px;
             border: solid transparent;
             height: 0;
             width: 0;
-            border-color: rgba($c-neutral7, 0);
-            border-top-color: $c-neutral7;
+            border-color: rgba(colour(neutral-7), 0);
+            border-top-color: colour(neutral-7);
             border-width: 30px;
             left: 23px;
             margin-left: -30px;
@@ -1068,7 +1138,7 @@ $comment-recommend-button-size: 19px;
 .d-discussion__error {
     margin-top: ($gs-baseline / 3) * 2;
     @include fs-textSans(4);
-    color: $c-error;
+    color: colour(error);
 
     .d-discussion__error-text {
         display: inline-block;
@@ -1078,7 +1148,7 @@ $comment-recommend-button-size: 19px;
 }
 
 .d-comment-box__error-meta {
-    color: $c-neutral2;
+    color: colour(neutral-2);
 }
 
 .d-comment-box--response {
@@ -1099,13 +1169,6 @@ $comment-recommend-button-size: 19px;
     }
 }
 
-
-.d-comment-box--response {
-    @include mq(tablet) {
-        padding-left: $avatarSize-small + $avatarPadding;
-    }
-}
-
 .discussion__comment-box {
     display: none;
     .id--signed-in .discussion--open & {
@@ -1116,11 +1179,11 @@ $comment-recommend-button-size: 19px;
 .d-bar {
     margin-bottom: ($gs-baseline / 3) * 4;
     @include fs-textSans(4);
-    color: $c-neutral2;
+    color: colour(neutral-2);
 }
 .d-comment-box__body {
     @include box-sizing(border-box);
-    border: 1px solid $c-neutral3;
+    border: 1px solid colour(neutral-3);
     height: 50px;
     margin: ($gs-baseline / 3) * 2 0;
     padding: ($gs-baseline / 3) * 2 $gs-gutter / 2;
@@ -1141,11 +1204,17 @@ $comment-recommend-button-size: 19px;
             color: #ffffff;
         }
     }
+    .discussion__comment-box--bottom & {
+        margin-top: 0;
+    }
 }
 
 .d-comment-box--top-level {
     @include mq(leftCol) {
         padding-top: $gs-baseline * 2;
+        .discussion__comment-box--bottom & {
+            padding-top: 0;
+        }
     }
 }
 
@@ -1156,7 +1225,7 @@ $comment-recommend-button-size: 19px;
 
 .d-comment-box--invalid {
     .d-comment-box__body {
-        border-color: $c-error;
+        border-color: colour(error);
     }
 }
 .d-comment-box--expanded .d-comment-box__body {
@@ -1167,6 +1236,10 @@ $comment-recommend-button-size: 19px;
 }
 .d-comment-box__submit {
     vertical-align: middle;
+    &[disabled] {
+        background-color: colour(neutral-3);
+        border-color: colour(neutral-3);
+    }
 }
 .d-comment-box__cancel {
     margin-left: $gs-gutter;
@@ -1174,12 +1247,12 @@ $comment-recommend-button-size: 19px;
 .d-comment-box__reply-to,
 .d-comment-box__cancel {
     @include fs-textSans(1);
-    color: $c-neutral1;
+    color: colour(neutral-1);
 }
 .d-comment-box__hide-preview,
 .d-comment-box__preview {
     @include fs-textSans(1);
-    color: $c-neutral2;
+    color: colour(neutral-2);
     font-weight: bold;
 }
 .d-comment-box__hide-preview {
@@ -1195,6 +1268,7 @@ $comment-recommend-button-size: 19px;
     margin-left: $gs-gutter;
     @include fs-textSans(2);
 }
+
 .d-comment-box--response {
 
     padding-top: $gs-baseline / 2;
@@ -1229,7 +1303,7 @@ $comment-recommend-button-size: 19px;
 .d-comment-box__cancel {
     display: none;
     bottom: $gs-baseline;
-    color: $c-neutral2;
+    color: colour(neutral-2);
 
     .d-comment-box--expanded &,
     .d-comment-box--response & {
@@ -1246,11 +1320,11 @@ $comment-recommend-button-size: 19px;
     margin-top: ($gs-baseline / 3) * 8;
 
     .clamp-fade {
-        @include simple-gradient(transparent, $c-neutral7);
+        @include simple-gradient(transparent, colour(neutral-7));
     }
     .clamp-fade__content {
-        border-top: 1px solid $c-neutral3;
-        background: $c-neutral7;
+        border-top: 1px solid colour(neutral-3);
+        background: colour(neutral-7);
     }
 }
 .d-comment-box__preview-spout,
@@ -1260,24 +1334,18 @@ $comment-recommend-button-size: 19px;
     width: 0;
     height: 0;
     border-right: 16px solid transparent;
-    border-bottom: 16px solid $c-neutral7;
+    border-bottom: 16px solid colour(neutral-7);
     margin-left: $gs-gutter * 2;
     border-right-style: inset;
 }
 .d-comment-box__parent-comment {
     padding: $gs-baseline $gs-gutter;
-    background-color: $c-neutral7;
+    background-color: colour(neutral-7);
     @include fs-textSans(4);
 
     .d-comment-box__hide-parent {
         margin-left: 0;
     }
-}
-.d-comment:target .d-comment-box__parent-comment-spout {
-    border-bottom-color: $c-neutral5;
-}
-.d-comment:target .d-comment-box__parent-comment {
-    background-color: $c-neutral5;
 }
 .d-comment-box__parent-comment-author {
     display: inline-block;
@@ -1309,7 +1377,7 @@ $comment-recommend-button-size: 19px;
 }
 .d-comment-box__preview-block {
     display: block;
-    background-color: $c-neutral7;
+    background-color: colour(neutral-7);
     padding: $gs-baseline $gs-gutter;
 }
 .d-comment-box__preview-body {
@@ -1340,8 +1408,8 @@ $comment-recommend-button-size: 19px;
 .d-comment-box__formatting-quote,
 .d-comment-box__formatting-link {
     display: inline-block;
-    border: 1px solid $c-neutral5;
-    color: $c-neutral2;
+    border: 1px solid colour(neutral-5);
+    color: colour(neutral-2);
     text-align: center;
     cursor: pointer;
     @include fs-textSans(2);
@@ -1351,6 +1419,6 @@ $comment-recommend-button-size: 19px;
     line-height: 17px;
 
     &:hover {
-        border-color: $c-brandBlue;
+        border-color: colour(guardian-brand);
     }
 }

@@ -18,4 +18,8 @@ with ConfigAgentLifecycle {
     LatestBlocks.stop()
     super.onStop(app)
   }
+
+  override def onStop(app: play.api.Application): Unit = {
+    ToolPressQueueWorker.stop()
+  }
 }
