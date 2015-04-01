@@ -1,6 +1,6 @@
 package liveblogs
 
-import com.gu.openplatform.contentapi.model.Content
+import com.gu.contentapi.client.model.Content
 import com.gu.util.liveblogs.{BlockToText, Block => ParsedBlock, Parser}
 import org.joda.time.DateTime
 import play.api.libs.json.Json

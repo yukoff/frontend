@@ -89,32 +89,12 @@ $block-padding-right: $gs-gutter;
     }
 }
 
-@include keyframes(live-pulse) {
-    0% {opacity: 1;}
-    10% {opacity: .25;}
-    40% {opacity: 1;}
-    100% {opacity: 1;}
-}
-
 .live-pulse-icon:before {
     display: inline-block;
     position: relative;
     @include border-radius(50%);
     $size: .75em;
     background-color: #ffffff;
-    width: $size;
-    height: $size;
-    margin-bottom: -1px;
-    margin-right: 3px;
-    @include border-radius(50%);
-    @include animation(live-pulse 2s infinite);
-}
-
-.blog__live-icon--red {
-    $size: 12px;
-    display: inline-block;
-    content: '';
-    background-color: $c-liveDefault;
     width: $size;
     height: $size;
     content: '';
