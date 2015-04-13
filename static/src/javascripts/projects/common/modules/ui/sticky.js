@@ -9,9 +9,11 @@ define([
     mediator,
     fastdom
 ) {
-    var Sticky, $element = bonzo(element);
+    var Sticky,
+        $element = bonzo(element),
+        elementComputedStyle = window.getComputedStyle($element);
 
-    if (/sticky/.test(window.getComputedStyle($element).getPropertyValue("position"))) {
+    if (/sticky/.test(elementComputedStyle.getPropertyValue("position"))) {
         // we have native support but let's not break the API...
         Sticky = function () {};
         Sticky.prototype.init = function () {};
@@ -20,7 +22,7 @@ define([
             this.$element = $element;
             this.$parent  = this.$element.parent();
             this.opts     = _.defaults(options || {}, {
-                top: 0
+                top: parseInt(elementComputedStyle.top) || 0
             });
             this.read = null;
             this.write = null;
