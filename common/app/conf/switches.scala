@@ -192,7 +192,7 @@ object Switches {
   val LzAds = Switch("Commercial", "lz-ads", "Lazy loading ads.",
     safeState = Off, sellByDate = new LocalDate(2015, 5, 13)
   )
-  
+
   val DfpCachingSwitch = Switch("Commercial", "dfp-caching",
     "Have Admin will poll DFP to precache adserving data.",
     safeState = On, sellByDate = never
@@ -312,6 +312,10 @@ object Switches {
 
   val AppleAdTechFrontSwitch = Switch("Commercial", "apple-ads-on-tech-front",
     "If this switch is on, Apple ads will appear below nav on the tech section front.",
+    safeState = Off, sellByDate = new LocalDate(2015, 5, 6))
+
+  val AppleAdLifestyleFrontSwitch = Switch("Commercial", "apple-ads-on-lifestyle-front",
+    "If this switch is on, Apple ads will appear below nav on the life-and-style section front.",
     safeState = Off, sellByDate = new LocalDate(2015, 5, 6))
 
 
