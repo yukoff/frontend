@@ -13,6 +13,31 @@ mac() {
   [[ $SYSTEM == 'Darwin' ]]
 }
 
+suse() {
+  # NOTE: /etc/SuSE-release is deprecated and will be removed in the future
+  [[ -f /etc/SuSE-release ]]
+}
+
+redhat() {
+  [[ -f /etc/redhat-release || -f /etc/centos-release || -f /etc/oracle-release ]]
+}
+
+setup_pkgmgr() {
+  if suse; then
+    echo -n 'zypper -n install -y'
+  elif redhat; then
+    echo -n 'yum install -y'
+  else
+    echo -n 'apt-get install -y'
+  fi
+}
+
+readonly PKGMGR=$(setup_pkgmgr)
+
+pkgmgr() {
+  echo -n $PKGMGR
+}
+
 installed() {
   hash "$1" 2>/dev/null
 }
@@ -70,7 +95,12 @@ install_homebrew() {
 install_jdk() {
   if ! installed javac; then
     if linux; then
-      sudo apt-get install -y openjdk-7-jdk
+      local JDK=
+      if suse; then JDK="java-1_8_0-openjdk-devel"
+      elif redhat; then JDK="java-1.8.0-openjdk-devel"
+      else JDK="openjdk-7-jdk"
+      fi
+      sudo $(pkgmgr) $JDK
     elif mac; then
       EXTRA_STEPS+=("Download the JDK from http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html")
     fi
@@ -80,12 +110,19 @@ install_jdk() {
 install_node() {
   if ! installed node || ! installed npm; then
     if ! installed curl; then
-      sudo apt-get install -y curl
+      sudo $(pkgmgr) curl
     fi
 
     if linux; then
-      curl -sL https://deb.nodesource.com/setup | sudo bash -
-      sudo apt-get install -y nodejs
+      NODEDEV=
+      if redhat; then
+        curl -sL https://rpm.nodesource.com/setup | sudo bash -
+      elif suse; then
+        NODEDEV="nodejs-devel"
+      else
+        curl -sL https://deb.nodesource.com/setup | sudo bash -
+      fi
+      sudo $(pkgmgr) nodejs $NODEDEV
     elif mac && installed brew; then
       brew install node
     fi
@@ -106,20 +143,30 @@ install_jspm() {
 
 install_ruby() {
   if linux; then
-    sudo apt-get install -y ruby1.9.1-full
+    local RUBY=
+    if suse || redhat; then RUBY="ruby"
+    else RUBY="ruby1.9.1-full"
+    fi
+    sudo $(pkgmgr) $RUBY
   fi
 }
 
 install_bundler() {
   if ! installed bundle; then
-    sudo gem install bundler
+    if suse; then sudo $(pkgmgr) rubygem-bundler
+    else sudo gem install bundler
+    fi
   fi
 }
 
 install_gcc() {
   if ! installed g++; then
     if linux; then
-      sudo apt-get install -y g++ make
+      local CPP=
+      if suse || redhat; then CPP="gcc-c++"
+      else CPP="g++"
+      fi
+      sudo $(pkgmgr) $CPP make
     elif mac; then
       EXTRA_STEPS+=("Install Xcode from the App Store")
     fi
@@ -128,7 +175,13 @@ install_gcc() {
 
 install_libpng() {
   if linux; then
-    sudo apt-get install -y libpng-dev
+    local LIBPNG=
+    # suse 11.x/12.x has libpng14, do it tricky
+    if suse; then LIBPNG="libpng16-devel"
+    elif redhat; then LIBPNG="libpng-devel"
+    else LIBPNG="libpng-dev"
+    fi
+    sudo $(pkgmgr) $LIBPNG
   elif mac; then
     brew install libpng
   fi
